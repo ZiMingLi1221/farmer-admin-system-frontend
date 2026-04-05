@@ -15,11 +15,7 @@ const { openPreview } = useFilePreview();
  * 處理文件點擊，打開預覽
  */
 const handleFileClick = (reference: DocumentReference): void => {
-  // Mock 模式下使用公共資源中的 sample.pdf，避免伺服器 404 導致的 Iframe 遞迴渲染（顯示整個 App）
-  const isMock = import.meta.env.VITE_USE_MOCK === 'true';
-  const fileUrl = isMock 
-    ? '/sample.pdf' 
-    : `/api/documents/${reference.documentId}/download`;
+  const fileUrl = `/api/v1/knowledge/documents/${reference.documentId}/download`;
 
   openPreview({
     fileName: reference.documentName,
@@ -41,8 +37,12 @@ const formatScore = (score: number): string => {
     <!-- Header -->
     <div class="source-header">
       <svg class="source-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+        />
       </svg>
       <span class="source-title">引用來源</span>
       <span class="source-count">{{ references.length }}</span>
@@ -50,8 +50,12 @@ const formatScore = (score: number): string => {
 
     <!-- Source List -->
     <div class="source-list">
-      <div v-for="(reference, index) in references" :key="reference.chunkId" class="source-item"
-        @click="handleFileClick(reference)">
+      <div
+        v-for="(reference, index) in references"
+        :key="reference.chunkId"
+        class="source-item"
+        @click="handleFileClick(reference)"
+      >
         <!-- 文件編號 -->
         <div class="source-number">{{ index + 1 }}</div>
 
@@ -60,7 +64,7 @@ const formatScore = (score: number): string => {
           <span class="source-name">{{ reference.documentName }}</span>
           <span class="source-snippet">{{
             reference.content.slice(0, 60) + (reference.content.length > 60 ? '...' : '')
-            }}</span>
+          }}</span>
         </div>
 
         <!-- Source Score -->

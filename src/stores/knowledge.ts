@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
-import { DocumentStatus } from '@/types/knowledge';
+
 import type { KnowledgeDocument } from '@/types/knowledge';
-import { mockDocuments } from '@/mock/knowledge';
+import { DocumentStatus } from '@/types/knowledge';
+import { httpClient } from '@/utils/request';
 
 interface KnowledgeState {
   documents: KnowledgeDocument[];
@@ -11,7 +12,7 @@ interface KnowledgeState {
 
 export const useKnowledgeStore = defineStore('knowledge', {
   state: (): KnowledgeState => ({
-    documents: import.meta.env.VITE_USE_MOCK === 'true' ? mockDocuments : [],
+    documents: [],
     isLoading: false,
     error: null,
   }),
@@ -36,15 +37,8 @@ export const useKnowledgeStore = defineStore('knowledge', {
         this.isLoading = true;
         this.error = null;
 
-        if (import.meta.env.VITE_USE_MOCK === 'true') {
-          // 模擬網路延遲
-          await new Promise(resolve => setTimeout(resolve, 500));
-          this.documents = mockDocuments;
-          return;
-        }
-
-        // TODO: 串接真實 API
-        console.warn('[fetchDocuments] 尚未串接後端 API，且 Mock 被關閉。');
+        const res = await httpClient.get<{ items: KnowledgeDocument[] }>('/knowledge/documents');
+        this.documents = res.data.items;
       } catch (err) {
         this.error = '載入文件列表失敗';
         console.error(err);
@@ -53,7 +47,9 @@ export const useKnowledgeStore = defineStore('knowledge', {
       }
     },
 
-    addDocument(doc: Omit<KnowledgeDocument, 'id' | 'uploadedAt' | 'updatedAt' | 'status' | 'chunkCount'>) {
+    addDocument(
+      doc: Omit<KnowledgeDocument, 'id' | 'uploadedAt' | 'updatedAt' | 'status' | 'chunkCount'>
+    ) {
       const now = new Date().toLocaleString('zh-TW', {
         year: 'numeric',
         month: '2-digit',
@@ -87,12 +83,22 @@ export const useKnowledgeStore = defineStore('knowledge', {
       return newDoc;
     },
 
-    updateDocument(id: string, data: Partial<Pick<KnowledgeDocument, 'title' | 'category' | 'department' | 'tags' | 'description'>>) {
+    updateDocument(
+      id: string,
+      data: Partial<
+        Pick<KnowledgeDocument, 'title' | 'category' | 'department' | 'tags' | 'description'>
+      >
+    ) {
       const index = this.documents.findIndex((d) => d.id === id);
       if (index !== -1) {
         const now = new Date().toLocaleString('zh-TW', {
-          year: 'numeric', month: '2-digit', day: '2-digit',
-          hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
         });
         this.documents[index] = { ...this.documents[index], ...data, updatedAt: now };
         return this.documents[index];

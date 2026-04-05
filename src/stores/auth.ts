@@ -1,15 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import type {
-  ChangePasswordResponse,
-  LoginRequest,
-  LoginResponse,
-} from '@/types/auth';
-
-import { mockLoginData, mockPasswords } from '@/mock/auth';
-
-import { useUserStore } from './user';
+import type { ChangePasswordResponse, LoginRequest, LoginResponse } from '@/types/auth';
+import { httpClient } from '@/utils/request';
 
 /**
  * 認證狀態管理
@@ -47,19 +40,10 @@ export const useAuthStore = defineStore(
       isLoggingIn.value = true;
 
       try {
-        // Mock 登入邏輯判斷
-        if (import.meta.env.VITE_USE_MOCK === 'true') {
-          await new Promise((resolve) => setTimeout(resolve, 800));
-          const mockResponse = await mockLoginData(credentials);
-          setToken(mockResponse.accessToken);
-          return mockResponse;
-        }
-
-        // TODO: 替換為真實 API 呼叫
-        // const response = await authApi.login(credentials);
-        // setToken(response.accessToken);
-        // return response;
-        throw new Error('未啟用 Mock，且後端 API 未連接。');
+        const res = await httpClient.post<LoginResponse>('/auth/login', credentials);
+        const { data } = res;
+        setToken(data.accessToken);
+        return data;
       } finally {
         isLoggingIn.value = false;
       }
@@ -74,7 +58,6 @@ export const useAuthStore = defineStore(
 
     /**
      * 修改密碼
-     * Mock 實作：驗證舊密碼，更新使用者狀態
      */
     const changePassword = async (
       oldPassword: string,
@@ -83,25 +66,11 @@ export const useAuthStore = defineStore(
       isLoggingIn.value = true;
 
       try {
-        // Mock 判斷
-        if (import.meta.env.VITE_USE_MOCK === 'true') {
-          await new Promise((resolve) => setTimeout(resolve, 800));
-          const userStore = useUserStore();
-          const currentUser = userStore.user;
-          if (!currentUser) throw new Error('未登入');
-
-          const correctPassword = mockPasswords[currentUser.username];
-          if (oldPassword !== correctPassword) throw new Error('舊密碼錯誤');
-          if (oldPassword === newPassword) throw new Error('新密碼不能與舊密碼相同');
-
-          userStore.setUser({ ...currentUser, mustChangePassword: false });
-          return { success: true, message: '密碼修改成功' };
-        }
-
-        // TODO: 替換為真實 API 呼叫
-        // const response = await authApi.changePassword({ oldPassword, newPassword });
-        // return response;
-        throw new Error('未啟用 Mock，且後端 API 未連接。');
+        const res = await httpClient.post<ChangePasswordResponse>('/auth/change-password', {
+          oldPassword,
+          newPassword,
+        });
+        return res.data;
       } finally {
         isLoggingIn.value = false;
       }
@@ -128,5 +97,3 @@ export const useAuthStore = defineStore(
     },
   }
 );
-
-

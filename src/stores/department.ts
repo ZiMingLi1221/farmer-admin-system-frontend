@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
+
 import type { Department, DepartmentFormData } from '@/types/department';
-import { mockDepartments } from '@/mock/department';
+import { httpClient } from '@/utils/request';
 
 interface DepartmentState {
   departments: Department[];
@@ -8,7 +9,7 @@ interface DepartmentState {
 
 export const useDepartmentStore = defineStore('department', {
   state: (): DepartmentState => ({
-    departments: import.meta.env.VITE_USE_MOCK === 'true' ? mockDepartments : [],
+    departments: [],
   }),
 
   getters: {
@@ -52,14 +53,12 @@ export const useDepartmentStore = defineStore('department', {
     },
 
     async fetchDepartments() {
-      // 若開啟了 Mock 功能，則回傳 Mock 假資料
-      if (import.meta.env.VITE_USE_MOCK === 'true') {
-        this.departments = mockDepartments;
-        return;
+      try {
+        const res = await httpClient.get<{ items: Department[] }>('/departments');
+        this.departments = res.data.items;
+      } catch (err) {
+        console.error('[fetchDepartments] 載入部門失敗', err);
       }
-
-      // TODO: 串接真實 API -> await api.getDepartments()
-      console.warn('[fetchDepartments] 尚未串接後端 API，且 Mock 被關閉。');
     },
 
     // 更新部門

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import type { UserInfo, UserRole } from '@/types/user';
 
-import { mockUsers } from '@/mock/staff';
+import type { UserInfo, UserRole } from '@/types/user';
+import { httpClient } from '@/utils/request';
 
 interface StaffState {
   users: UserInfo[];
@@ -9,8 +9,7 @@ interface StaffState {
 
 export const useStaffStore = defineStore('staff', {
   state: (): StaffState => ({
-    // 若為 Mock 模式則載入假帳號，否則預設空陣列等待 API 更新
-    users: import.meta.env.VITE_USE_MOCK === 'true' ? mockUsers : [],
+    users: [],
   }),
 
   getters: {
@@ -35,6 +34,16 @@ export const useStaffStore = defineStore('staff', {
   },
 
   actions: {
+    /** 載入人員列表 */
+    async fetchStaff() {
+      try {
+        const res = await httpClient.get<{ items: UserInfo[] }>('/staff');
+        this.users = res.data.items;
+      } catch (err) {
+        console.error('[fetchStaff] 載入人員列表失敗', err);
+      }
+    },
+
     // 新增使用者
     addUser(formData: any) {
       const newUser: UserInfo = {

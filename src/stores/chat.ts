@@ -2,10 +2,8 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 import { CHAT } from '@/config';
-import { getMockAIResponse } from '@/mock/chat';
-// TODO: 連接後端 API 時啟用
-// import { chatService } from '@/services';
 import type { Conversation, Message } from '@/types';
+import { httpClient } from '@/utils/request';
 
 export const useChatStore = defineStore(
   'chat',
@@ -34,7 +32,7 @@ export const useChatStore = defineStore(
     /**
      * 設置當前對話
      */
-    const setCurrentConversation = (conversationId: string): void => {
+    const setCurrentConversation = (conversationId: string | null): void => {
       currentConversationId.value = conversationId;
     };
 
@@ -43,9 +41,7 @@ export const useChatStore = defineStore(
      */
     const deleteConversation = async (conversationId: string): Promise<void> => {
       try {
-        // TODO: 連接後端 API 時啟用
-        // await chatService.deleteConversation(conversationId);
-
+        // httpClient.delete(`/chat/conversations/${conversationId}`)
         // 本地刪除
         const index = conversations.value.findIndex((c) => c.id === conversationId);
         if (index !== -1) {
@@ -56,7 +52,6 @@ export const useChatStore = defineStore(
         if (currentConversationId.value === conversationId) {
           currentConversationId.value = null;
         }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         error.value = err instanceof Error ? err.message : '刪除對話失敗';
         throw err;
@@ -129,21 +124,21 @@ export const useChatStore = defineStore(
         const conversation = conversations.value.find((c) => c.id === conversationId);
         if (!conversation) return;
 
-        // Mock 開關邏輯
-        if (import.meta.env.VITE_USE_MOCK === 'true') {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          const aiMessage = getMockAIResponse(userMessage, useRAG);
-          conversation.messages.push(aiMessage);
-          conversation.updatedAt = new Date();
-          return;
-        }
+        const res = await httpClient.post<{ conversationId: string; message: Message }>(
+          '/chat/message',
+          {
+            conversationId,
+            query: userMessage,
+            useRAG,
+          }
+        );
 
-        // TODO: 連接後端 API 時啟用
-        // const response = await chatService.sendMessage(conversationId, userMessage, useRAG);
-        // const aiMessage = response.message;
-        // if (response.references) {
-        //   // 處理 RAG 引用
-        // }
+        const aiMessage = res.data.message;
+        conversation.messages.push({
+          ...aiMessage,
+          timestamp: new Date(aiMessage.timestamp),
+        });
+        conversation.updatedAt = new Date();
       } catch (err) {
         error.value = err instanceof Error ? err.message : 'AI 回覆失敗';
       } finally {
@@ -159,9 +154,16 @@ export const useChatStore = defineStore(
         isLoading.value = true;
         error.value = null;
 
-        // TODO: 連接後端 API 時啟用
-        // const loadedConversations = await chatService.getConversations();
-        // conversations.value = loadedConversations;
+        const res = await httpClient.get<{ items: Conversation[] }>('/chat/conversations');
+        conversations.value = res.data.items.map((conv) => ({
+          ...conv,
+          createdAt: new Date(conv.createdAt),
+          updatedAt: new Date(conv.updatedAt),
+          messages: (conv.messages || []).map((m) => ({
+            ...m,
+            timestamp: new Date(m.timestamp),
+          })),
+        }));
       } catch (err) {
         error.value = err instanceof Error ? err.message : '載入對話列表失敗';
       } finally {

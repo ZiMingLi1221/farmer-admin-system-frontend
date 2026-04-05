@@ -1,25 +1,25 @@
 import { defineStore } from 'pinia';
+
 import type {
+  ApplicantFieldDef,
   EFormBusinessType,
   EFormTemplate,
   FormFieldCoord,
-  ApplicantFieldDef,
   FormSessionRecord,
 } from '@/types/form';
+import { httpClient } from '@/utils/request';
 
 // 語意鍵 → 輸入欄位定義的映射表
 const FIELD_DEF_MAP: Record<string, Omit<ApplicantFieldDef, 'required'>> = {
-  applicant_name:       { key: 'applicant_name',       label: '申請人姓名',   type: 'text' },
-  applicant_id_number:  { key: 'applicant_id_number',  label: '身分證字號',   type: 'id'   },
-  applicant_birth_date: { key: 'applicant_birth_date', label: '出生日期',     type: 'date' },
-  applicant_phone:      { key: 'applicant_phone',      label: '聯絡電話',     type: 'tel'  },
-  applicant_address:    { key: 'applicant_address',    label: '戶籍地址',     type: 'text' },
-  applicant_email:      { key: 'applicant_email',      label: 'E-mail',       type: 'text' },
-  institution_name:     { key: 'institution_name',     label: '機構/公司名稱', type: 'text' },
-  institution_tax_id:   { key: 'institution_tax_id',   label: '統一編號',     type: 'text' },
+  applicant_name: { key: 'applicant_name', label: '申請人姓名', type: 'text' },
+  applicant_id_number: { key: 'applicant_id_number', label: '身分證字號', type: 'id' },
+  applicant_birth_date: { key: 'applicant_birth_date', label: '出生日期', type: 'date' },
+  applicant_phone: { key: 'applicant_phone', label: '聯絡電話', type: 'tel' },
+  applicant_address: { key: 'applicant_address', label: '戶籍地址', type: 'text' },
+  applicant_email: { key: 'applicant_email', label: 'E-mail', type: 'text' },
+  institution_name: { key: 'institution_name', label: '機構/公司名稱', type: 'text' },
+  institution_tax_id: { key: 'institution_tax_id', label: '統一編號', type: 'text' },
 };
-
-import { MOCK_BUSINESS_TYPES, MOCK_SESSIONS } from '@/mock/eform';
 
 // --- Store ---
 
@@ -30,14 +30,13 @@ interface EFormState {
 
 export const useEFormStore = defineStore('eform', {
   state: (): EFormState => ({
-    businessTypes: import.meta.env.VITE_USE_MOCK === 'true' ? MOCK_BUSINESS_TYPES : [],
-    sessions: import.meta.env.VITE_USE_MOCK === 'true' ? MOCK_SESSIONS : [],
+    businessTypes: [],
+    sessions: [],
   }),
 
   getters: {
     /** 依業務別 ID 取得業務別資料 */
-    getBusinessType: (state) => (id: string) =>
-      state.businessTypes.find((bt) => bt.id === id),
+    getBusinessType: (state) => (id: string) => state.businessTypes.find((bt) => bt.id === id),
 
     /** 依業務別及選取的模板 IDs 計算聯集欄位 */
     getUnionFields:
@@ -91,10 +90,27 @@ export const useEFormStore = defineStore('eform', {
   },
 
   actions: {
+    /** 載入業務別清單 */
+    async fetchBusinessTypes() {
+      try {
+        const res = await httpClient.get<EFormBusinessType[]>('/eform/business-types');
+        this.businessTypes = res.data;
+      } catch (err) {
+        console.error('[fetchBusinessTypes] 載入失敗', err);
+      }
+    },
+
+    /** 載入生成歷程 */
+    async fetchSessions() {
+      try {
+        const res = await httpClient.get<{ items: FormSessionRecord[] }>('/eform/sessions');
+        this.sessions = res.data.items;
+      } catch (err) {
+        console.error('[fetchSessions] 載入失敗', err);
+      }
+    },
     /** 新增生成歷程（Mock：不呼叫 API） */
-    addSession(
-      payload: Omit<FormSessionRecord, 'id' | 'createdAt'>,
-    ): FormSessionRecord {
+    addSession(payload: Omit<FormSessionRecord, 'id' | 'createdAt'>): FormSessionRecord {
       const now = new Date().toLocaleString('zh-TW', {
         year: 'numeric',
         month: '2-digit',
