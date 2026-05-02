@@ -1,105 +1,3 @@
-<script setup lang="ts">
-import { computed } from 'vue';
-
-import { useFilePreview } from '@/composables/useFilePreview'; // Import composable
-import { ICONS } from '@/constants';
-import type { Message, UploadedFile } from '@/types';
-import { formatMarkdown } from '@/utils/format';
-
-import { useChat } from '../../composables/useChat';
-import SourceReference from './SourceReference.vue';
-
-interface Props {
-  message: Message;
-  conversationId?: string;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const props = defineProps<Props>();
-
-const { copyMessage, regenerateMessage } = useChat({ conversationId: props.conversationId });
-// 使用文件預覽 Composable
-const { openPreview } = useFilePreview();
-
-const isUser = computed(() => props.message.role === 'user');
-
-const formattedContent = computed(() => {
-  if (isUser.value) {
-    return props.message.content;
-  }
-  return formatMarkdown(props.message.content);
-});
-
-const formattedTime = computed(() => {
-  return new Date(props.message.timestamp).toLocaleTimeString('zh-TW', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-});
-
-const handleCopy = async () => {
-  try {
-    await copyMessage(props.message.id);
-  } catch (error) {
-    console.error('複製失敗:', error);
-  }
-};
-
-const handleRegenerate = async () => {
-  try {
-    await regenerateMessage(props.message.id);
-  } catch (error) {
-    console.error('重新生成失敗:', error);
-  }
-};
-
-/**
- * 處理附件點擊
- */
-const handleAttachmentClick = (file: UploadedFile) => {
-  let url = file.url;
-
-  // 確保 file.file 是一個有效的 Blob 或 File 對象
-  // 使用 as any 繞過 TS 靜態檢查，因為運行時對象可能已丟失原型鏈
-  const rawFile = file.file as any;
-  if (
-    !url &&
-    rawFile &&
-    (rawFile instanceof Blob || (typeof File !== 'undefined' && rawFile instanceof File))
-  ) {
-    try {
-      url = URL.createObjectURL(rawFile);
-    } catch (e) {
-      console.error('無法建立文件預覽 URL:', e);
-    }
-  }
-
-  if (url) {
-    openPreview({
-      fileName: file.name,
-      fileUrl: url,
-    });
-  } else {
-    // 如果沒有 URL 也沒有有效的 File 對象，這可能是一個異常狀態
-    // 但如果有預設的資源路徑（例如範例文件），可以嘗試使用
-    console.warn('無法預覽文件: 缺少 URL 或有效的文件對象', file);
-  }
-};
-
-/**
- * 格式化文件大小
- */
-const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 B';
-
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return `${Math.round(bytes / Math.pow(k, i))} ${sizes[i]}`;
-};
-</script>
-
 <template>
   <div :class="['message-wrapper', isUser ? 'message-user-wrapper' : 'message-assistant-wrapper']">
     <div :class="['message-container', isUser ? 'message-user' : 'message-assistant']">
@@ -200,6 +98,94 @@ const formatFileSize = (bytes: number): string => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+
+import { useFilePreview } from '@/composables/useFilePreview';
+import { ICONS } from '@/constants/icons';
+import type { Message } from '@/types/chat';
+import type { UploadedFile } from '@/types/upload';
+import { formatMarkdown } from '@/utils/format';
+
+import { useChat } from '../../composables/useChat';
+import SourceReference from './SourceReference.vue';
+
+interface Props {
+  message: Message;
+  conversationId?: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const props = defineProps<Props>();
+
+const { copyMessage, regenerateMessage } = useChat({ conversationId: props.conversationId });
+const { openPreview } = useFilePreview();
+
+const isUser = computed(() => props.message.role === 'user');
+
+const formattedContent = computed(() => {
+  if (isUser.value) {
+    return props.message.content;
+  }
+  return formatMarkdown(props.message.content);
+});
+
+const formattedTime = computed(() => {
+  return new Date(props.message.timestamp).toLocaleTimeString('zh-TW', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+});
+
+const handleCopy = async () => {
+  try {
+    await copyMessage(props.message.id);
+  } catch (error) {
+    console.error('複製失敗:', error);
+  }
+};
+
+const handleRegenerate = async () => {
+  try {
+    await regenerateMessage(props.message.id);
+  } catch (error) {
+    console.error('重新生成失敗:', error);
+  }
+};
+
+const handleAttachmentClick = (file: UploadedFile) => {
+  let url = file.url;
+
+  const rawFile: File | Blob | null | undefined = file.file;
+  if (!url && rawFile instanceof Blob) {
+    try {
+      url = URL.createObjectURL(rawFile);
+    } catch (e) {
+      console.error('無法建立文件預覽 URL:', e);
+    }
+  }
+
+  if (url) {
+    openPreview({
+      fileName: file.name,
+      fileUrl: url,
+    });
+  } else {
+    console.warn('無法預覽文件: 缺少 URL 或有效的文件對象', file);
+  }
+};
+
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 B';
+
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${Math.round(bytes / Math.pow(k, i))} ${sizes[i]}`;
+};
+</script>
 
 <style scoped>
 /* ========== 訊息包裝器（整體容器） ========== */
