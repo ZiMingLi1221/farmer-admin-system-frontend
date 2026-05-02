@@ -24,11 +24,23 @@
         @mouseleave="showAppearanceSubmenu = false"
       >
         <button class="action-item">
-          <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            aria-hidden="true"
+            class="action-icon"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.SUN" />
           </svg>
           <span>外觀</span>
-          <svg class="submenu-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            aria-hidden="true"
+            class="submenu-arrow"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -46,7 +58,13 @@
             :class="{ active: theme === option.value }"
             @click="handleThemeSelect(option.value)"
           >
-            <svg class="submenu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              aria-hidden="true"
+              class="submenu-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -57,6 +75,7 @@
             <span>{{ option.label }}</span>
             <svg
               v-if="theme === option.value"
+              aria-hidden="true"
               class="check-icon"
               fill="none"
               stroke="currentColor"
@@ -74,7 +93,13 @@
       </div>
 
       <button class="action-item" @click="handleChangePassword">
-        <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          aria-hidden="true"
+          class="action-icon"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.EDIT" />
         </svg>
         <span>變更密碼</span>
@@ -85,7 +110,13 @@
 
     <div class="actions-section">
       <button class="action-item logout" @click="handleLogout">
-        <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          aria-hidden="true"
+          class="action-icon"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.LOGOUT" />
         </svg>
         <span>退出登錄</span>
@@ -99,9 +130,10 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useTheme } from '@/composables/useTheme';
-import { ICONS } from '@/constants';
+import { ICONS } from '@/constants/icons';
 import { useAuthStore } from '@/stores/auth';
 import { useUserStore } from '@/stores/user';
+import type { ThemeMode } from '@/types/theme';
 import { ROLE_LABELS } from '@/types/user';
 
 const emit = defineEmits<{
@@ -123,7 +155,7 @@ const themeOptions = [
   { value: 'system' as const, label: '跟隨系統', icon: 'COMPUTER' as const },
 ];
 
-const handleThemeSelect = (value: 'light' | 'dark' | 'system') => {
+const handleThemeSelect = (value: ThemeMode) => {
   setTheme(value);
 };
 
@@ -199,8 +231,8 @@ onUnmounted(() => {
   justify-content: center;
   width: 3rem;
   height: 3rem;
-  color: white;
-  background: linear-gradient(135deg, var(--primary), #4285f4);
+  color: var(--text-on-primary);
+  background: linear-gradient(135deg, var(--primary), var(--info-blue));
   border-radius: 50%;
 }
 

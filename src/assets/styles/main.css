@@ -50,6 +50,8 @@
     --error: #ef4444;
     --error-hover: #dc2626;
     --info: #3b82f6;
+    --info-blue: #4285f4;
+    --text-on-primary: #fff;
   }
 
   /* ##### 顏色配置：深色模式 ##### */
@@ -82,6 +84,8 @@
     --error: #ef4444;
     --error-hover: #dc2626;
     --info: #3b82f6;
+    --info-blue: #4285f4;
+    --text-on-primary: #fff;
   }
 
   /* ##### 全局過渡處理 ##### */
