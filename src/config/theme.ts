@@ -1,8 +1,6 @@
 import type { ThemeMode, ThemeOption } from '@/types/theme';
 
-/** 系統名稱與前綴 **/
-export const APP_NAME = 'Farmer Admin';
-export const APP_PREFIX = 'fa';
+const APP_PREFIX = 'fa';
 
 /** 主題模式 常數 **/
 export const FA_THEME_MODES = {

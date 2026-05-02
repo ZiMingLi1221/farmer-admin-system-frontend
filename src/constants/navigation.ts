@@ -29,15 +29,9 @@ export const NAVIGATION_ITEMS: MenuItem[] = [
     route: '/eform',
   },
   {
-    id: 'departments',
+    id: 'organization',
     icon: ICONS.OFFICE_BUILDING,
-    label: '部門管理',
-    route: '/departments',
-  },
-  {
-    id: 'staff',
-    icon: ICONS.USERS,
-    label: '人員管理',
-    route: '/staff',
+    label: '組織管理',
+    route: '/organization',
   },
 ];
