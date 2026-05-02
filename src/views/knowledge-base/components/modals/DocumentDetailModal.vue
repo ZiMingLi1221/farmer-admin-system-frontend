@@ -256,7 +256,7 @@ const handleClose = () => {
   height: 3rem;
   font-size: 0.6875rem;
   font-weight: 700;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .icon-pdf {
@@ -356,7 +356,7 @@ const handleClose = () => {
   color: var(--text-primary);
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   transition: border-color 0.2s;
 }
 
@@ -399,7 +399,7 @@ const handleClose = () => {
   padding: 0.375rem 0.5rem;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   transition: border-color 0.2s;
 }
 
@@ -427,7 +427,7 @@ const handleClose = () => {
   font-size: 0.75rem;
   color: var(--primary);
   background: rgb(var(--primary-rgb), 0.1);
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
 }
 
 .tag-remove {
@@ -489,7 +489,7 @@ const handleClose = () => {
   gap: 0.75rem;
   padding: 1rem;
   background: var(--bg-tertiary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .info-item {

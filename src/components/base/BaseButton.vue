@@ -1,9 +1,23 @@
-<script setup lang="ts">
-/**
- * 通用按鈕組件
- * 支援多種樣式變體、尺寸、載入狀態與禁用狀態
- */
+<template>
+  <button
+    :type="type"
+    :class="[
+      'base-button',
+      `variant-${variant}`,
+      `size-${size}`,
+      { 'full-width': fullWidth, disabled: disabled || loading, loading },
+    ]"
+    :disabled="disabled || loading"
+    @click="handleClick"
+  >
+    <span v-if="loading" class="loading-spinner"></span>
+    <span :class="{ 'button-content': true, 'with-spinner': loading }">
+      <slot></slot>
+    </span>
+  </button>
+</template>
 
+<script setup lang="ts">
 interface Props {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
@@ -33,25 +47,6 @@ const handleClick = (event: MouseEvent) => {
 };
 </script>
 
-<template>
-  <button
-    :type="type"
-    :class="[
-      'base-button',
-      `variant-${variant}`,
-      `size-${size}`,
-      { 'full-width': fullWidth, disabled: disabled || loading, loading },
-    ]"
-    :disabled="disabled || loading"
-    @click="handleClick"
-  >
-    <span v-if="loading" class="loading-spinner"></span>
-    <span :class="{ 'button-content': true, 'with-spinner': loading }">
-      <slot></slot>
-    </span>
-  </button>
-</template>
-
 <style scoped>
 .base-button {
   position: relative;
@@ -64,9 +59,7 @@ const handleClick = (event: MouseEvent) => {
   cursor: pointer;
   outline: none;
   border: none;
-  border-radius: 0.5rem;
-
-  /* 移除預設過渡，防止主題切換黑閃 */
+  border-radius: var(--radius-sm);
 }
 
 /* 尺寸變體 */
@@ -93,7 +86,7 @@ const handleClick = (event: MouseEvent) => {
 
 .variant-primary:hover:not(.disabled) {
   background: var(--primary-hover);
-  transition: background-color 0.2s ease;
+  transition: background-color 0.15s ease;
 }
 
 .variant-primary:active:not(.disabled) {
@@ -107,18 +100,18 @@ const handleClick = (event: MouseEvent) => {
 
 .variant-secondary:hover:not(.disabled) {
   background: var(--bg-tertiary);
-  transition: background-color 0.2s ease;
+  transition: background-color 0.15s ease;
 }
 
 .variant-outline {
-  color: var(--primary);
+  color: var(--text-primary);
   background: transparent;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--border-primary, #d1d5db);
 }
 
 .variant-outline:hover:not(.disabled) {
-  background: rgb(0 173 104 / 10%);
-  transition: background-color 0.2s ease;
+  background: var(--bg-elevated);
+  transition: background-color 0.15s ease;
 }
 
 .variant-ghost {
@@ -127,8 +120,8 @@ const handleClick = (event: MouseEvent) => {
 }
 
 .variant-ghost:hover:not(.disabled) {
-  background: var(--bg-secondary);
-  transition: background-color 0.2s ease;
+  background: var(--bg-overlay);
+  transition: background-color 0.15s ease;
 }
 
 .variant-danger {
@@ -138,7 +131,7 @@ const handleClick = (event: MouseEvent) => {
 
 .variant-danger:hover:not(.disabled) {
   background: var(--error-hover);
-  transition: background-color 0.2s ease;
+  transition: background-color 0.15s ease;
 }
 
 /* 狀態 */

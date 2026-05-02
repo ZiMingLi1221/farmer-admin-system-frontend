@@ -1,37 +1,3 @@
-<script setup lang="ts">
-import { useFilePreview } from '@/composables/useFilePreview';
-import type { DocumentReference } from '@/types';
-
-interface Props {
-  references: DocumentReference[];
-}
-
-defineProps<Props>();
-
-// 使用文件預覽 Composable
-const { openPreview } = useFilePreview();
-
-/**
- * 處理文件點擊，打開預覽
- */
-const handleFileClick = (reference: DocumentReference): void => {
-  const fileUrl = `/api/v1/knowledge/documents/${reference.documentId}/download`;
-
-  openPreview({
-    fileName: reference.documentName,
-    fileUrl,
-    highlightText: reference.content,
-  });
-};
-
-/**
- * 格式化相關度分數
- */
-const formatScore = (score: number): string => {
-  return `${Math.round(score * 100)}%`;
-};
-</script>
-
 <template>
   <div v-if="references && references.length > 0" class="source-references">
     <!-- Header -->
@@ -76,6 +42,33 @@ const formatScore = (score: number): string => {
   </div>
 </template>
 
+<script setup lang="ts">
+import { useFilePreview } from '@/composables/useFilePreview';
+import type { DocumentReference } from '@/types/rag';
+
+interface Props {
+  references: DocumentReference[];
+}
+
+defineProps<Props>();
+
+const { openPreview } = useFilePreview();
+
+const handleFileClick = (reference: DocumentReference): void => {
+  const fileUrl = `/api/v1/knowledge/documents/${reference.documentId}/download`;
+
+  openPreview({
+    fileName: reference.documentName,
+    fileUrl,
+    highlightText: reference.content,
+  });
+};
+
+const formatScore = (score: number): string => {
+  return `${Math.round(score * 100)}%`;
+};
+</script>
+
 <style scoped>
 /* ========== 來源引用容器 ========== */
 .source-references {
@@ -83,7 +76,7 @@ const formatScore = (score: number): string => {
   margin-top: 1rem;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 /* ========== Header ========== */
@@ -112,7 +105,7 @@ const formatScore = (score: number): string => {
   font-size: 0.75rem;
   color: var(--primary);
   background-color: var(--primary-light);
-  border-radius: 9999px;
+  border-radius: var(--radius-xs);
 }
 
 /* ========== Source List ========== */
@@ -132,7 +125,7 @@ const formatScore = (score: number): string => {
   cursor: pointer;
   background-color: var(--bg-primary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 
   /* 修正：指定動畫屬性，防止主題切換時背景色彩過渡產生黑閃 */
   transition:

@@ -97,7 +97,7 @@ const handleConfirm = () => {
   max-height: 90vh;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   box-shadow: 0 20px 25px -5px rgb(0 0 0 / 30%);
 }
 
@@ -118,7 +118,6 @@ const handleConfirm = () => {
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 1px solid var(--border-primary);
 }
 
 .modal-title {
@@ -133,15 +132,15 @@ const handleConfirm = () => {
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 0.375rem;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+  border-radius: var(--radius-sm);
 }
 
 .modal-close:hover {
   color: var(--text-primary);
-  background: var(--bg-tertiary);
+  background: var(--bg-overlay);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .icon {
@@ -161,7 +160,6 @@ const handleConfirm = () => {
   align-items: center;
   justify-content: flex-end;
   padding: 1.5rem;
-  border-top: 1px solid var(--border-primary);
 }
 
 .btn {
@@ -170,12 +168,7 @@ const handleConfirm = () => {
   font-weight: 500;
   cursor: pointer;
   border: none;
-  border-radius: 0.5rem;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    opacity 0.2s ease;
+  border-radius: var(--radius-sm);
 }
 
 .btn:disabled {
@@ -190,16 +183,21 @@ const handleConfirm = () => {
 
 .btn-primary:hover:not(:disabled) {
   background: var(--primary-hover);
+  transition: background-color 0.15s ease;
 }
 
 .btn-secondary {
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
 }
 
 .btn-secondary:hover {
-  background: var(--bg-primary);
+  color: var(--text-primary);
+  background: var(--bg-overlay);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 /* 動畫 */

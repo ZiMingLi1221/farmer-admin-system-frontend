@@ -115,7 +115,7 @@ const clearFilters = () => {
   margin-bottom: 1rem;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 .search-input-wrapper {
@@ -143,13 +143,13 @@ const clearFilters = () => {
   color: var(--text-primary);
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .search-input:focus {
   outline: none;
   border-color: var(--primary);
-  transition: border-color 0.2s ease;
+  transition: border-color 0.15s ease;
 }
 
 .search-input::placeholder {
@@ -170,13 +170,13 @@ const clearFilters = () => {
   cursor: pointer;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .filter-select:focus {
   outline: none;
   border-color: var(--primary);
-  transition: border-color 0.2s ease;
+  transition: border-color 0.15s ease;
 }
 
 .btn-clear {
@@ -189,15 +189,15 @@ const clearFilters = () => {
   cursor: pointer;
   background: transparent;
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .btn-clear:hover {
   color: var(--error);
   border-color: var(--error);
   transition:
-    color 0.2s ease,
-    border-color 0.2s ease;
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .icon-sm {

@@ -110,7 +110,7 @@ const goToLogin = () => {
       </div>
 
       <!-- 返回按鈕 -->
-      <BaseButton variant="outline" size="lg" full-width @click="goToLogin">
+      <BaseButton variant="secondary" size="lg" full-width @click="goToLogin">
         返回登入頁面
       </BaseButton>
     </div>
@@ -202,7 +202,7 @@ const goToLogin = () => {
   padding: 1rem;
   background: rgb(255 255 255 / 3%);
   border: 1px solid rgb(255 255 255 / 8%);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .contact-header {
@@ -252,7 +252,7 @@ const goToLogin = () => {
   padding: 1rem;
   background: rgb(0 173 104 / 10%);
   border: 1px solid rgb(0 173 104 / 25%);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .notice-icon {

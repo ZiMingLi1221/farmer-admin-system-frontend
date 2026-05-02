@@ -233,7 +233,7 @@ const togglePasswordVisibility = () => {
   color: var(--error);
   background: rgb(239 68 68 / 10%);
   border: 1px solid rgb(239 68 68 / 25%);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .error-icon {

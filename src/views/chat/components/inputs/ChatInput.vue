@@ -402,7 +402,7 @@ const handleRemoveFile = (fileId: string): void => {
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .action-button:hover {
@@ -428,7 +428,7 @@ const handleRemoveFile = (fileId: string): void => {
   cursor: not-allowed;
   background: var(--bg-tertiary);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .send-button.active {

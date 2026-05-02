@@ -45,7 +45,7 @@ import PageHeader from '@/components/common/PageHeader.vue';
 
 .tab-link:hover {
   color: var(--text-primary);
-  transition: color 0.2s ease;
+  transition: color 0.15s ease;
 }
 
 .tab-link--active {

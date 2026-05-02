@@ -101,7 +101,7 @@ const emit = defineEmits<{
   padding: 0.75rem;
   background: rgb(239 68 68 / 10%);
   border: 1px solid rgb(239 68 68 / 30%);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .warning-text {
@@ -117,7 +117,7 @@ const emit = defineEmits<{
   font-weight: 500;
   cursor: pointer;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .btn-cancel {
@@ -128,7 +128,7 @@ const emit = defineEmits<{
 
 .btn-cancel:hover {
   background: var(--bg-primary);
-  transition: background-color 0.2s ease;
+  transition: background-color 0.15s ease;
 }
 
 .btn-delete {
@@ -138,6 +138,6 @@ const emit = defineEmits<{
 
 .btn-delete:hover {
   background: var(--error-hover);
-  transition: background-color 0.2s ease;
+  transition: background-color 0.15s ease;
 }
 </style>

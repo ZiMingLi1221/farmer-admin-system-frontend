@@ -29,7 +29,7 @@ defineEmits<{
   padding: 0.625rem 1rem;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .batch-count {
@@ -52,13 +52,13 @@ defineEmits<{
   cursor: pointer;
   background: transparent;
   border: 1px solid var(--error);
-  border-radius: 0.375rem;
+  border-radius: var(--radius-sm);
 }
 
 .btn-danger-outline:hover {
   color: white;
   background: var(--error);
-  transition: background-color 0.2s ease;
+  transition: background-color 0.15s ease;
 }
 
 .btn-cancel {
@@ -69,12 +69,12 @@ defineEmits<{
   cursor: pointer;
   background: transparent;
   border: 1px solid var(--border-primary);
-  border-radius: 0.375rem;
+  border-radius: var(--radius-sm);
 }
 
 .btn-cancel:hover {
   color: var(--text-primary);
   background: var(--bg-primary);
-  transition: background-color 0.2s ease;
+  transition: background-color 0.15s ease;
 }
 </style>

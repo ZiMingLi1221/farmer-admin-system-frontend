@@ -63,29 +63,48 @@
     />
 
     <!-- 刪除確認 Modal -->
-    <DeleteConfirmModal
-      :open="showDeleteModal"
-      :title="`確定要刪除「${selectedDocument?.title}」嗎？`"
-      detail="文件刪除後，相關的向量索引也將一併移除且無法恢復"
+    <BaseModal
+      v-model="showDeleteModal"
+      title="確認刪除"
+      size="sm"
+      confirm-text="確認刪除"
       @confirm="handleConfirmDelete"
-      @cancel="showDeleteModal = false"
-    />
+    >
+      <div class="delete-confirm-content">
+        <div class="warning-icon-container">
+          <svg class="warning-icon-large" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </div>
+        <div class="message-container">
+          <p class="message-title">確定要刪除「{{ selectedDocument?.title }}」嗎？</p>
+          <p class="message-detail">文件刪除後，相關的向量索引也將一併移除且無法恢復</p>
+        </div>
+        <div class="warning-box">
+          <p class="warning-text">⚠️ 此操作無法復原，請確認後再執行。</p>
+        </div>
+      </div>
+    </BaseModal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 
+import BaseModal from '@/components/base/BaseModal.vue';
 import IconBtn from '@/components/base/IconBtn.vue';
-import DeleteConfirmModal from '@/components/common/DeleteConfirmModal.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
 import Pagination from '@/components/common/Pagination.vue';
-import { usePagination } from '@/composables/usePagination';
 import { usePermission } from '@/composables/usePermission';
 import { useDepartmentStore } from '@/stores/department';
 import { useKnowledgeStore } from '@/stores/knowledge';
 import { useUserStore } from '@/stores/user';
-import type { KnowledgeDocument } from '@/types';
+import type { KnowledgeDocument } from '@/types/knowledge';
 
 import DocumentTable from './components/DocumentTable.vue';
 import DocumentDetailModal from './components/modals/DocumentDetailModal.vue';
@@ -181,12 +200,10 @@ const filteredDocuments = computed(() => {
   // 排序
   if (sortField.value) {
     result = [...result].sort((a, b) => {
-      const aVal = (a as KnowledgeDocument)[sortField.value as keyof KnowledgeDocument] ?? '';
-      const bVal = (b as KnowledgeDocument)[sortField.value as keyof KnowledgeDocument] ?? '';
+      const aVal = (a as any)[sortField.value] ?? '';
+      const bVal = (b as any)[sortField.value] ?? '';
       const cmp =
-        typeof aVal === 'string'
-          ? aVal.localeCompare(bVal as string)
-          : (aVal as number) - (bVal as number);
+        typeof aVal === 'string' ? aVal.localeCompare(bVal) : (aVal as number) - (bVal as number);
       return sortOrder.value === 'asc' ? cmp : -cmp;
     });
   }
@@ -195,15 +212,24 @@ const filteredDocuments = computed(() => {
 });
 
 // 分頁
-const {
-  currentPage,
-  totalPages,
-  paginatedItems: paginatedDocuments,
-  startIndex,
-  endIndex,
-  goToPage,
-} = usePagination(filteredDocuments);
+const currentPage = ref(1);
+const pageSize = 10;
+
 const total = computed(() => filteredDocuments.value.length);
+const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize)));
+const startIndex = computed(() =>
+  Math.min((currentPage.value - 1) * pageSize + 1, total.value || 1)
+);
+const endIndex = computed(() => Math.min(currentPage.value * pageSize, total.value));
+
+const paginatedDocuments = computed(() => {
+  const s = (currentPage.value - 1) * pageSize;
+  return filteredDocuments.value.slice(s, s + pageSize);
+});
+
+const goToPage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) currentPage.value = page;
+};
 
 // 點擊列 → 開詳情 Modal
 const handleDetail = (doc: KnowledgeDocument) => {
@@ -228,8 +254,8 @@ const handleDelete = (doc: KnowledgeDocument) => {
   showDeleteModal.value = true;
 };
 
-const handleUpload = async (_file: File, formData: any) => {
-  await knowledgeStore.addDocument({
+const handleUpload = (_file: File, formData: any) => {
+  knowledgeStore.addDocument({
     title: formData.title,
     filename: _file.name,
     fileSize: _file.size,
@@ -260,5 +286,79 @@ const handleConfirmDelete = () => {
   max-width: 1400px;
   padding: 2rem;
   margin: 0 auto;
+}
+
+.btn-primary {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+/* 刪除確認 Modal */
+.delete-confirm-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  text-align: center;
+}
+
+.warning-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  background: rgb(239 68 68 / 10%);
+  border-radius: 50%;
+}
+
+.warning-icon-large {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--error);
+}
+
+.message-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.message-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.message-detail {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.warning-box {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgb(239 68 68 / 10%);
+  border: 1px solid rgb(239 68 68 / 30%);
+  border-radius: var(--radius-sm);
+}
+
+.warning-text {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-primary);
 }
 </style>

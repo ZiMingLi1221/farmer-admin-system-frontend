@@ -6,7 +6,7 @@ import type { ModuleType } from '@/types';
 export const useSidebar = () => {
   const sidebarStore = useSidebarStore();
 
-  const { activeModule, isSecondaryExpanded } = storeToRefs(sidebarStore);
+  const { activeModule, isSecondaryExpanded, isCollapsed } = storeToRefs(sidebarStore);
 
   const setActiveModule = (module: ModuleType): void => {
     sidebarStore.setActiveModule(module);
@@ -20,11 +20,17 @@ export const useSidebar = () => {
     sidebarStore.setSecondaryExpanded(value);
   };
 
+  const toggleCollapsed = (): void => {
+    sidebarStore.toggleCollapsed();
+  };
+
   return {
     activeModule,
     isSecondaryExpanded,
+    isCollapsed,
     setActiveModule,
     toggleSecondary,
     setSecondaryExpanded,
+    toggleCollapsed,
   };
 };

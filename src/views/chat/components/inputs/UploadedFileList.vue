@@ -173,7 +173,7 @@ const handleRemove = (fileId: string): void => {
   cursor: default;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   transition: all 0.2s;
 }
 
@@ -295,7 +295,7 @@ const handleRemove = (fileId: string): void => {
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
   transition: all 0.2s;
 }
 

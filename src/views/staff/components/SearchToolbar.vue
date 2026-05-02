@@ -112,13 +112,13 @@ const activeDepartments = computed(() => departmentStore.departments.filter((d) 
   color: var(--text-primary);
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .search-input:focus {
   outline: none;
   border-color: var(--primary);
-  transition: border-color 0.2s ease;
+  transition: border-color 0.15s ease;
 }
 
 .filters {
@@ -133,12 +133,12 @@ const activeDepartments = computed(() => departmentStore.departments.filter((d) 
   cursor: pointer;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .filter-select:focus {
   outline: none;
   border-color: var(--primary);
-  transition: border-color 0.2s ease;
+  transition: border-color 0.15s ease;
 }
 </style>

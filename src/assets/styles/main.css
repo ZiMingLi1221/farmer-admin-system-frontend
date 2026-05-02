@@ -7,7 +7,7 @@
   :root {
     /* ##### 顏色配置：淺色模式 ##### */
     color-scheme: light;
-
+    
     /* ===== 尺寸變數 ===== */
     --sidebar-main-width: 5rem;
     --sidebar-secondary-width: 16rem;
@@ -15,19 +15,33 @@
     --transition-duration: 300ms;
 
     /* ===== 淺色模式配色（Gemini 風格） ===== */
-    --bg-primary: #fcfcf9;
-    --bg-secondary: #f3f3ee;
-    --bg-tertiary: #e5e5de;
+    --bg-base: #f8f9fa;
+    --bg-surface: #fff;
+    --bg-elevated: #f1f3f5;
+    --bg-overlay: #e9ecef;
+    --bg-muted: #dee2e6;
+
+    /* 舊變數保留為別名（保持相容） */
+    --bg-primary: var(--bg-base);
+    --bg-secondary: var(--bg-elevated);
+    --bg-tertiary: var(--bg-overlay);
     --text-primary: #252525;
     --text-secondary: #5f5f5f;
     --text-tertiary: #979797;
     --border-primary: #e5e7eb;
     --border-secondary: #d1d5db;
 
+    /* ===== 圓角 token ===== */
+    --radius-xs: 2px;
+    --radius-sm: 8px;
+    --radius-md: 10px;
+
     /* ===== 農會綠 ===== */
     --primary: #00ad68;
     --primary-hover: #008a53;
     --primary-light: rgb(0 173 104 / 20%);
+    --primary-active-bg: rgb(0 173 104 / 12%);
+    --primary-active-bg-hover: rgb(0 173 104 / 18%);
 
     /* ===== 狀態顏色 ===== */
     --success: #00ad68;
@@ -36,15 +50,24 @@
     --error: #ef4444;
     --error-hover: #dc2626;
     --info: #3b82f6;
+    --info-blue: #4285f4;
+    --text-on-primary: #fff;
   }
 
   /* ##### 顏色配置：深色模式 ##### */
   .dark {
     color-scheme: dark;
 
-    --bg-primary: #191a1a;
-    --bg-secondary: #1f2121;
-    --bg-tertiary: #2a2e2d;
+    --bg-base: #111213;
+    --bg-surface: #1a1b1e;
+    --bg-elevated: #242628;
+    --bg-overlay: #2e3033;
+    --bg-muted: #383a3e;
+
+    /* 舊變數保留為別名（保持相容） */
+    --bg-primary: var(--bg-base);
+    --bg-secondary: var(--bg-elevated);
+    --bg-tertiary: var(--bg-overlay);
     --text-primary: #f3f4f6;
     --text-secondary: #9ca3af;
     --text-tertiary: #6b7280;
@@ -61,6 +84,8 @@
     --error: #ef4444;
     --error-hover: #dc2626;
     --info: #3b82f6;
+    --info-blue: #4285f4;
+    --text-on-primary: #fff;
   }
 
   /* ##### 全局過渡處理 ##### */
@@ -95,7 +120,7 @@
     padding: 1rem;
     background-color: var(--bg-primary);
     border: 1px solid var(--border-primary);
-    border-radius: 0.5rem;
+    border-radius: var(--radius-md);
     box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
   }
 
@@ -107,12 +132,12 @@
     cursor: pointer;
     background-color: var(--primary);
     border: none;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-sm);
   }
 
   .btn-primary:hover {
     background-color: var(--primary-hover);
-    transition: background-color 0.2s ease;
+    transition: background-color 0.15s ease;
   }
 
   /* ===== 次要按鈕 ===== */
@@ -123,12 +148,12 @@
     cursor: pointer;
     background-color: var(--bg-secondary);
     border: none;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-sm);
   }
 
   .btn-secondary:hover {
     background-color: var(--bg-tertiary);
-    transition: background-color 0.2s ease;
+    transition: background-color 0.15s ease;
   }
 
   /* ===== 輸入框樣式 ===== */
@@ -138,7 +163,7 @@
     color: var(--text-primary);
     background-color: var(--bg-primary);
     border: 1px solid var(--border-primary);
-    border-radius: 0.5rem;
+    border-radius: var(--radius-sm);
   }
 
   .input:focus {
@@ -146,9 +171,9 @@
     outline-offset: 0;
     border-color: transparent;
     transition:
-      border-color 0.2s ease,
-      outline 0.2s ease,
-      box-shadow 0.2s ease;
+      border-color 0.15s ease,
+      outline 0.15s ease,
+      box-shadow 0.15s ease;
   }
 
   .input::placeholder {
@@ -166,14 +191,14 @@
     padding: 0.75rem 1rem;
     color: var(--text-primary);
     background-color: var(--primary-light);
-    border-radius: 1rem;
+    border-radius: var(--radius-md);
   }
 
   .message-bubble-ai {
     padding: 0.75rem 1rem;
     color: var(--text-primary);
     background-color: var(--bg-secondary);
-    border-radius: 1rem;
+    border-radius: var(--radius-md);
   }
 }
 

@@ -320,7 +320,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
   font-weight: 500;
   cursor: pointer;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   transition: all 0.2s;
 }
 

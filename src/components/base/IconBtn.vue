@@ -1,3 +1,15 @@
+<template>
+  <button :type="type" class="icon-btn" :disabled="disabled" @click="handleClick">
+    <slot name="icon">
+      <svg v-if="icon" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS[icon]" />
+      </svg>
+    </slot>
+    <span v-if="label" class="btn-text">{{ label }}</span>
+    <slot></slot>
+  </button>
+</template>
+
 <script setup lang="ts">
 import { type IconName, ICONS } from '@/constants/icons';
 
@@ -22,18 +34,6 @@ const handleClick = (event: MouseEvent) => {
 };
 </script>
 
-<template>
-  <button :type="type" class="icon-btn" :disabled="disabled" @click="handleClick">
-    <slot name="icon">
-      <svg v-if="icon" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS[icon]" />
-      </svg>
-    </slot>
-    <span v-if="label" class="btn-text">{{ label }}</span>
-    <slot></slot>
-  </button>
-</template>
-
 <style scoped>
 .icon-btn {
   display: inline-flex;
@@ -41,13 +41,14 @@ const handleClick = (event: MouseEvent) => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border-radius: var(--radius-sm);
 }
 
 .icon-btn:hover:not(:disabled) {
   transition:
-    background-color 0.3s ease,
-    color 0.3s ease,
-    border-color 0.3s ease;
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .icon-btn:disabled {

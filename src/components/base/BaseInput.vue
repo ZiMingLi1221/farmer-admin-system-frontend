@@ -1,10 +1,25 @@
+<template>
+  <div class="base-input">
+    <label v-if="label" class="input-label">
+      {{ label }}
+      <span v-if="required" class="required-mark">*</span>
+    </label>
+    <input
+      :type="type"
+      :value="modelValue"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :class="['input-field', { error: hasError, disabled }]"
+      @input="handleInput"
+      @blur="handleBlur"
+      @focus="handleFocus"
+    />
+    <span v-if="hasError" class="error-message">{{ error }}</span>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { computed } from 'vue';
-
-/**
- * 通用輸入框組件
- * 支援文字、密碼等類型，包含錯誤提示與禁用狀態
- */
 
 interface Props {
   modelValue: string;
@@ -47,26 +62,6 @@ const handleFocus = () => {
 };
 </script>
 
-<template>
-  <div class="base-input">
-    <label v-if="label" class="input-label">
-      {{ label }}
-      <span v-if="required" class="required-mark">*</span>
-    </label>
-    <input
-      :type="type"
-      :value="modelValue"
-      :placeholder="placeholder"
-      :disabled="disabled"
-      :class="['input-field', { error: hasError, disabled }]"
-      @input="handleInput"
-      @blur="handleBlur"
-      @focus="handleFocus"
-    />
-    <span v-if="hasError" class="error-message">{{ error }}</span>
-  </div>
-</template>
-
 <style scoped>
 .base-input {
   display: flex;
@@ -92,10 +87,12 @@ const handleFocus = () => {
   font-size: 0.9375rem;
   color: var(--text-primary);
   outline: none;
-  background: var(--bg-tertiary);
-  border: 2px solid var(--border-primary);
-  border-radius: 0.5rem;
-  transition: none; /* 預設不設置過渡，防止主題切換黑閃 */
+  background: var(--bg-muted);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+
+  /* transition 不能加在基礎樣式，否則主題切換會黑閃 */
+  transition: none;
 }
 
 .input-field::placeholder {
@@ -104,7 +101,7 @@ const handleFocus = () => {
 
 .input-field:focus {
   border-color: var(--primary);
-  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.15s ease;
 }
 
 .input-field.error {

@@ -222,7 +222,7 @@ watch(
   margin: 2rem auto;
   background-color: rgb(239 68 68 / 10%);
   border: 1px solid rgb(239 68 68 / 30%);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 .error-icon {
