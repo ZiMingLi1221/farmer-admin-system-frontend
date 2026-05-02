@@ -65,6 +65,7 @@ const handleClick = (event: MouseEvent) => {
   outline: none;
   border: none;
   border-radius: 0.5rem;
+
   /* 移除預設過渡，防止主題切換黑閃 */
 }
 

@@ -7,7 +7,7 @@
   :root {
     /* ##### 顏色配置：淺色模式 ##### */
     color-scheme: light;
-    
+
     /* ===== 尺寸變數 ===== */
     --sidebar-main-width: 5rem;
     --sidebar-secondary-width: 16rem;
@@ -41,6 +41,7 @@
   /* ##### 顏色配置：深色模式 ##### */
   .dark {
     color-scheme: dark;
+
     --bg-primary: #191a1a;
     --bg-secondary: #1f2121;
     --bg-tertiary: #2a2e2d;
@@ -63,6 +64,7 @@
   }
 
   /* ##### 全局過渡處理 ##### */
+
   /* 當 HTML 節點屬性變化時，確保顏色相關屬性的切換步調一致 */
   html {
     height: 100%;
@@ -78,6 +80,7 @@
     background-color: var(--bg-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
     /* 
        重要：body 本身不應帶有 colors 相關過渡動畫，以確保主題切換時背景色能瞬間到位。
        若子組件帶有過渡，則應確保其過渡屬性不包含 colors 或與變數切換解耦。

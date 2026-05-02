@@ -64,14 +64,23 @@ const handleItemClick = (item: MenuItem): void => {
 
     <nav class="menu-nav">
       <div class="menu-items-top scrollbar-custom">
-        <SidebarMenu v-for="item in filteredMenuItems" :key="item.id" :item="item"
-          :is-active="sidebarStore.activeModule === item.id" :is-new-chat="item.id === 'new-chat'"
-          @click="handleItemClick(item)" />
+        <SidebarMenu
+          v-for="item in filteredMenuItems"
+          :key="item.id"
+          :item="item"
+          :is-active="sidebarStore.activeModule === item.id"
+          :is-new-chat="item.id === 'new-chat'"
+          @click="handleItemClick(item)"
+        />
       </div>
 
       <div class="menu-items-bottom">
-        <SidebarMenu :item="userItem" :is-active="showUserMenu" :suppress-tooltip="showUserMenu"
-          @click="showUserMenu = !showUserMenu" />
+        <SidebarMenu
+          :item="userItem"
+          :is-active="showUserMenu"
+          :suppress-tooltip="showUserMenu"
+          @click="showUserMenu = !showUserMenu"
+        />
         <UserMenu v-if="showUserMenu" @close="showUserMenu = false" />
       </div>
     </nav>

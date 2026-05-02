@@ -35,7 +35,11 @@ watch(
 );
 
 const mainLayoutStyles = computed(() => {
-  const marginLeft = !props.hasSecondary ? '80px' : (sidebarStore.isSecondaryExpanded ? '336px' : '80px');
+  const marginLeft = !props.hasSecondary
+    ? '80px'
+    : sidebarStore.isSecondaryExpanded
+      ? '336px'
+      : '80px';
   const width = `calc(100% - ${marginLeft})`;
   const paddingTop = props.hasHeader ? '4rem' : '0';
 
@@ -44,9 +48,9 @@ const mainLayoutStyles = computed(() => {
     width,
     paddingTop,
     // 如果正在切換路徑，則暫停動畫以防止擠壓
-    transition: isSwitchingRoute.value 
-      ? 'none' 
-      : 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+    transition: isSwitchingRoute.value
+      ? 'none'
+      : 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   };
 });
 </script>
@@ -61,9 +65,9 @@ const mainLayoutStyles = computed(() => {
 .main-content {
   box-sizing: border-box;
   height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden auto;
   background-color: var(--bg-primary);
+
   /* 動態 transition, marginLeft 與 width 由 script 邏輯與 inline style 控制 */
 }
 </style>
