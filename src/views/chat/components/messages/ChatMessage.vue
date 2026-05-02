@@ -560,7 +560,7 @@ const formatFileSize = (bytes: number): string => {
 
 .message-wrapper:hover .message-actions {
   opacity: 1;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.15s ease;
 }
 
 .action-btn {
