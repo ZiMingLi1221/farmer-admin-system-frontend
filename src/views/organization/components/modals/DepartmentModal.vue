@@ -158,7 +158,7 @@ const handleClose = () => {
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-sm);
-  transition: border-color 0.2s;
+  transition: border-color 0.15s;
 }
 
 .form-input:focus,

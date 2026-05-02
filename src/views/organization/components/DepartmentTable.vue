@@ -150,7 +150,7 @@ defineEmits<{
   overflow: hidden;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 .data-table {
@@ -208,21 +208,21 @@ defineEmits<{
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-xs);
 }
 
 .btn-expand:hover {
   color: var(--primary);
   background: var(--bg-primary);
   transition:
-    color 0.2s ease,
-    background-color 0.2s ease;
+    color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .icon-chevron {
   width: 1rem;
   height: 1rem;
-  transition: transform 0.2s ease;
+  transition: transform 0.15s ease;
 }
 
 .btn-expand.is-expanded .icon-chevron {
@@ -256,15 +256,15 @@ defineEmits<{
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-sm);
 }
 
 .btn-icon:hover {
   color: var(--primary);
   background: var(--bg-primary);
   transition:
-    color 0.2s ease,
-    background-color 0.2s ease;
+    color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .icon {
@@ -279,7 +279,7 @@ defineEmits<{
   padding: 0.25rem 0.625rem;
   font-size: 0.75rem;
   font-weight: 500;
-  border-radius: 9999px;
+  border-radius: var(--radius-xs);
 }
 
 .status-badge.active {
