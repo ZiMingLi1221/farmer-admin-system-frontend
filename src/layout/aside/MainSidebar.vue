@@ -41,7 +41,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { usePermission } from '@/composables/usePermission';
 import { NAVIGATION_ITEMS } from '@/constants/navigation';
 import { useSidebarStore } from '@/stores/sidebar';
-import type { MenuItem } from '@/types';
+import type { MenuItem } from '@/types/sidebar';
 
 import SidebarLogo from './SidebarLogo.vue';
 import SidebarMenu from './SidebarMenu.vue';
@@ -64,7 +64,7 @@ const filteredMenuItems = computed(() => {
 });
 
 const userItem: MenuItem = {
-  id: 'new-chat',
+  id: 'user-settings',
   icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
   label: '使用者設定',
   route: '',
@@ -76,7 +76,7 @@ const handleItemClick = (item: MenuItem): void => {
   if (item.id === 'new-chat') {
     router.push('/chat');
     sidebarStore.setSecondaryExpanded(true);
-    sidebarStore.activeModule = 'conversation';
+    sidebarStore.setActiveModule('conversation');
     return;
   }
 

@@ -40,6 +40,8 @@
     --primary: #00ad68;
     --primary-hover: #008a53;
     --primary-light: rgb(0 173 104 / 20%);
+    --primary-active-bg: rgb(0 173 104 / 12%);
+    --primary-active-bg-hover: rgb(0 173 104 / 18%);
 
     /* ===== 狀態顏色 ===== */
     --success: #00ad68;

@@ -3,6 +3,7 @@
   <button
     v-if="sidebarStore.isCollapsed"
     class="hamburger-btn"
+    aria-label="展開側邊欄"
     @click="sidebarStore.toggleCollapsed()"
   >
     <svg class="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">

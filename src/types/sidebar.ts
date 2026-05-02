@@ -7,7 +7,8 @@ export type ModuleType =
   | 'eform'
   | 'departments'
   | 'staff'
-  | 'logs';
+  | 'logs'
+  | 'user-settings';
 
 // 側邊欄狀態
 export interface SidebarState {

@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import type { MenuItem } from '@/types';
+import type { MenuItem } from '@/types/sidebar';
 
 interface Props {
   item: MenuItem;
@@ -128,11 +128,11 @@ const handleMouseLeave = (): void => {
 
 .menu-button.active {
   color: var(--primary);
-  background-color: rgb(0 173 104 / 12%);
+  background-color: var(--primary-active-bg);
 }
 
 .menu-button.active:hover:not(.disabled) {
-  background-color: rgb(0 173 104 / 18%);
+  background-color: var(--primary-active-bg-hover);
 }
 
 /* 展開狀態 */
