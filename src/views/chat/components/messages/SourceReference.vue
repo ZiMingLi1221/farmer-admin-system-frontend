@@ -112,7 +112,7 @@ const formatScore = (score: number): string => {
   font-size: 0.75rem;
   color: var(--primary);
   background-color: var(--primary-light);
-  border-radius: 9999px;
+  border-radius: var(--radius-xs);
 }
 
 /* ========== Source List ========== */

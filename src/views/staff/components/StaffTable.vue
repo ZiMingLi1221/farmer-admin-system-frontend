@@ -43,25 +43,64 @@
           <td>{{ user.lastLoginAt || '從未登入' }}</td>
           <td class="col-actions">
             <div class="action-buttons">
-              <button v-if="canEdit(user)" class="btn-icon" title="編輯" @click="$emit('edit', user)">
+              <button
+                v-if="canEdit(user)"
+                class="btn-icon"
+                title="編輯"
+                @click="$emit('edit', user)"
+              >
                 <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.EDIT" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    :d="ICONS.EDIT"
+                  />
                 </svg>
               </button>
-              <button v-if="isAdmin" class="btn-icon" title="調整權限" @click="$emit('change-role', user)">
+              <button
+                v-if="isAdmin"
+                class="btn-icon"
+                title="調整權限"
+                @click="$emit('change-role', user)"
+              >
                 <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.SHIELD_CHECK" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    :d="ICONS.SHIELD_CHECK"
+                  />
                 </svg>
               </button>
-              <button v-if="canResetPassword(user)" class="btn-icon" title="重置密碼"
-                @click="$emit('reset-password', user)">
+              <button
+                v-if="canResetPassword(user)"
+                class="btn-icon"
+                title="重置密碼"
+                @click="$emit('reset-password', user)"
+              >
                 <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.KEY" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    :d="ICONS.KEY"
+                  />
                 </svg>
               </button>
-              <button v-if="isAdmin" class="btn-icon btn-danger" title="刪除" @click="$emit('delete', user)">
+              <button
+                v-if="isAdmin"
+                class="btn-icon btn-danger"
+                title="刪除"
+                @click="$emit('delete', user)"
+              >
                 <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.DELETE" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    :d="ICONS.DELETE"
+                  />
                 </svg>
               </button>
             </div>
@@ -222,7 +261,7 @@ const canResetPassword = (user: UserInfo) => {
   padding: 0.25rem 0.625rem;
   font-size: 0.75rem;
   font-weight: 500;
-  border-radius: 9999px;
+  border-radius: var(--radius-xs);
 }
 
 .status-badge.active {
