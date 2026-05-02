@@ -8,6 +8,7 @@ export const useSidebarStore = defineStore(
   () => {
     const activeModule = ref<ModuleType>('conversation');
     const isSecondaryExpanded = ref<boolean>(true); // 預設展開（如 ChatGPT）
+    const isCollapsed = ref<boolean>(false);
 
     const setActiveModule = (module: ModuleType): void => {
       // 如果點擊的是當前模組，則切換展開狀態
@@ -27,12 +28,18 @@ export const useSidebarStore = defineStore(
       isSecondaryExpanded.value = value;
     };
 
+    const toggleCollapsed = (): void => {
+      isCollapsed.value = !isCollapsed.value;
+    };
+
     return {
       activeModule,
       isSecondaryExpanded,
+      isCollapsed,
       setActiveModule,
       toggleSecondary,
       setSecondaryExpanded,
+      toggleCollapsed,
     };
   },
   {
