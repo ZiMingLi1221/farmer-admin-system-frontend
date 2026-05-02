@@ -47,8 +47,8 @@ const headerWidth = computed(() => `calc(100% - ${sidebarTotalWidth.value}px)`);
 /* 寬螢幕：跟隨 sidebar 折疊狀態與 secondary 展開狀態 */
 @media (width >= 1025px) {
   .app-header {
-    width: v-bind(headerwidth);
-    margin-left: v-bind(headermarginleft);
+    width: v-bind('headerWidth');
+    margin-left: v-bind('headerMarginLeft');
   }
 }
 
