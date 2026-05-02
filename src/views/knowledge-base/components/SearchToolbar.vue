@@ -3,8 +3,12 @@
     <!-- 搜尋框 -->
     <div class="search-input-wrapper">
       <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"
+        />
       </svg>
       <input
         :value="searchQuery"
@@ -54,7 +58,12 @@
       <!-- 清除篩選 -->
       <button v-if="hasActiveFilter" class="btn-clear" @click="clearFilters">
         <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
         清除篩選
       </button>
@@ -122,11 +131,12 @@ const clearFilters = () => {
   width: 1rem;
   height: 1rem;
   color: var(--text-secondary);
-  transform: translateY(-50%);
   pointer-events: none;
+  transform: translateY(-50%);
 }
 
 .search-input {
+  box-sizing: border-box;
   width: 100%;
   padding: 0.5rem 0.75rem 0.5rem 2.25rem;
   font-size: 0.875rem;
@@ -134,7 +144,6 @@ const clearFilters = () => {
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
   border-radius: 0.5rem;
-  box-sizing: border-box;
 }
 
 .search-input:focus {
@@ -186,7 +195,9 @@ const clearFilters = () => {
 .btn-clear:hover {
   color: var(--error);
   border-color: var(--error);
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .icon-sm {

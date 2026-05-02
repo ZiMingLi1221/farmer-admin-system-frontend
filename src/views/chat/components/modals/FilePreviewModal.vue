@@ -57,13 +57,13 @@ const loadFile = async (): Promise<void> => {
   try {
     // 預檢檔案：確保檔案存在且不是 SPA 重定向後的 HTML (404 狀況)
     const response = await fetch(currentFile.value.fileUrl);
-    
+
     if (!response.ok) {
       throw new Error(`檔案服務器回應異常 (${response.status})`);
     }
 
     const contentType = response.headers.get('content-type') || '';
-    
+
     // 如果預期是 PDF/圖片，但回傳了文本 HTML，說明發生了 SPA 重定向（伺服器找不到檔案導向了 index.html）
     if (contentType.includes('text/html') && fileType.value !== 'text') {
       throw new Error('找不到該文件路徑，請確認檔案伺服器配置。');
@@ -162,16 +162,30 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
 
         <div class="header-actions">
           <!-- PDF 自帶下載功能，僅在非 PDF 時顯示自定義下載按鈕 -->
-          <button v-if="fileType !== 'pdf'" class="action-btn download-btn" @click="handleDownload" title="下載">
+          <button
+            v-if="fileType !== 'pdf'"
+            class="action-btn download-btn"
+            @click="handleDownload"
+            title="下載"
+          >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              ></path>
             </svg>
             <span>下載</span>
           </button>
           <button class="action-btn close-btn" @click="closePreview" title="關閉">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
             </svg>
           </button>
         </div>
@@ -192,7 +206,12 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
 
         <!-- PDF Viewer (iframe) -->
         <div v-else-if="fileType === 'pdf'" class="viewer-container pdf-container">
-          <iframe :src="pdfUrlWithHighlight" class="pdf-iframe" type="application/pdf" frameborder="0"></iframe>
+          <iframe
+            :src="pdfUrlWithHighlight"
+            class="pdf-iframe"
+            type="application/pdf"
+            frameborder="0"
+          ></iframe>
         </div>
 
         <!-- Image Viewer -->

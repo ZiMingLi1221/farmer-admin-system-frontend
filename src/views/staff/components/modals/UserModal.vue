@@ -1,11 +1,23 @@
 <template>
-  <BaseModal v-model="isOpen" :title="isEdit ? '編輯使用者' : '新增使用者'" size="md" :confirm-disabled="!isFormValid"
-    @confirm="handleSubmit" @close="handleClose">
+  <BaseModal
+    v-model="isOpen"
+    :title="isEdit ? '編輯使用者' : '新增使用者'"
+    size="md"
+    :confirm-disabled="!isFormValid"
+    @confirm="handleSubmit"
+    @close="handleClose"
+  >
     <form class="form" @submit.prevent="handleSubmit">
       <div class="form-group">
         <label class="form-label required">帳號</label>
-        <input v-model="formData.username" type="text" class="form-input" placeholder="例如：user001" :disabled="isEdit"
-          required />
+        <input
+          v-model="formData.username"
+          type="text"
+          class="form-input"
+          placeholder="例如：user001"
+          :disabled="isEdit"
+          required
+        />
         <p v-if="isEdit" class="form-hint">ⓘ 帳號作為登入憑證，建立後無法修改</p>
       </div>
 
@@ -38,7 +50,13 @@
 
       <div v-if="!isEdit" class="form-group">
         <label class="form-label">預設密碼</label>
-        <input v-model="formData.password" type="text" class="form-input" placeholder="系統將自動產生預設密碼" disabled />
+        <input
+          v-model="formData.password"
+          type="text"
+          class="form-input"
+          placeholder="系統將自動產生預設密碼"
+          disabled
+        />
       </div>
 
       <div v-if="!isEdit" class="form-group">
@@ -109,8 +127,7 @@ const formData = ref<UserFormData>({ ...defaultFormData });
 
 const isFormValid = computed(() => {
   return (
-    formData.value.username.trim() !== '' &&
-    formData.value.role !== ''
+    formData.value.username.trim() !== '' && formData.value.role !== ''
     // 部門改為選填，不再驗證
   );
 });

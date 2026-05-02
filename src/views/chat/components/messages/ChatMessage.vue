@@ -336,7 +336,9 @@ const formatFileSize = (bytes: number): string => {
 .attachment-card-outside:hover {
   background-color: var(--bg-tertiary);
   border-color: var(--primary);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .file-icon-outside {
@@ -591,7 +593,9 @@ const formatFileSize = (bytes: number): string => {
 .action-btn:hover {
   color: var(--text-primary);
   background: var(--bg-tertiary);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .action-icon {

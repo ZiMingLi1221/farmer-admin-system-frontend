@@ -29,8 +29,12 @@
         <template v-if="!selectedFile">
           <div class="drop-zone-icon">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
             </svg>
           </div>
           <p class="drop-title">拖曳文件至此，或<span class="drop-link">點擊選取</span></p>
@@ -48,7 +52,12 @@
             </div>
             <button class="file-remove-btn" @click.stop="removeFile">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -58,7 +67,13 @@
       <!-- 表單欄位 -->
       <div class="form-group">
         <label class="form-label required">文件標題</label>
-        <input v-model="formData.title" type="text" class="form-input" placeholder="請輸入文件標題" required />
+        <input
+          v-model="formData.title"
+          type="text"
+          class="form-input"
+          placeholder="請輸入文件標題"
+          required
+        />
       </div>
 
       <div class="form-row">
@@ -100,23 +115,38 @@
 
       <div class="form-group">
         <label class="form-label">說明</label>
-        <textarea v-model="formData.description" class="form-textarea" rows="2" placeholder="選填，簡短描述文件內容" />
+        <textarea
+          v-model="formData.description"
+          class="form-textarea"
+          rows="2"
+          placeholder="選填，簡短描述文件內容"
+        />
       </div>
     </div>
   </BaseModal>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+
 import BaseModal from '@/components/base/BaseModal.vue';
 
 const CATEGORIES = ['業務規章', '業務流程', '法規', '內部知識'];
 
 const MIME_MAP: Record<string, { label: string; cls: string }> = {
   'application/pdf': { label: 'PDF', cls: 'icon-pdf' },
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': { label: 'DOC', cls: 'icon-word' },
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { label: 'XLS', cls: 'icon-excel' },
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation': { label: 'PPT', cls: 'icon-ppt' },
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+    label: 'DOC',
+    cls: 'icon-word',
+  },
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
+    label: 'XLS',
+    cls: 'icon-excel',
+  },
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': {
+    label: 'PPT',
+    cls: 'icon-ppt',
+  },
   'text/plain': { label: 'TXT', cls: 'icon-txt' },
 };
 const getFileIconLabel = (mime: string) => MIME_MAP[mime]?.label ?? 'FILE';
@@ -149,11 +179,20 @@ const fileInputRef = ref<HTMLInputElement | null>(null);
 const selectedFile = ref<File | null>(null);
 const tagInput = ref('');
 
-const defaultForm = () => ({ title: '', category: '', department: '', tags: [] as string[], description: '' });
+const defaultForm = () => ({
+  title: '',
+  category: '',
+  department: '',
+  tags: [] as string[],
+  description: '',
+});
 const formData = ref(defaultForm());
 
 const isFormValid = computed(
-  () => selectedFile.value !== null && formData.value.title.trim() !== '' && formData.value.category !== ''
+  () =>
+    selectedFile.value !== null &&
+    formData.value.title.trim() !== '' &&
+    formData.value.category !== ''
 );
 
 // 當檔案選取時，自動帶入原始檔名作為標題建議
@@ -228,17 +267,19 @@ const handleClose = () => {
 
 .drop-zone:hover,
 .drop-zone-active {
+  background: rgb(var(--primary-rgb), 0.04);
   border-color: var(--primary);
-  background: rgba(var(--primary-rgb), 0.04);
 }
 
 .drop-zone-has-file {
-  border-style: solid;
+  background: rgb(var(--primary-rgb), 0.04);
   border-color: var(--primary);
-  background: rgba(var(--primary-rgb), 0.04);
+  border-style: solid;
 }
 
-.file-input-hidden { display: none; }
+.file-input-hidden {
+  display: none;
+}
 
 .drop-zone-icon svg {
   width: 2.5rem;
@@ -275,6 +316,7 @@ const handleClose = () => {
 
 .file-type-badge {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 2.5rem;
@@ -282,15 +324,37 @@ const handleClose = () => {
   font-size: 0.625rem;
   font-weight: 700;
   border-radius: 0.375rem;
-  flex-shrink: 0;
 }
 
-.icon-pdf    { color: #ef4444; background: rgba(239, 68, 68, 0.12); }
-.icon-word   { color: #3b82f6; background: rgba(59, 130, 246, 0.12); }
-.icon-excel  { color: #22c55e; background: rgba(34, 197, 94, 0.12); }
-.icon-ppt    { color: #f97316; background: rgba(249, 115, 22, 0.12); }
-.icon-txt    { color: var(--text-secondary); background: var(--bg-tertiary); }
-.icon-default{ color: var(--text-secondary); background: var(--bg-tertiary); }
+.icon-pdf {
+  color: #ef4444;
+  background: rgb(239 68 68 / 12%);
+}
+
+.icon-word {
+  color: #3b82f6;
+  background: rgb(59 130 246 / 12%);
+}
+
+.icon-excel {
+  color: #22c55e;
+  background: rgb(34 197 94 / 12%);
+}
+
+.icon-ppt {
+  color: #f97316;
+  background: rgb(249 115 22 / 12%);
+}
+
+.icon-txt {
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+}
+
+.icon-default {
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+}
 
 .file-preview-info {
   flex: 1;
@@ -299,12 +363,12 @@ const handleClose = () => {
 
 .file-preview-name {
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-primary);
-  overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .file-preview-size {
@@ -314,8 +378,8 @@ const handleClose = () => {
 }
 
 .file-remove-btn {
-  flex-shrink: 0;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 1.5rem;
@@ -330,10 +394,13 @@ const handleClose = () => {
 
 .file-remove-btn:hover {
   color: var(--error);
-  background: rgba(239, 68, 68, 0.1);
+  background: rgb(239 68 68 / 10%);
 }
 
-.file-remove-btn svg { width: 0.875rem; height: 0.875rem; }
+.file-remove-btn svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
 
 /* ── 表單 ── */
 .form-row {
@@ -355,8 +422,8 @@ const handleClose = () => {
 }
 
 .form-label.required::after {
-  content: ' *';
   color: var(--error);
+  content: ' *';
 }
 
 .form-input,
@@ -378,7 +445,10 @@ const handleClose = () => {
   border-color: var(--primary);
 }
 
-.form-textarea { resize: none; font-family: inherit; }
+.form-textarea {
+  font-family: inherit;
+  resize: none;
+}
 
 /* ── 標籤輸入 ── */
 .tag-input-wrapper {
@@ -407,7 +477,7 @@ const handleClose = () => {
   padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
   color: var(--primary);
-  background: rgba(var(--primary-rgb), 0.1);
+  background: rgb(var(--primary-rgb), 0.1);
   border-radius: 0.25rem;
 }
 
@@ -422,17 +492,21 @@ const handleClose = () => {
   opacity: 0.7;
 }
 
-.tag-remove:hover { opacity: 1; }
+.tag-remove:hover {
+  opacity: 1;
+}
 
 .tag-input {
   width: 100%;
   padding: 0.25rem;
   font-size: 0.875rem;
   color: var(--text-primary);
+  outline: none;
   background: transparent;
   border: none;
-  outline: none;
 }
 
-.tag-input::placeholder { color: var(--text-tertiary); }
+.tag-input::placeholder {
+  color: var(--text-tertiary);
+}
 </style>

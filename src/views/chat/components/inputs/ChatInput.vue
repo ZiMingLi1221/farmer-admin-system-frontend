@@ -149,13 +149,24 @@ const handleRemoveFile = (fileId: string): void => {
     <!-- 已上傳文件列表（顯示在輸入框上方） -->
     <UploadedFileList :files="files" @remove="handleRemoveFile" />
 
-    <div class="input-area-container" :class="{ 'drag-over': isDragging }" @dragenter="handleDragEnter"
-      @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop">
+    <div
+      class="input-area-container"
+      :class="{ 'drag-over': isDragging }"
+      @dragenter="handleDragEnter"
+      @dragover="handleDragOver"
+      @dragleave="handleDragLeave"
+      @drop="handleDrop"
+    >
       <!-- 拖放提示覆蓋層 -->
       <div v-if="isDragging" class="drag-overlay">
         <div class="drag-content">
           <svg class="drag-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.UPLOAD" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              :d="ICONS.UPLOAD"
+            />
           </svg>
           <p class="drag-text">將檔案拖曳到這裡</p>
         </div>
@@ -163,10 +174,19 @@ const handleRemoveFile = (fileId: string): void => {
       <div class="input-area-wrapper">
         <div class="textarea-row">
           <div class="textarea-container scrollbar-custom">
-            <div ref="textareaRef" contenteditable="true" role="textbox" :data-placeholder="inputText ? '' : '輸入訊息...'"
-              class="rich-textarea scrollbar-custom" :class="{ disabled: chatStore.isLoading }" @input="handleInput"
-              @keydown="handleKeydown" @compositionstart="handleCompositionStart" @compositionend="handleCompositionEnd"
-              @paste="handlePaste"></div>
+            <div
+              ref="textareaRef"
+              contenteditable="true"
+              role="textbox"
+              :data-placeholder="inputText ? '' : '輸入訊息...'"
+              class="rich-textarea scrollbar-custom"
+              :class="{ disabled: chatStore.isLoading }"
+              @input="handleInput"
+              @keydown="handleKeydown"
+              @compositionstart="handleCompositionStart"
+              @compositionend="handleCompositionEnd"
+              @paste="handlePaste"
+            ></div>
           </div>
         </div>
 
@@ -177,8 +197,12 @@ const handleRemoveFile = (fileId: string): void => {
             <button type="button" class="action-button" @click="handleUpload" title="附加檔案">
               <span class="button-icon">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                  />
                 </svg>
               </span>
             </button>
@@ -186,21 +210,40 @@ const handleRemoveFile = (fileId: string): void => {
 
           <!-- 右側：發送按鈕 -->
           <div class="actions-right">
-            <button type="button" class="send-button" :class="{ active: canSend }" :disabled="!canSend"
-              @click="handleSend" title="發送訊息">
+            <button
+              type="button"
+              class="send-button"
+              :class="{ active: canSend }"
+              :disabled="!canSend"
+              @click="handleSend"
+              title="發送訊息"
+            >
               <span v-if="!chatStore.isLoading" class="send-icon">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  />
                 </svg>
               </span>
               <span v-else class="loading-spinner">
                 <svg viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
-                  </circle>
-                  <path class="opacity-75" fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                  </path>
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                    fill="none"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
               </span>
             </button>
@@ -246,12 +289,14 @@ const handleRemoveFile = (fileId: string): void => {
   content: '';
 
   /* 使用 CSS 變數，淺色模式自動使用 #fcfcf9 */
-  background: linear-gradient(to bottom,
-      transparent 0%,
-      color-mix(in srgb, var(--bg-primary) 30%, transparent) 20%,
-      color-mix(in srgb, var(--bg-primary) 70%, transparent) 50%,
-      color-mix(in srgb, var(--bg-primary) 90%, transparent) 75%,
-      var(--bg-primary) 100%);
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--bg-primary) 30%, transparent) 20%,
+    color-mix(in srgb, var(--bg-primary) 70%, transparent) 50%,
+    color-mix(in srgb, var(--bg-primary) 90%, transparent) 75%,
+    var(--bg-primary) 100%
+  );
 }
 
 /* ========== 輸入區域容器 ========== */
@@ -444,7 +489,7 @@ const handleRemoveFile = (fileId: string): void => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(var(--primary-rgb), 0.04);
+  background-color: rgb(var(--primary-rgb), 0.04);
   border: 2px dashed var(--primary);
   border-radius: 26px;
   backdrop-filter: blur(24px);

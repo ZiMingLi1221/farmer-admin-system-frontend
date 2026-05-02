@@ -27,15 +27,24 @@
           <td :colspan="isAdmin ? 8 : 7" class="empty-cell">
             <div class="empty-state">
               <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                  d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
               <p>尚無文件，請點擊「上傳文件」新增</p>
             </div>
           </td>
         </tr>
 
-        <tr v-for="doc in documents" :key="doc.id" class="clickable-row" @click="$emit('detail', doc)">
+        <tr
+          v-for="doc in documents"
+          :key="doc.id"
+          class="clickable-row"
+          @click="$emit('detail', doc)"
+        >
           <!-- 文件標題欄 -->
           <td class="col-title">
             <div class="doc-title-cell">
@@ -46,7 +55,9 @@
                 <span class="doc-title-text">{{ doc.title }}</span>
                 <span class="doc-filename">{{ doc.filename }}</span>
                 <div v-if="doc.tags.length" class="doc-tags">
-                  <span v-for="tag in doc.tags.slice(0, 3)" :key="tag" class="doc-tag">{{ tag }}</span>
+                  <span v-for="tag in doc.tags.slice(0, 3)" :key="tag" class="doc-tag">{{
+                    tag
+                  }}</span>
                 </div>
               </div>
             </div>
@@ -80,26 +91,52 @@
               <!-- 眼睛：開新分頁預覽原始文件 -->
               <button class="btn-icon" title="開啟文件預覽" @click="$emit('preview', doc)">
                 <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
                 </svg>
               </button>
 
               <!-- 編輯：管理員或主管 -->
-              <button v-if="canEdit" class="btn-icon" title="編輯文件資訊" @click="$emit('edit', doc)">
+              <button
+                v-if="canEdit"
+                class="btn-icon"
+                title="編輯文件資訊"
+                @click="$emit('edit', doc)"
+              >
                 <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
                 </svg>
               </button>
 
               <!-- 刪除：僅管理員 -->
-              <button v-if="isAdmin" class="btn-icon btn-danger" title="刪除" @click="$emit('delete', doc)">
+              <button
+                v-if="isAdmin"
+                class="btn-icon btn-danger"
+                title="刪除"
+                @click="$emit('delete', doc)"
+              >
                 <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
                 </svg>
               </button>
             </div>
@@ -148,9 +185,18 @@ const formatFileSize = (bytes: number): string => {
 // 檔案類型圖示
 const MIME_MAP: Record<string, { label: string; cls: string }> = {
   'application/pdf': { label: 'PDF', cls: 'icon-pdf' },
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': { label: 'DOC', cls: 'icon-word' },
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { label: 'XLS', cls: 'icon-excel' },
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation': { label: 'PPT', cls: 'icon-ppt' },
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+    label: 'DOC',
+    cls: 'icon-word',
+  },
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
+    label: 'XLS',
+    cls: 'icon-excel',
+  },
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': {
+    label: 'PPT',
+    cls: 'icon-ppt',
+  },
   'text/plain': { label: 'TXT', cls: 'icon-txt' },
 };
 const getFileIconLabel = (mime: string) => MIME_MAP[mime]?.label ?? 'FILE';
@@ -230,8 +276,8 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
 .data-table tbody td {
   padding: 1rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
   vertical-align: middle;
+  color: var(--text-primary);
 }
 
 .col-nowrap {
@@ -260,22 +306,22 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
 
 .icon-pdf {
   color: #ef4444;
-  background: rgba(239, 68, 68, 0.12);
+  background: rgb(239 68 68 / 12%);
 }
 
 .icon-word {
   color: #3b82f6;
-  background: rgba(59, 130, 246, 0.12);
+  background: rgb(59 130 246 / 12%);
 }
 
 .icon-excel {
   color: #22c55e;
-  background: rgba(34, 197, 94, 0.12);
+  background: rgb(34 197 94 / 12%);
 }
 
 .icon-ppt {
   color: #f97316;
-  background: rgba(249, 115, 22, 0.12);
+  background: rgb(249 115 22 / 12%);
 }
 
 .icon-txt,
@@ -292,18 +338,18 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
 }
 
 .doc-title-text {
-  font-weight: 500;
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .doc-filename {
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 0.75rem;
   color: var(--text-tertiary);
-  overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .doc-tags {
@@ -317,7 +363,7 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   padding: 0.1rem 0.4rem;
   font-size: 0.6875rem;
   color: var(--primary);
-  background: rgba(var(--primary-rgb), 0.1);
+  background: rgb(var(--primary-rgb), 0.1);
   border-radius: 0.25rem;
 }
 
@@ -328,8 +374,8 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   padding: 0.25rem 0.625rem;
   font-size: 0.75rem;
   font-weight: 500;
-  border-radius: 9999px;
   white-space: nowrap;
+  border-radius: 9999px;
 }
 
 .status-ready {
@@ -403,8 +449,8 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
 .empty-state {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 0.75rem;
+  align-items: center;
   color: var(--text-secondary);
 }
 

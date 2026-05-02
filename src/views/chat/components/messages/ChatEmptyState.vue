@@ -108,9 +108,6 @@
   background-color: var(--bg-primary);
   border: 1.5px solid var(--border-primary);
   border-radius: 1rem;
-
-  border: 1.5px solid var(--border-primary);
-  border-radius: 1rem;
 }
 
 .suggestion-card:hover {

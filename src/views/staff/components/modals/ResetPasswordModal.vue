@@ -1,5 +1,12 @@
 <template>
-  <BaseModal v-model="isOpen" title="重置密碼" size="sm" confirm-text="確認重置" @confirm="handleSubmit" @close="handleClose">
+  <BaseModal
+    v-model="isOpen"
+    title="重置密碼"
+    size="sm"
+    confirm-text="確認重置"
+    @confirm="handleSubmit"
+    @close="handleClose"
+  >
     <div class="modal-content">
       <div class="user-info">
         <div class="info-row">
@@ -14,7 +21,12 @@
 
       <div class="form-group">
         <label class="form-label">新密碼</label>
-        <input v-model="newPassword" type="text" class="form-input" :placeholder="`預設：${DEFAULT_PASSWORD}`" />
+        <input
+          v-model="newPassword"
+          type="text"
+          class="form-input"
+          :placeholder="`預設：${DEFAULT_PASSWORD}`"
+        />
       </div>
 
       <div class="form-group">
@@ -26,8 +38,12 @@
 
       <div class="info-box">
         <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
         <p class="info-text">提示：重置後請通知使用者新密碼</p>
       </div>

@@ -120,7 +120,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, defineComponent, h } from 'vue';
+import { computed, defineComponent, h, ref, watch } from 'vue';
+
 import BaseModal from '@/components/base/BaseModal.vue';
 import type { KnowledgeDocument } from '@/types/knowledge';
 
@@ -146,9 +147,18 @@ const StatusBadge = defineComponent({
 /* ── 工具 ── */
 const MIME_MAP: Record<string, { label: string; cls: string }> = {
   'application/pdf': { label: 'PDF', cls: 'icon-pdf' },
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': { label: 'DOC', cls: 'icon-word' },
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { label: 'XLS', cls: 'icon-excel' },
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation': { label: 'PPT', cls: 'icon-ppt' },
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+    label: 'DOC',
+    cls: 'icon-word',
+  },
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
+    label: 'XLS',
+    cls: 'icon-excel',
+  },
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': {
+    label: 'PPT',
+    cls: 'icon-ppt',
+  },
   'text/plain': { label: 'TXT', cls: 'icon-txt' },
 };
 const getFileIconLabel = (mime: string) => MIME_MAP[mime]?.label ?? 'FILE';
@@ -177,7 +187,13 @@ const isOpen = computed({
 });
 const isEdit = ref(false);
 const tagInput = ref('');
-const formData = ref({ title: '', category: '', department: '', tags: [] as string[], description: '' });
+const formData = ref({
+  title: '',
+  category: '',
+  department: '',
+  tags: [] as string[],
+  description: '',
+});
 
 watch(
   () => props.document,
@@ -233,6 +249,7 @@ const handleClose = () => {
 
 .file-icon-lg {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 3rem;
@@ -240,17 +257,39 @@ const handleClose = () => {
   font-size: 0.6875rem;
   font-weight: 700;
   border-radius: 0.5rem;
-  flex-shrink: 0;
 }
 
-.icon-pdf    { color: #ef4444; background: rgba(239, 68, 68, 0.12); }
-.icon-word   { color: #3b82f6; background: rgba(59, 130, 246, 0.12); }
-.icon-excel  { color: #22c55e; background: rgba(34, 197, 94, 0.12); }
-.icon-ppt    { color: #f97316; background: rgba(249, 115, 22, 0.12); }
-.icon-txt,
-.icon-default{ color: var(--text-secondary); background: var(--bg-tertiary); }
+.icon-pdf {
+  color: #ef4444;
+  background: rgb(239 68 68 / 12%);
+}
 
-.doc-header-info { display: flex; flex-direction: column; gap: 0.375rem; }
+.icon-word {
+  color: #3b82f6;
+  background: rgb(59 130 246 / 12%);
+}
+
+.icon-excel {
+  color: #22c55e;
+  background: rgb(34 197 94 / 12%);
+}
+
+.icon-ppt {
+  color: #f97316;
+  background: rgb(249 115 22 / 12%);
+}
+
+.icon-txt,
+.icon-default {
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+}
+
+.doc-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
 
 .doc-original-name {
   margin: 0;
@@ -268,7 +307,9 @@ const handleClose = () => {
   color: var(--text-secondary);
 }
 
-.dot { color: var(--border-primary); }
+.dot {
+  color: var(--border-primary);
+}
 
 .divider {
   margin: 0;
@@ -296,15 +337,15 @@ const handleClose = () => {
 }
 
 .form-label.required::after {
-  content: ' *';
   color: var(--error);
+  content: ' *';
 }
 
 .form-value {
+  min-height: 1.25rem;
   margin: 0;
   font-size: 0.875rem;
   color: var(--text-primary);
-  min-height: 1.25rem;
 }
 
 .form-input,
@@ -326,9 +367,14 @@ const handleClose = () => {
   border-color: var(--primary);
 }
 
-.form-textarea { resize: none; font-family: inherit; }
+.form-textarea {
+  font-family: inherit;
+  resize: none;
+}
 
-.text-secondary { color: var(--text-secondary); }
+.text-secondary {
+  color: var(--text-secondary);
+}
 
 /* ── 分類/部門標籤 ── */
 .category-badge {
@@ -344,7 +390,7 @@ const handleClose = () => {
   padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
   color: #7c3aed;
-  background: rgba(124, 58, 237, 0.1);
+  background: rgb(124 58 237 / 10%);
   border-radius: 1rem;
 }
 
@@ -357,7 +403,9 @@ const handleClose = () => {
   transition: border-color 0.2s;
 }
 
-.tag-input-wrapper:focus-within { border-color: var(--primary); }
+.tag-input-wrapper:focus-within {
+  border-color: var(--primary);
+}
 
 .tag-list,
 .tag-list-readonly {
@@ -367,7 +415,9 @@ const handleClose = () => {
   margin-bottom: 0.25rem;
 }
 
-.tag-list-readonly { margin-bottom: 0; }
+.tag-list-readonly {
+  margin-bottom: 0;
+}
 
 .tag-item {
   display: inline-flex;
@@ -376,7 +426,7 @@ const handleClose = () => {
   padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
   color: var(--primary);
-  background: rgba(var(--primary-rgb), 0.1);
+  background: rgb(var(--primary-rgb), 0.1);
   border-radius: 0.25rem;
 }
 
@@ -391,19 +441,23 @@ const handleClose = () => {
   opacity: 0.7;
 }
 
-.tag-remove:hover { opacity: 1; }
+.tag-remove:hover {
+  opacity: 1;
+}
 
 .tag-input {
   width: 100%;
   padding: 0.25rem;
   font-size: 0.875rem;
   color: var(--text-primary);
+  outline: none;
   background: transparent;
   border: none;
-  outline: none;
 }
 
-.tag-input::placeholder { color: var(--text-tertiary); }
+.tag-input::placeholder {
+  color: var(--text-tertiary);
+}
 
 /* ── 狀態標籤 ── */
 .status-badge {
@@ -413,9 +467,20 @@ const handleClose = () => {
   border-radius: 1rem;
 }
 
-.status-ready      { color: #16a34a; background: rgba(34, 197, 94, 0.12); }
-.status-processing { color: #d97706; background: rgba(245, 158, 11, 0.12); }
-.status-error      { color: #dc2626; background: rgba(239, 68, 68, 0.12); }
+.status-ready {
+  color: #16a34a;
+  background: rgb(34 197 94 / 12%);
+}
+
+.status-processing {
+  color: #d97706;
+  background: rgb(245 158 11 / 12%);
+}
+
+.status-error {
+  color: #dc2626;
+  background: rgb(239 68 68 / 12%);
+}
 
 /* ── 資訊格 ── */
 .info-grid {
@@ -444,8 +509,8 @@ const handleClose = () => {
 }
 
 .info-id {
-  font-size: 0.75rem;
   font-family: monospace;
+  font-size: 0.75rem;
   color: var(--text-secondary);
 }
 </style>

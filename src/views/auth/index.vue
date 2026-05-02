@@ -179,8 +179,6 @@ const togglePasswordVisibility = () => {
           <router-link to="/forgot-password">忘記密碼？</router-link>
         </div>
       </form>
-
-
     </div>
   </div>
 </template>
@@ -294,8 +292,6 @@ const togglePasswordVisibility = () => {
   color: var(--primary-hover);
   text-decoration: underline;
 }
-
-
 
 /* 響應式 */
 @media (width <= 640px) {

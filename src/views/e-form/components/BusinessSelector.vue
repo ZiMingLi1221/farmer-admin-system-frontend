@@ -4,14 +4,24 @@
     <div class="selector-section">
       <label class="field-label" for="business-select">選擇業務別</label>
       <div class="select-wrapper">
-        <select id="business-select" class="base-select" :value="selectedBusinessId" @change="onBusinessChange">
+        <select
+          id="business-select"
+          class="base-select"
+          :value="selectedBusinessId"
+          @change="onBusinessChange"
+        >
           <option value="">-- 請選擇業務別 --</option>
           <option v-for="bt in businessTypes" :key="bt.id" :value="bt.id">
             {{ bt.name }}
           </option>
         </select>
         <svg class="select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
       </div>
       <p v-if="selectedBusiness?.description" class="business-desc">
@@ -28,15 +38,28 @@
         </div>
 
         <div class="template-list">
-          <label v-for="tmpl in selectedBusiness.templates" :key="tmpl.id" class="template-item"
-            :class="{ 'template-checked': selectedTemplateIds.includes(tmpl.id) }">
-            <input type="checkbox" class="template-checkbox" :value="tmpl.id"
-              :checked="selectedTemplateIds.includes(tmpl.id)" @change="onTemplateToggle(tmpl.id)" />
+          <label
+            v-for="tmpl in selectedBusiness.templates"
+            :key="tmpl.id"
+            class="template-item"
+            :class="{ 'template-checked': selectedTemplateIds.includes(tmpl.id) }"
+          >
+            <input
+              type="checkbox"
+              class="template-checkbox"
+              :value="tmpl.id"
+              :checked="selectedTemplateIds.includes(tmpl.id)"
+              @change="onTemplateToggle(tmpl.id)"
+            />
             <div class="template-info">
               <div class="template-filename">
                 <svg class="doc-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
                 </svg>
                 {{ tmpl.pdfFileName }}
               </div>
@@ -49,8 +72,12 @@
 
         <div v-if="selectedTemplateIds.length === 0" class="no-selection-hint">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="hint-icon">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           請至少勾選一張表單才能繼續
         </div>
@@ -61,6 +88,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+
 import { useEFormStore } from '@/stores/eform';
 
 const props = defineProps<{
@@ -77,10 +105,9 @@ const eformStore = useEFormStore();
 
 const businessTypes = computed(() => eformStore.businessTypes.filter((b) => b.active));
 
-const selectedBusiness = computed(() =>
-  businessTypes.value.find((b) => b.id === props.selectedBusinessId) ?? null,
+const selectedBusiness = computed(
+  () => businessTypes.value.find((b) => b.id === props.selectedBusinessId) ?? null
 );
-
 
 function onBusinessChange(e: Event) {
   const val = (e.target as HTMLSelectElement).value;
@@ -131,14 +158,14 @@ function onTemplateToggle(id: string) {
 .base-select {
   width: 100%;
   padding: 0.75rem 2.5rem 0.75rem 1rem;
-  appearance: none;
   font-size: 0.9375rem;
   color: var(--text-primary);
+  appearance: none;
+  cursor: pointer;
+  outline: none;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
   border-radius: 0.5rem;
-  cursor: pointer;
-  outline: none;
 }
 
 .base-select:focus {
@@ -148,13 +175,13 @@ function onTemplateToggle(id: string) {
 
 .select-arrow {
   position: absolute;
-  right: 0.75rem;
   top: 50%;
-  transform: translateY(-50%);
+  right: 0.75rem;
   width: 1rem;
   height: 1rem;
   color: var(--text-secondary);
   pointer-events: none;
+  transform: translateY(-50%);
 }
 
 .business-desc {
@@ -172,8 +199,8 @@ function onTemplateToggle(id: string) {
 
 .templates-header {
   display: flex;
-  align-items: baseline;
   gap: 0.75rem;
+  align-items: baseline;
 }
 
 .templates-title {
@@ -195,56 +222,58 @@ function onTemplateToggle(id: string) {
 
 .template-item {
   display: flex;
-  align-items: center;
   gap: 1rem;
+  align-items: center;
   padding: 1rem 1.25rem;
+  cursor: pointer;
+  user-select: none;
   background: var(--bg-tertiary);
   border: 1.5px solid var(--border-primary);
   border-radius: 0.625rem;
-  cursor: pointer;
-  user-select: none;
 }
 
 .template-item:hover {
-  border-color: color-mix(in srgb, var(--primary) 50%, transparent);
   background: color-mix(in srgb, var(--primary) 5%, var(--bg-tertiary));
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .template-checked {
-  border-color: var(--primary) !important;
   background: color-mix(in srgb, var(--primary) 8%, var(--bg-tertiary)) !important;
+  border-color: var(--primary) !important;
 }
 
 .template-checkbox {
+  flex-shrink: 0;
   width: 1.125rem;
   height: 1.125rem;
   accent-color: var(--primary);
   cursor: pointer;
-  flex-shrink: 0;
 }
 
 .template-info {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 0.25rem;
 }
 
 .template-filename {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
+  align-items: center;
   font-size: 0.9375rem;
   font-weight: 500;
   color: var(--text-primary);
 }
 
 .doc-icon {
+  flex-shrink: 0;
   width: 1.125rem;
   height: 1.125rem;
   color: var(--primary);
-  flex-shrink: 0;
 }
 
 .template-field-count {
@@ -270,18 +299,18 @@ function onTemplateToggle(id: string) {
 
 .union-title {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--primary);
-  margin-bottom: 0.75rem;
 }
 
 .union-icon {
+  flex-shrink: 0;
   width: 1rem;
   height: 1rem;
-  flex-shrink: 0;
 }
 
 .union-chips {
@@ -291,6 +320,9 @@ function onTemplateToggle(id: string) {
 }
 
 .field-chip {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
   padding: 0.3125rem 0.75rem;
   font-size: 0.8125rem;
   font-weight: 500;
@@ -298,27 +330,24 @@ function onTemplateToggle(id: string) {
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
   border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
 }
 
 .chip-required {
   color: var(--primary);
-  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
   background: color-mix(in srgb, var(--primary) 8%, var(--bg-tertiary));
+  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
 }
 
 .chip-req-mark {
-  color: var(--error);
   font-size: 0.875rem;
+  color: var(--error);
 }
 
 /* --- 提示 --- */
 .no-selection-hint {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
+  align-items: center;
   padding: 0.875rem 1.25rem;
   font-size: 0.875rem;
   color: var(--text-secondary);
@@ -328,16 +357,18 @@ function onTemplateToggle(id: string) {
 }
 
 .hint-icon {
+  flex-shrink: 0;
   width: 1.125rem;
   height: 1.125rem;
-  flex-shrink: 0;
 }
 
 /* --- 動畫 --- */
 .slide-down-enter-active,
 .slide-down-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
   overflow: hidden;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .slide-down-enter-from,
