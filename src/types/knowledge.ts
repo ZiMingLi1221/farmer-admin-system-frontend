@@ -5,19 +5,19 @@
 // 知識庫文件
 export interface KnowledgeDocument {
   id: string;
-  title: string;            // 文件顯示標題
-  filename: string;         // 原始檔名
-  fileSize: number;         // 位元組
+  title: string; // 文件顯示標題
+  filename: string; // 原始檔名
+  fileSize: number; // 位元組
   mimeType: string;
-  category: string;         // 分類（業務規章、業務流程、法規、內部知識）
-  department: string;       // 所屬部門（空字串表示全體可見）
+  category: string; // 分類（業務規章、業務流程、法規、內部知識）
+  department: string; // 所屬部門（空字串表示全體可見）
   tags: string[];
   description?: string;
-  uploadedBy: string;       // 上傳者姓名
+  uploadedBy: string; // 上傳者姓名
   uploadedAt: string;
   updatedAt: string;
   status: DocumentStatus;
-  chunkCount: number;       // RAG 切片數量
+  chunkCount: number; // RAG 切片數量
 }
 
 // 新增/編輯文件表單

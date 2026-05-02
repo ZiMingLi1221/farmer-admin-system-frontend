@@ -5,8 +5,7 @@ export type ModuleType =
   | 'conversation'
   | 'knowledge-base'
   | 'eform'
-  | 'departments'
-  | 'staff'
+  | 'organization'
   | 'logs';
 
 // 側邊欄狀態
