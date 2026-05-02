@@ -323,8 +323,8 @@ const formatFileSize = (bytes: number): string => {
   background-color: var(--bg-tertiary);
   border-color: var(--primary);
   transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease;
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .file-icon-outside {
@@ -449,11 +449,11 @@ const formatFileSize = (bytes: number): string => {
 .message-markdown :deep(a) {
   color: var(--primary);
   text-decoration: underline;
-  transition: opacity 0.2s;
 }
 
 .message-markdown :deep(a:hover) {
   opacity: 0.8;
+  transition: opacity 0.15s ease;
 }
 
 /* ========== 引用樣式 ========== */
@@ -580,8 +580,8 @@ const formatFileSize = (bytes: number): string => {
   color: var(--text-primary);
   background: var(--bg-tertiary);
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .action-icon {
