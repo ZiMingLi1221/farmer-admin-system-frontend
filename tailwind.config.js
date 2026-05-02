@@ -15,6 +15,13 @@ export default {
 
         // 背景色系
         bg: {
+          // 新語意化 token
+          base: 'var(--bg-base)',
+          surface: 'var(--bg-surface)',
+          elevated: 'var(--bg-elevated)',
+          overlay: 'var(--bg-overlay)',
+          muted: 'var(--bg-muted)',
+          // 舊 key 保留作為別名
           primary: 'var(--bg-primary)',
           secondary: 'var(--bg-secondary)',
           tertiary: 'var(--bg-tertiary)',
@@ -57,12 +64,13 @@ export default {
 
       // ========== 圓角系統 ==========
       borderRadius: {
-        DEFAULT: '0.5rem', // 8px
-        sm: '0.25rem', // 4px
-        md: '0.5rem', // 8px
-        lg: '1rem', // 16px
-        xl: '1.5rem', // 24px
-        '2xl': '2rem', // 32px
+        xs: '2px', // Badge、極小元素
+        sm: '8px', // 按鈕、Input
+        DEFAULT: '8px',
+        md: '10px', // 卡片、彈窗
+        lg: '1rem',
+        xl: '1.5rem',
+        '2xl': '2rem',
         full: '9999px',
       },
 
