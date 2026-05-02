@@ -1,33 +1,14 @@
 <template>
-  <BaseModal
-    v-model="isOpen"
-    :title="title"
-    size="sm"
-    confirm-text="確認刪除"
-    cancel-text="取消"
-    @confirm="handleConfirm"
-  >
+  <BaseModal v-model="isOpen" :title="title" size="sm">
     <div class="modal-content">
-      <div class="warning-icon-container">
-        <svg class="warning-icon-large" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-          />
-        </svg>
-      </div>
-
-      <div class="message-container">
-        <p class="message-title">{{ message }}</p>
-        <p v-if="detail" class="message-detail">{{ detail }}</p>
-      </div>
-
-      <div class="warning-box">
-        <p class="warning-text">⚠️ 此操作無法復原，請確認後再執行。</p>
-      </div>
+      <p class="message-title">{{ message }}</p>
+      <p v-if="detail" class="message-detail">{{ detail }}</p>
     </div>
+
+    <template #footer>
+      <button class="btn-cancel" @click="isOpen = false">取消</button>
+      <button class="btn-danger" @click="handleConfirm">確認刪除</button>
+    </template>
   </BaseModal>
 </template>
 
@@ -67,37 +48,12 @@ const handleConfirm = () => {
 .modal-content {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  align-items: center;
-  text-align: center;
-}
-
-.warning-icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  background: rgb(239 68 68 / 10%);
-  border-radius: 50%;
-}
-
-.warning-icon-large {
-  width: 2.5rem;
-  height: 2.5rem;
-  color: var(--error);
-}
-
-.message-container {
-  display: flex;
-  flex-direction: column;
   gap: 0.5rem;
 }
 
 .message-title {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.9375rem;
   color: var(--text-primary);
 }
 
@@ -107,17 +63,38 @@ const handleConfirm = () => {
   color: var(--text-secondary);
 }
 
-.warning-box {
-  width: 100%;
-  padding: 0.75rem;
-  background: rgb(239 68 68 / 10%);
-  border: 1px solid rgb(239 68 68 / 30%);
-  border-radius: 0.5rem;
+.btn-cancel {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
 }
 
-.warning-text {
-  margin: 0;
-  font-size: 0.875rem;
+.btn-cancel:hover {
   color: var(--text-primary);
+  background: var(--bg-overlay);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.btn-danger {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  background: var(--error);
+  border: none;
+  border-radius: var(--radius-sm);
+}
+
+.btn-danger:hover {
+  background: var(--error-hover);
+  transition: background-color 0.15s ease;
 }
 </style>
