@@ -92,7 +92,7 @@ export const useAuthStore = defineStore(
   },
   {
     persist: {
-      key: 'auth-token',
+      key: 'auth_token',
       pick: ['accessToken'],
     },
   }

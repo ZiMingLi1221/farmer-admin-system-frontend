@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import { FA_DEFAULT_THEME, FA_THEME_STORAGE_KEY } from '@/theme/config';
+import { FA_DEFAULT_THEME, FA_THEME_STORAGE_KEY } from '@/config/theme';
 import type { AppliedTheme, ThemeMode } from '@/types/theme';
 
 export const useThemeStore = defineStore(

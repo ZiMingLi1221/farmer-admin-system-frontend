@@ -15,8 +15,6 @@ export const useUserStore = defineStore(
     const user = ref<UserInfo | null>(null);
 
     // Getters
-    const isAdmin = computed(() => user.value?.role === 'admin');
-    const isManager = computed(() => user.value?.role === 'manager');
     const userName = computed(() => user.value?.name || '');
     const userRole = computed(() => {
       return user.value?.role ? ROLE_LABELS[user.value.role] : '';
@@ -42,8 +40,6 @@ export const useUserStore = defineStore(
       // State
       user,
       // Getters
-      isAdmin,
-      isManager,
       userName,
       userRole,
       userDepartment,

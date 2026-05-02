@@ -1,5 +1,5 @@
-import { DocumentStatus } from '@/types/knowledge';
 import type { KnowledgeDocument } from '@/types/knowledge';
+import { DocumentStatus } from '@/types/knowledge';
 
 export const mockDocuments: KnowledgeDocument[] = [
   {

@@ -47,8 +47,7 @@ export const getActiveDepartments = async (): Promise<ApiResponse<Department[]>>
  */
 export const createDepartment = async (
   data: DepartmentFormData
-): Promise<ApiResponse<Department>> =>
-  httpClient.post<Department>('/departments', data);
+): Promise<ApiResponse<Department>> => httpClient.post<Department>('/departments', data);
 
 /**
  * 更新部門
@@ -56,8 +55,7 @@ export const createDepartment = async (
 export const updateDepartment = async (
   id: string,
   data: Partial<DepartmentFormData>
-): Promise<ApiResponse<Department>> =>
-  httpClient.put<Department>(`/departments/${id}`, data);
+): Promise<ApiResponse<Department>> => httpClient.put<Department>(`/departments/${id}`, data);
 
 /**
  * 刪除部門

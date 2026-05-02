@@ -1,5 +1,8 @@
 import { http, HttpResponse } from 'msw';
 
+import type { KnowledgeDocument } from '@/types/knowledge';
+import { DocumentStatus } from '@/types/knowledge';
+
 import { mockDocuments } from '../knowledge';
 
 export const knowledgeHandlers = [
@@ -36,23 +39,51 @@ export const knowledgeHandlers = [
   }),
 
   // 上傳文件
-  http.post('*/api/v1/knowledge/documents', async () => {
-    // 模擬上傳延遲
+  http.post('*/api/v1/knowledge/documents', async ({ request }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+
+    const now = new Date().toLocaleString('zh-TW', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+
+    const newDoc: KnowledgeDocument = {
+      id: `DOC${String(mockDocuments.length + 1).padStart(3, '0')}`,
+      title: (body.title as string) || '新上傳文件',
+      filename: (body.filename as string) || 'new_file.pdf',
+      fileSize: (body.fileSize as number) || 0,
+      mimeType: (body.mimeType as string) || 'application/pdf',
+      category: (body.category as string) || '',
+      department: (body.department as string) || '',
+      tags: (body.tags as string[]) || [],
+      description: (body.description as string) || '',
+      uploadedBy: (body.uploadedBy as string) || '系統管理員',
+      uploadedAt: now,
+      updatedAt: now,
+      status: DocumentStatus.PROCESSING,
+      chunkCount: 0,
+    };
+
+    mockDocuments.push(newDoc);
+
+    // 模擬向量化完成（3 秒後狀態更新為 READY，下次 fetchDocuments 即可取得最新狀態）
+    setTimeout(() => {
+      const index = mockDocuments.findIndex((d) => d.id === newDoc.id);
+      if (index !== -1) {
+        mockDocuments[index].status = DocumentStatus.READY;
+        mockDocuments[index].chunkCount = Math.floor(Math.random() * 50) + 10;
+      }
+    }, 3000);
+
     return HttpResponse.json({
       code: 0,
       message: '文件上傳成功，正在處理向量化',
-      data: {
-        id: `DOC${Math.floor(Math.random() * 1000)}`,
-        title: '新上傳文件',
-        filename: 'new_file.pdf',
-        fileSize: 1024 * 1024,
-        mimeType: 'application/pdf',
-        category: '業務規章',
-        status: 'processing',
-        uploadedBy: '系統管理員',
-        uploadedAt: new Date().toISOString(),
-        chunkCount: 0,
-      },
+      data: newDoc,
     });
   }),
 
