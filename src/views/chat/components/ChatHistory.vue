@@ -196,7 +196,7 @@ const formatDateTime = (date: Date | string): string => {
   margin-bottom: 0.375rem;
   cursor: pointer;
   background-color: transparent;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 .conversation-item:hover {
@@ -240,7 +240,7 @@ const formatDateTime = (date: Date | string): string => {
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   opacity: 0;
   transition: all 0.2s;
 }

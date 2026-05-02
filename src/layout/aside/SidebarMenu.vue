@@ -189,7 +189,7 @@ const handleMouseLeave = (): void => {
   pointer-events: none;
   background-color: var(--bg-primary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.375rem;
+  border-radius: var(--radius-sm);
 }
 
 .dark .menu-tooltip {

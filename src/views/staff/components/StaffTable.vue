@@ -159,7 +159,7 @@ const canResetPassword = (user: UserInfo) => {
   overflow-x: auto;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 .data-table {
@@ -236,7 +236,7 @@ const canResetPassword = (user: UserInfo) => {
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-sm);
   transition: all 0.2s;
 }
 

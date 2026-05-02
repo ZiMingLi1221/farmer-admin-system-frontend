@@ -268,7 +268,7 @@ onUnmounted(() => {
   font-weight: 500;
   color: var(--primary);
   background: var(--primary-light);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .dept-text {
@@ -303,7 +303,7 @@ onUnmounted(() => {
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .action-item:hover {
@@ -360,7 +360,7 @@ onUnmounted(() => {
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .submenu-item:hover {

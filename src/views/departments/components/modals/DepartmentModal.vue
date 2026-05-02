@@ -1,17 +1,35 @@
 <template>
-  <BaseModal v-model="isOpen" :title="isEdit ? '編輯部門' : '新增部門'" size="md" :confirm-disabled="!isFormValid"
-    @confirm="handleSubmit" @close="handleClose">
+  <BaseModal
+    v-model="isOpen"
+    :title="isEdit ? '編輯部門' : '新增部門'"
+    size="md"
+    :confirm-disabled="!isFormValid"
+    @confirm="handleSubmit"
+    @close="handleClose"
+  >
     <form class="form" @submit.prevent="handleSubmit">
       <div class="form-group">
         <label class="form-label required">部門代碼</label>
-        <input v-model="formData.code" type="text" class="form-input" placeholder="例如：CR01" :disabled="isEdit"
-          required />
+        <input
+          v-model="formData.code"
+          type="text"
+          class="form-input"
+          placeholder="例如：CR01"
+          :disabled="isEdit"
+          required
+        />
         <p v-if="isEdit" class="form-hint">ⓘ 部門代碼作為唯一識別碼，建立後無法修改</p>
       </div>
 
       <div class="form-group">
         <label class="form-label required">部門名稱</label>
-        <input v-model="formData.name" type="text" class="form-input" placeholder="例如：信用部" required />
+        <input
+          v-model="formData.name"
+          type="text"
+          class="form-input"
+          placeholder="例如：信用部"
+          required
+        />
       </div>
 
       <div class="form-group">
@@ -139,7 +157,7 @@ const handleClose = () => {
   color: var(--text-primary);
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   transition: border-color 0.2s;
 }
 

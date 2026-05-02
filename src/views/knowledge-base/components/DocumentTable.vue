@@ -219,7 +219,7 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   overflow-x: auto;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 .data-table {
@@ -301,7 +301,7 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   margin-top: 0.125rem;
   font-size: 0.625rem;
   font-weight: 700;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-sm);
 }
 
 .icon-pdf {
@@ -364,7 +364,7 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   font-size: 0.6875rem;
   color: var(--primary);
   background: rgb(var(--primary-rgb), 0.1);
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
 }
 
 /* ── 狀態徽章 ── */
@@ -422,7 +422,7 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-sm);
   transition: all 0.2s;
 }
 

@@ -300,7 +300,7 @@ const handleConfirmDelete = () => {
   cursor: pointer;
   background: var(--primary);
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   transition: background-color 0.2s;
 }
 

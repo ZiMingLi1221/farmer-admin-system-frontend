@@ -76,7 +76,7 @@ const formatScore = (score: number): string => {
   margin-top: 1rem;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 /* ========== Header ========== */
@@ -125,7 +125,7 @@ const formatScore = (score: number): string => {
   cursor: pointer;
   background-color: var(--bg-primary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 
   /* 修正：指定動畫屬性，防止主題切換時背景色彩過渡產生黑閃 */
   transition:

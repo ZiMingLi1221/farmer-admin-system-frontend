@@ -180,7 +180,7 @@ const handleConfirmDelete = () => {
   cursor: pointer;
   background: var(--primary);
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   transition: background-color 0.2s;
 }
 
@@ -237,7 +237,7 @@ const handleConfirmDelete = () => {
   padding: 0.75rem;
   background: rgb(239 68 68 / 10%);
   border: 1px solid rgb(239 68 68 / 30%);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .warning-text {

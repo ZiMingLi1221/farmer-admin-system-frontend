@@ -109,7 +109,7 @@ const handleClose = () => {
   padding: 1rem;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .info-row {
@@ -157,7 +157,7 @@ const handleClose = () => {
   cursor: pointer;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   transition: border-color 0.2s;
 }
 
@@ -172,7 +172,7 @@ const handleClose = () => {
   padding: 1rem;
   background: rgb(245 158 11 / 10%);
   border: 1px solid rgb(245 158 11 / 30%);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .warning-icon {

@@ -316,7 +316,7 @@ const formatFileSize = (bytes: number): string => {
   cursor: pointer;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 .attachment-card-outside:hover {
@@ -417,7 +417,7 @@ const formatFileSize = (bytes: number): string => {
   margin: 0.75rem 0;
   overflow-x: auto;
   background-color: var(--bg-tertiary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .message-markdown :deep(pre code) {
@@ -436,7 +436,7 @@ const formatFileSize = (bytes: number): string => {
   font-size: 0.875rem;
   color: var(--primary);
   background-color: var(--bg-tertiary);
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
 }
 
 .message-markdown :deep(pre code) {
@@ -501,7 +501,7 @@ const formatFileSize = (bytes: number): string => {
   max-width: 100%;
   height: auto;
   margin: 0.75rem 0;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 /* ========== 強調樣式 ========== */
@@ -573,7 +573,7 @@ const formatFileSize = (bytes: number): string => {
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-sm);
 }
 
 .action-btn:hover {
