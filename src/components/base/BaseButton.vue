@@ -1,3 +1,22 @@
+<template>
+  <button
+    :type="type"
+    :class="[
+      'base-button',
+      `variant-${variant}`,
+      `size-${size}`,
+      { 'full-width': fullWidth, disabled: disabled || loading, loading },
+    ]"
+    :disabled="disabled || loading"
+    @click="handleClick"
+  >
+    <span v-if="loading" class="loading-spinner"></span>
+    <span :class="{ 'button-content': true, 'with-spinner': loading }">
+      <slot></slot>
+    </span>
+  </button>
+</template>
+
 <script setup lang="ts">
 interface Props {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -27,25 +46,6 @@ const handleClick = (event: MouseEvent) => {
   }
 };
 </script>
-
-<template>
-  <button
-    :type="type"
-    :class="[
-      'base-button',
-      `variant-${variant}`,
-      `size-${size}`,
-      { 'full-width': fullWidth, disabled: disabled || loading, loading },
-    ]"
-    :disabled="disabled || loading"
-    @click="handleClick"
-  >
-    <span v-if="loading" class="loading-spinner"></span>
-    <span :class="{ 'button-content': true, 'with-spinner': loading }">
-      <slot></slot>
-    </span>
-  </button>
-</template>
 
 <style scoped>
 .base-button {
