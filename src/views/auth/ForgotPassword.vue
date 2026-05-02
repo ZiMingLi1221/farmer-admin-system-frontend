@@ -110,7 +110,7 @@ const goToLogin = () => {
       </div>
 
       <!-- 返回按鈕 -->
-      <BaseButton variant="outline" size="lg" full-width @click="goToLogin">
+      <BaseButton variant="secondary" size="lg" full-width @click="goToLogin">
         返回登入頁面
       </BaseButton>
     </div>
