@@ -65,11 +65,16 @@ export const setupAuthGuard = (
     const userRole = userStore.user?.role;
     if (userRole) {
       const allowedRoutes = ROUTE_PERMISSIONS[userRole] || [];
-      const hasPermission = allowedRoutes.some((route) => to.path === route || to.path.startsWith(route + '/'));
+      const hasPermission = allowedRoutes.some(
+        (route) => to.path === route || to.path.startsWith(route + '/')
+      );
 
       if (!hasPermission) {
         // 無權限，跳轉到首頁
-        console.warn(`[Guard] 使用者 ${userStore.user?.username} (角色: ${userRole}) 無權限訪問 ${to.path}。允許路由:`, allowedRoutes);
+        console.warn(
+          `[Guard] 使用者 ${userStore.user?.username} (角色: ${userRole}) 無權限訪問 ${to.path}。允許路由:`,
+          allowedRoutes
+        );
         next('/chat');
         return;
       }
