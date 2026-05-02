@@ -1,3 +1,9 @@
+<template>
+  <header class="app-header">
+    <HeaderTitle />
+  </header>
+</template>
+
 <script setup lang="ts">
 import { computed } from 'vue';
 
@@ -16,12 +22,6 @@ const headerMarginLeft = computed(() => `${sidebarTotalWidth.value}px`);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- consumed by v-bind() in <style scoped>
 const headerWidth = computed(() => `calc(100% - ${sidebarTotalWidth.value}px)`);
 </script>
-
-<template>
-  <header class="app-header">
-    <HeaderTitle />
-  </header>
-</template>
 
 <style scoped>
 .app-header {

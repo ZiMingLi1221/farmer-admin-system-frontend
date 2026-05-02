@@ -1,3 +1,9 @@
+<template>
+  <main class="main-content" :style="mainLayoutStyles">
+    <router-view />
+  </main>
+</template>
+
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
@@ -46,12 +52,6 @@ const mainLayoutStyles = computed(() => {
   };
 });
 </script>
-
-<template>
-  <main class="main-content" :style="mainLayoutStyles">
-    <router-view />
-  </main>
-</template>
 
 <style scoped>
 .main-content {
