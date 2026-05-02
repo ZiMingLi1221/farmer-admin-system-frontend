@@ -57,8 +57,7 @@ export const createStaff = async (data: {
   department?: string;
   password: string;
   mustChangePassword?: boolean;
-}): Promise<ApiResponse<UserInfo>> =>
-  httpClient.post<UserInfo>('/staff', data);
+}): Promise<ApiResponse<UserInfo>> => httpClient.post<UserInfo>('/staff', data);
 
 /**
  * 更新人員基本資料
@@ -66,16 +65,12 @@ export const createStaff = async (data: {
 export const updateStaff = async (
   id: string,
   data: Partial<Pick<UserInfo, 'name' | 'department'>>
-): Promise<ApiResponse<UserInfo>> =>
-  httpClient.put<UserInfo>(`/staff/${id}`, data);
+): Promise<ApiResponse<UserInfo>> => httpClient.put<UserInfo>(`/staff/${id}`, data);
 
 /**
  * 更新人員權限（角色）
  */
-export const updateStaffRole = async (
-  id: string,
-  role: UserRole
-): Promise<ApiResponse<UserInfo>> =>
+export const updateStaffRole = async (id: string, role: UserRole): Promise<ApiResponse<UserInfo>> =>
   httpClient.patch<UserInfo>(`/staff/${id}/role`, { role });
 
 /**
@@ -84,8 +79,7 @@ export const updateStaffRole = async (
 export const resetPassword = async (
   id: string,
   payload: { newPassword: string; mustChangePassword: boolean }
-): Promise<ApiResponse<void>> =>
-  httpClient.post<void>(`/staff/${id}/reset-password`, payload);
+): Promise<ApiResponse<void>> => httpClient.post<void>(`/staff/${id}/reset-password`, payload);
 
 /**
  * 刪除人員

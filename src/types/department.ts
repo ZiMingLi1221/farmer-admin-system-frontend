@@ -26,3 +26,26 @@ export interface DepartmentFormData {
   managerName?: string;
   active: boolean;
 }
+
+/**
+ * 業務別
+ */
+export interface BusinessType {
+  id: string;
+  departmentId: string;
+  name: string;
+  description?: string;
+  active: boolean;
+}
+
+export interface CreateBusinessTypePayload {
+  name: string;
+  description?: string;
+  active?: boolean;
+}
+
+export interface UpdateBusinessTypePayload {
+  name?: string;
+  description?: string;
+  active?: boolean;
+}

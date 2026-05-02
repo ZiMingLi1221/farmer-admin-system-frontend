@@ -2,14 +2,28 @@
   <div class="step-indicator">
     <div v-for="(step, index) in steps" :key="step.id" class="step-wrapper">
       <!-- 步驟節點 -->
-      <div class="step-node" :class="{
-        'step-completed': currentStep > step.id,
-        'step-active': currentStep === step.id,
-        'step-pending': currentStep < step.id,
-      }">
+      <div
+        class="step-node"
+        :class="{
+          'step-completed': currentStep > step.id,
+          'step-active': currentStep === step.id,
+          'step-pending': currentStep < step.id,
+        }"
+      >
         <!-- 完成圖示 -->
-        <svg v-if="currentStep > step.id" class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+        <svg
+          v-if="currentStep > step.id"
+          class="check-icon"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 13l4 4L19 7"
+          />
         </svg>
         <span v-else class="step-number">{{ step.id }}</span>
       </div>
@@ -20,8 +34,11 @@
       </div>
 
       <!-- 連接線（最後一步不畫） -->
-      <div v-if="index < steps.length - 1" class="step-connector"
-        :class="{ 'connector-done': currentStep > step.id }" />
+      <div
+        v-if="index < steps.length - 1"
+        class="step-connector"
+        :class="{ 'connector-done': currentStep > step.id }"
+      />
     </div>
   </div>
 </template>
@@ -41,53 +58,53 @@ const steps = STEPS;
 <style scoped>
 .step-indicator {
   display: flex;
+  gap: 0;
   align-items: flex-start;
   justify-content: center;
   padding: 0.625rem 1rem 0.75rem;
-  gap: 0;
 }
 
 .step-wrapper {
+  position: relative;
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
-  position: relative;
-  flex: 1;
   max-width: 180px;
 }
 
 /* 節點 */
 .step-node {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  width: 2.5rem;
+  height: 2.5rem;
   font-size: 1rem;
+  font-weight: 600;
+  border-radius: 50%;
   transition: transform 0.3s ease;
-  position: relative;
-  z-index: 1;
 }
 
 .step-pending {
+  color: var(--text-secondary);
   background: var(--bg-tertiary);
   border: 2px solid var(--border-primary);
-  color: var(--text-secondary);
 }
 
 .step-active {
+  color: white;
   background: var(--primary);
   border: 2px solid var(--primary);
-  color: white;
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 .step-completed {
+  color: white;
   background: var(--primary);
   border: 2px solid var(--primary);
-  color: white;
 }
 
 /* 數字與勾勾 */
@@ -110,10 +127,10 @@ const steps = STEPS;
 }
 
 .label-active {
-  opacity: 1;
   max-height: 2rem;
-  color: var(--primary);
   font-weight: 600;
+  color: var(--primary);
+  opacity: 1;
   transition: color 0.3s;
 }
 

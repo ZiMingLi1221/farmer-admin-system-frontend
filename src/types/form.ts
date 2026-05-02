@@ -8,14 +8,14 @@
 export interface FormFieldCoord {
   id: string;
   templateId: string;
-  fieldKey: string;   // 語意鍵，如 applicant_name、applicant_phone
-  label: string;      // 顯示標籤，如「申請人姓名」
-  page: number;       // 位於 PDF 第幾頁（1-based）
+  fieldKey: string; // 語意鍵，如 applicant_name、applicant_phone
+  label: string; // 顯示標籤，如「申請人姓名」
+  page: number; // 位於 PDF 第幾頁（1-based）
   x1: number;
   y1: number;
   x2: number;
   y2: number;
-  fontSize: number;   // 填入文字大小（預設 10）
+  fontSize: number; // 填入文字大小（預設 10）
   required: boolean;
 }
 
@@ -24,8 +24,8 @@ export interface FormFieldCoord {
 export interface EFormTemplate {
   id: string;
   businessTypeId: string;
-  name: string;         // 如「貸款授信申請書」
-  pdfFileName: string;  // 原始 PDF 檔名
+  name: string; // 如「貸款授信申請書」
+  pdfFileName: string; // 原始 PDF 檔名
   fields: FormFieldCoord[];
   active: boolean;
 }
@@ -34,7 +34,7 @@ export interface EFormTemplate {
 
 export interface EFormBusinessType {
   id: string;
-  name: string;         // 如「貸款業務」
+  name: string; // 如「貸款業務」
   description?: string;
   templates: EFormTemplate[];
   active: boolean;

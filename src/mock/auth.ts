@@ -1,7 +1,4 @@
-import type {
-  LoginRequest,
-  LoginResponse,
-} from '@/types/auth';
+import type { LoginRequest, LoginResponse } from '@/types/auth';
 
 export async function mockLoginData(credentials: LoginRequest): Promise<LoginResponse> {
   const mockUsers = {

@@ -10,8 +10,8 @@ import type { UserRole } from '@/types/user';
  * 定義每個角色可以訪問的路由路徑
  */
 export const ROUTE_PERMISSIONS: Record<UserRole, string[]> = {
-  admin: ['/chat', '/knowledge-base', '/eform', '/departments', '/staff', '/logs'],
-  manager: ['/chat', '/knowledge-base', '/eform', '/departments', '/staff'],
+  admin: ['/chat', '/knowledge-base', '/eform', '/organization', '/logs'],
+  manager: ['/chat', '/knowledge-base', '/eform', '/organization'],
   user: ['/chat', '/knowledge-base', '/eform'],
 };
 

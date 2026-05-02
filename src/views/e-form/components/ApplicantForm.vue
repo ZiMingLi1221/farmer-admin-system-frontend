@@ -3,12 +3,18 @@
     <div class="form-header">
       <div class="form-header-info">
         <svg class="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          />
         </svg>
         <div>
           <p class="header-title">填入申請人基本資訊</p>
-          <p class="header-sub">以下欄位由所選 {{ selectedCount }} 張表單合併，填入一次自動套用至所有表單</p>
+          <p class="header-sub">
+            以下欄位由所選 {{ selectedCount }} 張表單合併，填入一次自動套用至所有表單
+          </p>
         </div>
       </div>
     </div>
@@ -19,16 +25,27 @@
           {{ field.label }}
           <span v-if="field.required" class="required-mark">*</span>
         </label>
-        <input :id="`field-${field.key}`" :type="inputType(field.type)" :placeholder="placeholder(field)"
-          :value="modelValue[field.key] ?? ''" :required="field.required" class="field-input"
+        <input
+          :id="`field-${field.key}`"
+          :type="inputType(field.type)"
+          :placeholder="placeholder(field)"
+          :value="modelValue[field.key] ?? ''"
+          :required="field.required"
+          class="field-input"
           :class="{ 'field-error': fieldError(field.key) }"
-          @input="onInput(field.key, ($event.target as HTMLInputElement).value)" @blur="onBlur(field.key)" />
+          @input="onInput(field.key, ($event.target as HTMLInputElement).value)"
+          @blur="onBlur(field.key)"
+        />
         <!-- 驗證錯誤訊息 -->
         <Transition name="err-fade">
           <span v-if="fieldError(field.key)" class="error-msg">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="err-icon">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             {{ fieldError(field.key) }}
           </span>
@@ -38,8 +55,12 @@
 
     <div class="form-note">
       <svg class="note-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
       </svg>
       標示 <span class="req-inline">*</span> 為必填欄位。填入資料將自動套用至所有選取的表單。
     </div>
@@ -48,6 +69,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+
 import type { ApplicantFieldDef } from '@/types/form';
 
 const props = defineProps<{
@@ -188,15 +210,15 @@ function placeholder(field: ApplicantFieldDef): string {
 
 .form-header-info {
   display: flex;
-  align-items: center;
   gap: 0.875rem;
+  align-items: center;
 }
 
 .header-icon {
+  flex-shrink: 0;
   width: 1.5rem;
   height: 1.5rem;
   color: var(--primary);
-  flex-shrink: 0;
 }
 
 .header-title {
@@ -226,17 +248,17 @@ function placeholder(field: ApplicantFieldDef): string {
 }
 
 .field-label {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
 }
 
 .required-mark {
-  color: var(--error);
   font-size: 0.875rem;
+  color: var(--error);
 }
 
 .field-input {
@@ -244,10 +266,10 @@ function placeholder(field: ApplicantFieldDef): string {
   padding: 0.75rem 1rem;
   font-size: 0.9375rem;
   color: var(--text-primary);
+  outline: none;
   background: var(--bg-tertiary);
   border: 1.5px solid var(--border-primary);
   border-radius: 0.5rem;
-  outline: none;
 }
 
 .field-input:focus {
@@ -262,24 +284,24 @@ function placeholder(field: ApplicantFieldDef): string {
 /* 錯誤訊息 */
 .error-msg {
   display: flex;
-  align-items: center;
   gap: 0.3rem;
+  align-items: center;
+  margin-top: 0.1rem;
   font-size: 0.75rem;
   color: var(--error);
-  margin-top: 0.1rem;
 }
 
 .err-icon {
+  flex-shrink: 0;
   width: 0.875rem;
   height: 0.875rem;
-  flex-shrink: 0;
 }
 
 /* Note */
 .form-note {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
+  align-items: center;
   padding: 0.75rem 1rem;
   font-size: 0.8125rem;
   color: var(--text-secondary);
@@ -288,20 +310,22 @@ function placeholder(field: ApplicantFieldDef): string {
 }
 
 .note-icon {
+  flex-shrink: 0;
   width: 1rem;
   height: 1rem;
-  flex-shrink: 0;
 }
 
 .req-inline {
-  color: var(--error);
   font-weight: 600;
+  color: var(--error);
 }
 
 /* 錯誤訊息淡入淡出 */
 .err-fade-enter-active,
 .err-fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .err-fade-enter-from,

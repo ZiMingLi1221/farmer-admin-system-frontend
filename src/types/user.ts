@@ -27,3 +27,14 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   manager: '部門主管',
   user: '一般員工',
 };
+
+/**
+ * 新增/編輯使用者表單資料
+ */
+export interface UserFormData {
+  username?: string;
+  name: string;
+  role: UserRole;
+  department?: string;
+  mustChangePassword?: boolean;
+}

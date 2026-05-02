@@ -6,13 +6,19 @@ const sidebarStore = useSidebarStore();
 </script>
 
 <template>
-  <div class="secondary-sidebar" :class="{
-    expanded: sidebarStore.isSecondaryExpanded,
-  }">
+  <div
+    class="secondary-sidebar"
+    :class="{
+      expanded: sidebarStore.isSecondaryExpanded,
+    }"
+  >
     <div class="secondary-sidebar-content scrollbar-custom">
-      <div v-if="
-        sidebarStore.activeModule === 'conversation' || sidebarStore.activeModule === 'new-chat'
-      " class="sidebar-section">
+      <div
+        v-if="
+          sidebarStore.activeModule === 'conversation' || sidebarStore.activeModule === 'new-chat'
+        "
+        class="sidebar-section"
+      >
         <ChatHistory />
       </div>
     </div>
@@ -32,6 +38,7 @@ const sidebarStore = useSidebarStore();
   pointer-events: none;
   background-color: var(--bg-secondary);
   opacity: 0;
+
   /* 統一動效：與 MainLayout 同步，避免內容跳動或回彈感 */
   transition:
     width 0.3s cubic-bezier(0.4, 0, 0.2, 1),

@@ -5,10 +5,8 @@ export type ModuleType =
   | 'conversation'
   | 'knowledge-base'
   | 'eform'
-  | 'departments'
-  | 'staff'
-  | 'logs'
-  | 'user-settings';
+  | 'organization'
+  | 'logs';
 
 // 側邊欄狀態
 export interface SidebarState {

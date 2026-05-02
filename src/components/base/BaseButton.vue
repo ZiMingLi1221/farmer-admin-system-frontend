@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 interface Props {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   loading?: boolean;
@@ -100,6 +100,17 @@ const handleClick = (event: MouseEvent) => {
 
 .variant-secondary:hover:not(.disabled) {
   background: var(--bg-tertiary);
+  transition: background-color 0.15s ease;
+}
+
+.variant-outline {
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border-primary, #d1d5db);
+}
+
+.variant-outline:hover:not(.disabled) {
+  background: var(--bg-elevated);
   transition: background-color 0.15s ease;
 }
 

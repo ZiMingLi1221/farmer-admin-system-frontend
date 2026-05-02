@@ -4,4 +4,6 @@
 
 export * from './api';
 export * from './app';
+export * from './eform';
 export * from './permissions';
+export * from './theme';

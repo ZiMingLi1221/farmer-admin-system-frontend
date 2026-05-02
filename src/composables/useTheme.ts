@@ -1,7 +1,7 @@
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue';
 
+import { FA_DARK_CLASS, FA_MEDIA_QUERY_DARK } from '@/config/theme';
 import { useThemeStore } from '@/stores/theme';
-import { FA_DARK_CLASS, FA_MEDIA_QUERY_DARK } from '@/theme/config';
 import type { AppliedTheme, ThemeMode } from '@/types/theme';
 
 export function useTheme() {
