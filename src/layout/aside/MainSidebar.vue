@@ -18,6 +18,10 @@
           :is-collapsed="sidebarStore.isCollapsed"
           @click="handleItemClick(item)"
         />
+
+        <div class="menu-divider"></div>
+
+        <RecentConversations />
       </div>
 
       <div class="menu-items-bottom" :class="{ 'items-center': sidebarStore.isCollapsed }">
@@ -51,6 +55,7 @@ import { useChatStore } from '@/stores/chat';
 import { useSidebarStore } from '@/stores/sidebar';
 import type { MenuItem } from '@/types/sidebar';
 
+import RecentConversations from './RecentConversations.vue';
 import SidebarLogo from './SidebarLogo.vue';
 import SidebarMenu from './SidebarMenu.vue';
 import UserMenu from './UserMenu.vue';
@@ -179,6 +184,12 @@ const handleItemClick = (item: MenuItem): void => {
   gap: 0.5rem;
   padding: 0 0.75rem;
   overflow: hidden auto;
+}
+
+.menu-divider {
+  height: 1px;
+  margin: 0.5rem 0.75rem;
+  background-color: var(--border-primary);
 }
 
 .menu-items-bottom {
