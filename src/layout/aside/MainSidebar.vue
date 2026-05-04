@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { usePermission } from '@/composables/usePermission';
@@ -82,17 +82,39 @@ const userItem: MenuItem = {
   route: '',
 };
 
-const openUserMenu = (): void => {
+const recalculatePosition = (): void => {
   const el = userButtonRef.value?.$el as HTMLElement | undefined;
-  if (el) {
-    const rect = el.getBoundingClientRect();
-    userMenuPosition.value = {
-      top: rect.top,
-      left: rect.right + 12,
-    };
-  }
-  showUserMenu.value = !showUserMenu.value;
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  userMenuPosition.value = { top: rect.top, left: rect.right + 12 };
 };
+
+const openUserMenu = (): void => {
+  if (showUserMenu.value) {
+    showUserMenu.value = false;
+    return;
+  }
+  const el = userButtonRef.value?.$el as HTMLElement | undefined;
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  userMenuPosition.value = { top: rect.top, left: rect.right + 12 };
+  showUserMenu.value = true;
+};
+
+watch(showUserMenu, (open) => {
+  if (open) {
+    window.addEventListener('resize', recalculatePosition);
+    window.addEventListener('scroll', recalculatePosition, true);
+  } else {
+    window.removeEventListener('resize', recalculatePosition);
+    window.removeEventListener('scroll', recalculatePosition, true);
+  }
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', recalculatePosition);
+  window.removeEventListener('scroll', recalculatePosition, true);
+});
 
 const handleItemClick = (item: MenuItem): void => {
   if (item.id === 'new-chat') {

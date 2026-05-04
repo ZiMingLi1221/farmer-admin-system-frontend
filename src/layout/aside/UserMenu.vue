@@ -201,7 +201,7 @@ onUnmounted(() => {
 <style scoped>
 .user-menu-popover {
   position: fixed;
-  z-index: 100;
+  z-index: 1000;
   width: 16rem;
   background: var(--bg-primary);
   border: 1px solid var(--border-primary);
