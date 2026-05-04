@@ -16,11 +16,10 @@
     </svg>
   </button>
 
-  <!-- 展開狀態：Logo + 系統名稱 + 收合按鈕 -->
+  <!-- 展開狀態：Logo + 收合按鈕 -->
   <div v-else class="logo-header">
     <button class="logo-button" title="返回首頁" @click="handleLogoClick">
       <img :src="farmersLogo" alt="農會 LOGO" class="logo-image" />
-      <span class="system-name">汐農管理系統</span>
     </button>
     <button class="collapse-btn" title="收合側邊欄" @click="sidebarStore.toggleCollapsed()">
       <svg class="collapse-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,13 +103,6 @@ const handleLogoClick = (): void => {
   width: 1.75rem;
   height: 1.75rem;
   object-fit: contain;
-}
-
-.system-name {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
 }
 
 /* 收合按鈕 */
