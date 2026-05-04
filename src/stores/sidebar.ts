@@ -1,5 +1,5 @@
-import { computed, defineStore } from 'pinia';
-import { ref } from 'vue';
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
 import type { ModuleType } from '@/types';
 
