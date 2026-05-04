@@ -1,4 +1,5 @@
 <template>
+  <SearchConversationModal v-model:open="showSearchModal" />
   <div class="main-sidebar" :class="{ collapsed: sidebarStore.isCollapsed }">
     <div class="logo-container">
       <SidebarLogo />
@@ -49,6 +50,7 @@
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+import SearchConversationModal from '@/components/SearchConversationModal.vue';
 import { usePermission } from '@/composables/usePermission';
 import { NAVIGATION_ITEMS } from '@/constants/navigation';
 import { useChatStore } from '@/stores/chat';
