@@ -1,5 +1,5 @@
 <template>
-  <!-- 收合狀態：漢堡圖示 -->
+  <!-- 收合狀態：panel-left 圖示 -->
   <button
     v-if="sidebarStore.isCollapsed"
     class="hamburger-btn"
@@ -7,18 +7,13 @@
     @click="sidebarStore.toggleCollapsed()"
   >
     <svg class="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M4 6h16M4 12h16M4 18h16"
-      />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.PANEL_LEFT" />
     </svg>
   </button>
 
   <!-- 展開狀態：Logo + 收合按鈕 -->
   <div v-else class="logo-header">
-    <button class="logo-button" title="返回首頁" @click="handleLogoClick">
+    <button class="logo-button" title="新對話" @click="handleLogoClick">
       <img :src="farmersLogo" alt="農會 LOGO" class="logo-image" />
     </button>
     <button class="collapse-btn" title="收合側邊欄" @click="sidebarStore.toggleCollapsed()">
@@ -33,14 +28,18 @@
 import { useRouter } from 'vue-router';
 
 import farmersLogo from '@/assets/images/national_farmers_logo.png';
+import { ICONS } from '@/constants/icons';
+import { useChatStore } from '@/stores/chat';
 import { useSidebarStore } from '@/stores/sidebar';
 
 const router = useRouter();
 const sidebarStore = useSidebarStore();
+const chatStore = useChatStore();
 
 const handleLogoClick = (): void => {
+  chatStore.setCurrentConversation(null);
+  sidebarStore.setActiveModule('new-chat');
   router.push('/chat');
-  sidebarStore.setActiveModule('search-conversation');
 };
 </script>
 
@@ -52,7 +51,7 @@ const handleLogoClick = (): void => {
   justify-content: center;
   width: 40px;
   height: 40px;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   cursor: pointer;
   background: transparent;
   border: none;
@@ -60,11 +59,8 @@ const handleLogoClick = (): void => {
 }
 
 .hamburger-btn:hover {
-  color: var(--text-primary);
   background: var(--bg-overlay);
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+  transition: background-color 0.15s ease;
 }
 
 .menu-icon {
@@ -78,7 +74,7 @@ const handleLogoClick = (): void => {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0 0.75rem;
+  padding: 0 0.5rem 0 0;
 }
 
 /* Logo 按鈕 */
@@ -86,7 +82,8 @@ const handleLogoClick = (): void => {
   display: flex;
   gap: 0.625rem;
   align-items: center;
-  padding: 0.25rem;
+  height: 2.5rem;
+  padding: 0 0.75rem;
   color: var(--text-primary);
   cursor: pointer;
   background: transparent;
@@ -100,8 +97,8 @@ const handleLogoClick = (): void => {
 }
 
 .logo-image {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2rem;
+  height: 2rem;
   object-fit: contain;
 }
 
