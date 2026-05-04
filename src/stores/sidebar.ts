@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { computed, defineStore } from 'pinia';
 import { ref } from 'vue';
 
 import type { ModuleType } from '@/types';
@@ -9,6 +9,10 @@ export const useSidebarStore = defineStore(
     const activeModule = ref<ModuleType>('search-conversation');
     const isCollapsed = ref<boolean>(false);
     const sidebarWidth = ref<number>(220);
+
+    const isChatModule = computed(
+      () => activeModule.value === 'search-conversation' || activeModule.value === 'new-chat'
+    );
 
     const setActiveModule = (module: ModuleType): void => {
       activeModule.value = module;
@@ -26,6 +30,7 @@ export const useSidebarStore = defineStore(
       activeModule,
       isCollapsed,
       sidebarWidth,
+      isChatModule,
       setActiveModule,
       toggleCollapsed,
       setSidebarWidth,

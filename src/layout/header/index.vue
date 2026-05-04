@@ -5,6 +5,7 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 
 import { useSidebarStore } from '@/stores/sidebar';
@@ -12,12 +13,9 @@ import { useSidebarStore } from '@/stores/sidebar';
 import HeaderTitle from './HeaderTitle.vue';
 
 const sidebarStore = useSidebarStore();
+const { isChatModule, isCollapsed, sidebarWidth } = storeToRefs(sidebarStore);
 
-const isChatModule = computed(
-  () =>
-    sidebarStore.activeModule === 'search-conversation' || sidebarStore.activeModule === 'new-chat'
-);
-const mainWidth = computed(() => (sidebarStore.isCollapsed ? 64 : sidebarStore.sidebarWidth));
+const mainWidth = computed(() => (isCollapsed.value ? 64 : sidebarWidth.value));
 const sidebarTotalWidth = computed(() =>
   isChatModule.value ? mainWidth.value + 256 : mainWidth.value
 );

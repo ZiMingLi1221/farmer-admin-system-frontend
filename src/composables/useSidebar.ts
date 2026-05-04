@@ -6,7 +6,7 @@ import type { ModuleType } from '@/types';
 export const useSidebar = () => {
   const sidebarStore = useSidebarStore();
 
-  const { activeModule, isCollapsed, sidebarWidth } = storeToRefs(sidebarStore);
+  const { activeModule, isCollapsed, sidebarWidth, isChatModule } = storeToRefs(sidebarStore);
 
   const setActiveModule = (module: ModuleType): void => {
     sidebarStore.setActiveModule(module);
@@ -24,6 +24,7 @@ export const useSidebar = () => {
     activeModule,
     isCollapsed,
     sidebarWidth,
+    isChatModule,
     setActiveModule,
     toggleCollapsed,
     setSidebarWidth,

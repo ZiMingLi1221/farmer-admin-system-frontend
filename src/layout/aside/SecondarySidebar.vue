@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
 
 import { useSidebarStore } from '@/stores/sidebar';
 import ChatHistory from '@/views/chat/components/ChatHistory.vue';
 
 const sidebarStore = useSidebarStore();
-
-const isChatModule = computed(
-  () =>
-    sidebarStore.activeModule === 'search-conversation' || sidebarStore.activeModule === 'new-chat'
-);
+const { isChatModule } = storeToRefs(sidebarStore);
 </script>
 
 <template>

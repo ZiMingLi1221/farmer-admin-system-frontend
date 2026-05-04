@@ -6,10 +6,6 @@ export type ModuleType =
   | 'organization'
   | 'logs';
 
-export interface SidebarState {
-  activeModule: ModuleType;
-}
-
 export interface MenuItem {
   id: ModuleType;
   icon: string;
