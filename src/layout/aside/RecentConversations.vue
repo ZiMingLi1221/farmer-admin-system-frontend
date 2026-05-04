@@ -1,34 +1,5 @@
 <template>
-  <!-- 收合模式：只顯示圖示 -->
-  <div v-if="sidebarStore.isCollapsed" class="collapsed-btn-wrapper">
-    <button
-      ref="collapsedBtnRef"
-      class="collapsed-btn"
-      @click="sidebarStore.toggleCollapsed()"
-      @mouseenter="handleMouseEnter"
-      @mouseleave="handleMouseLeave"
-    >
-      <svg class="collapsed-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-        />
-      </svg>
-    </button>
-    <Teleport to="body">
-      <Transition name="tooltip">
-        <div v-if="showTooltip" class="conv-tooltip" :style="tooltipStyle">
-          最近對話
-          <div class="tooltip-arrow"></div>
-        </div>
-      </Transition>
-    </Teleport>
-  </div>
-
-  <!-- 展開模式 -->
-  <div v-else class="recent-section">
+  <div v-if="!sidebarStore.isCollapsed" class="recent-section">
     <button class="section-header" @click="isSectionOpen = !isSectionOpen">
       <span class="section-title">最近對話</span>
       <svg
@@ -57,11 +28,15 @@
         @mouseleave="handleItemMouseLeave"
       >
         <span class="conv-title">{{ conv.title }}</span>
+        <button class="more-btn" title="更多選項" @click.stop="handleMoreClick($event, conv.id)">
+          ⋮
+        </button>
       </div>
 
       <div ref="sentinelRef" class="sentinel"></div>
     </div>
 
+    <!-- Item hover tooltip -->
     <Teleport to="body">
       <Transition name="tooltip">
         <div v-if="showItemTooltip" class="conv-tooltip" :style="itemTooltipStyle">
@@ -70,11 +45,28 @@
         </div>
       </Transition>
     </Teleport>
+
+    <!-- ⋮ Context menu -->
+    <Teleport to="body">
+      <div v-if="openMenuId !== null" class="conv-context-menu" :style="contextMenuStyle">
+        <button class="context-menu-item danger" @click="handleDeleteConv">
+          <svg class="context-menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
+          </svg>
+          <span>刪除對話</span>
+        </button>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useChatStore } from '@/stores/chat';
@@ -86,40 +78,7 @@ const router = useRouter();
 
 const isSectionOpen = ref(true);
 
-// Collapsed tooltip
-const collapsedBtnRef = ref<HTMLButtonElement | null>(null);
-const showTooltip = ref(false);
-const tooltipStyle = ref<Record<string, string>>({});
-let tooltipTimer: number | null = null;
-
-const clearTooltipTimer = (): void => {
-  if (tooltipTimer !== null) {
-    clearTimeout(tooltipTimer);
-    tooltipTimer = null;
-  }
-};
-
-const handleMouseEnter = (): void => {
-  clearTooltipTimer();
-  tooltipTimer = window.setTimeout(() => {
-    if (collapsedBtnRef.value) {
-      const rect = collapsedBtnRef.value.getBoundingClientRect();
-      tooltipStyle.value = {
-        top: `${rect.top + rect.height / 2}px`,
-        left: `${rect.right + 12}px`,
-        transform: 'translateY(-50%)',
-      };
-      showTooltip.value = true;
-    }
-  }, 500);
-};
-
-const handleMouseLeave = (): void => {
-  clearTooltipTimer();
-  showTooltip.value = false;
-};
-
-// Item tooltips
+// Item hover tooltips
 const showItemTooltip = ref(false);
 const itemTooltipStyle = ref<Record<string, string>>({});
 const tooltipText = ref('');
@@ -155,6 +114,43 @@ const handleItemMouseLeave = (): void => {
 const handleConvClick = (id: string): void => {
   chatStore.setCurrentConversation(id);
   router.push(`/chat/${id}`);
+};
+
+// ⋮ Context menu
+const openMenuId = ref<string | null>(null);
+const contextMenuStyle = ref<Record<string, string>>({});
+
+const handleMoreClick = (event: MouseEvent, convId: string): void => {
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+
+  if (openMenuId.value === convId) {
+    openMenuId.value = null;
+    return;
+  }
+
+  contextMenuStyle.value = {
+    top: `${rect.bottom + 4}px`,
+    left: `${rect.left}px`,
+  };
+  openMenuId.value = convId;
+
+  nextTick(() => {
+    window.addEventListener('click', closeContextMenu, { once: true });
+  });
+};
+
+const closeContextMenu = (): void => {
+  openMenuId.value = null;
+};
+
+const handleDeleteConv = (): void => {
+  if (openMenuId.value === null) return;
+  const idToDelete = openMenuId.value;
+  openMenuId.value = null;
+  chatStore.deleteConversation(idToDelete);
+  if (chatStore.currentConversationId === idToDelete) {
+    router.push('/chat');
+  }
 };
 
 // Lazy loading
@@ -206,47 +202,12 @@ watch(
 
 onUnmounted(() => {
   observer?.disconnect();
-  clearTooltipTimer();
   clearItemTooltipTimer();
+  window.removeEventListener('click', closeContextMenu);
 });
 </script>
 
 <style scoped>
-/* Collapsed mode */
-.collapsed-btn-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-
-.collapsed-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 3rem;
-  height: 3rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-  background-color: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-}
-
-.collapsed-btn:hover {
-  color: var(--primary);
-  background-color: var(--bg-tertiary);
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.collapsed-icon {
-  flex-shrink: 0;
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
 /* Expanded mode */
 .recent-section {
   width: 100%;
@@ -258,6 +219,7 @@ onUnmounted(() => {
   justify-content: space-between;
   width: 100%;
   padding: 0.375rem 0.75rem;
+  overflow: hidden;
   color: var(--text-secondary);
   cursor: pointer;
   background-color: transparent;
@@ -278,11 +240,14 @@ onUnmounted(() => {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 .chevron {
   flex-shrink: 0;
   transform: rotate(-90deg);
+
+  /* transition 加在基礎樣式是因為這是旋轉動畫效果，非顏色/背景，不會導致主題切換黑閃 */
   transition: transform 0.2s ease;
 }
 
@@ -332,14 +297,94 @@ onUnmounted(() => {
 }
 
 .conv-title {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.875rem;
   white-space: nowrap;
 }
 
+/* ⋮ 按鈕 */
+.more-btn {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-xs);
+  opacity: 0;
+}
+
+.conversation-item:hover .more-btn {
+  opacity: 1;
+  transition: opacity 0.15s ease;
+}
+
+.conversation-item.active .more-btn {
+  color: var(--text-on-primary);
+}
+
+.conversation-item.active:hover .more-btn {
+  opacity: 0.75;
+}
+
+.more-btn:hover {
+  background: var(--bg-overlay);
+}
+
 .sentinel {
   height: 1px;
+}
+
+/* Context menu popover */
+.conv-context-menu {
+  position: fixed;
+  z-index: 9999;
+  min-width: 8rem;
+  padding: 0.375rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 4px 12px rgb(0 0 0 / 15%),
+    0 2px 4px rgb(0 0 0 / 10%);
+}
+
+.context-menu-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+}
+
+.context-menu-item.danger {
+  color: var(--error);
+}
+
+.context-menu-item.danger:hover {
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+  transition: background-color 0.15s ease;
+}
+
+.context-menu-icon {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
 }
 
 /* Tooltip */
@@ -357,9 +402,7 @@ onUnmounted(() => {
 }
 
 .dark .conv-tooltip {
-  color: var(--text-primary);
   background-color: var(--bg-tertiary);
-  border-color: var(--border-primary);
 }
 
 .tooltip-arrow {
