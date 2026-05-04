@@ -13,9 +13,13 @@ import HeaderTitle from './HeaderTitle.vue';
 
 const sidebarStore = useSidebarStore();
 
+const isChatModule = computed(
+  () =>
+    sidebarStore.activeModule === 'search-conversation' || sidebarStore.activeModule === 'new-chat'
+);
 const mainWidth = computed(() => (sidebarStore.isCollapsed ? 64 : 220));
 const sidebarTotalWidth = computed(() =>
-  sidebarStore.isSecondaryExpanded ? mainWidth.value + 256 : mainWidth.value
+  isChatModule.value ? mainWidth.value + 256 : mainWidth.value
 );
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- consumed by v-bind() in <style scoped>
 const headerMarginLeft = computed(() => `${sidebarTotalWidth.value}px`);

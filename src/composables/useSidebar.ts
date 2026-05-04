@@ -6,31 +6,26 @@ import type { ModuleType } from '@/types';
 export const useSidebar = () => {
   const sidebarStore = useSidebarStore();
 
-  const { activeModule, isSecondaryExpanded, isCollapsed } = storeToRefs(sidebarStore);
+  const { activeModule, isCollapsed, sidebarWidth } = storeToRefs(sidebarStore);
 
   const setActiveModule = (module: ModuleType): void => {
     sidebarStore.setActiveModule(module);
-  };
-
-  const toggleSecondary = (): void => {
-    sidebarStore.toggleSecondary();
-  };
-
-  const setSecondaryExpanded = (value: boolean): void => {
-    sidebarStore.setSecondaryExpanded(value);
   };
 
   const toggleCollapsed = (): void => {
     sidebarStore.toggleCollapsed();
   };
 
+  const setSidebarWidth = (width: number): void => {
+    sidebarStore.setSidebarWidth(width);
+  };
+
   return {
     activeModule,
-    isSecondaryExpanded,
     isCollapsed,
+    sidebarWidth,
     setActiveModule,
-    toggleSecondary,
-    setSecondaryExpanded,
     toggleCollapsed,
+    setSidebarWidth,
   };
 };

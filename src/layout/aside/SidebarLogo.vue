@@ -40,7 +40,7 @@ const sidebarStore = useSidebarStore();
 
 const handleLogoClick = (): void => {
   router.push('/chat');
-  sidebarStore.setActiveModule('conversation');
+  sidebarStore.setActiveModule('search-conversation');
 };
 </script>
 

@@ -1,24 +1,26 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 import { useSidebarStore } from '@/stores/sidebar';
 import ChatHistory from '@/views/chat/components/ChatHistory.vue';
 
 const sidebarStore = useSidebarStore();
+
+const isChatModule = computed(
+  () =>
+    sidebarStore.activeModule === 'search-conversation' || sidebarStore.activeModule === 'new-chat'
+);
 </script>
 
 <template>
   <div
     class="secondary-sidebar"
     :class="{
-      expanded: sidebarStore.isSecondaryExpanded,
+      expanded: isChatModule,
     }"
   >
     <div class="secondary-sidebar-content scrollbar-custom">
-      <div
-        v-if="
-          sidebarStore.activeModule === 'conversation' || sidebarStore.activeModule === 'new-chat'
-        "
-        class="sidebar-section"
-      >
+      <div v-if="isChatModule" class="sidebar-section">
         <ChatHistory />
       </div>
     </div>

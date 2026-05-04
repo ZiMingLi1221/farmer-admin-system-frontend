@@ -11,9 +11,9 @@ export const NAVIGATION_ITEMS: MenuItem[] = [
     route: '/chat',
   },
   {
-    id: 'conversation',
+    id: 'search-conversation',
     icon: ICONS.CHAT,
-    label: '對話歷史',
+    label: '搜尋對話',
     route: '/chat',
   },
   {

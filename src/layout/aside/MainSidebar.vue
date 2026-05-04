@@ -56,7 +56,7 @@ const showUserMenu = ref(false);
 
 const filteredMenuItems = computed(() => {
   return NAVIGATION_ITEMS.filter((item) => {
-    if (item.id === 'new-chat' || item.id === 'conversation') {
+    if (item.id === 'new-chat' || item.id === 'search-conversation') {
       return true;
     }
     return hasRoutePermission(item.route);
@@ -75,8 +75,7 @@ const handleItemClick = (item: MenuItem): void => {
 
   if (item.id === 'new-chat') {
     router.push('/chat');
-    sidebarStore.setSecondaryExpanded(true);
-    sidebarStore.setActiveModule('conversation');
+    sidebarStore.setActiveModule('search-conversation');
     return;
   }
 
