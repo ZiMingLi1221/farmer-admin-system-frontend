@@ -36,7 +36,7 @@ watch(
 );
 
 const mainLayoutStyles = computed(() => {
-  const mainWidth = sidebarStore.isCollapsed ? 64 : 220;
+  const mainWidth = sidebarStore.isCollapsed ? 64 : sidebarStore.sidebarWidth;
   const secondaryWidth = 256;
   const marginLeft = !props.hasSecondary ? `${mainWidth}px` : `${mainWidth + secondaryWidth}px`;
   const width = `calc(100% - ${marginLeft})`;

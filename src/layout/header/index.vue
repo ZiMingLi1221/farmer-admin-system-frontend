@@ -17,7 +17,7 @@ const isChatModule = computed(
   () =>
     sidebarStore.activeModule === 'search-conversation' || sidebarStore.activeModule === 'new-chat'
 );
-const mainWidth = computed(() => (sidebarStore.isCollapsed ? 64 : 220));
+const mainWidth = computed(() => (sidebarStore.isCollapsed ? 64 : sidebarStore.sidebarWidth));
 const sidebarTotalWidth = computed(() =>
   isChatModule.value ? mainWidth.value + 256 : mainWidth.value
 );
