@@ -13,16 +13,13 @@ import { useSidebarStore } from '@/stores/sidebar';
 import HeaderTitle from './HeaderTitle.vue';
 
 const sidebarStore = useSidebarStore();
-const { isChatModule, isCollapsed, sidebarWidth } = storeToRefs(sidebarStore);
+const { isCollapsed, sidebarWidth } = storeToRefs(sidebarStore);
 
 const mainWidth = computed(() => (isCollapsed.value ? 64 : sidebarWidth.value));
-const sidebarTotalWidth = computed(() =>
-  isChatModule.value ? mainWidth.value + 256 : mainWidth.value
-);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- consumed by v-bind() in <style scoped>
-const headerMarginLeft = computed(() => `${sidebarTotalWidth.value}px`);
+const headerMarginLeft = computed(() => `${mainWidth.value}px`);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- consumed by v-bind() in <style scoped>
-const headerWidth = computed(() => `calc(100% - ${sidebarTotalWidth.value}px)`);
+const headerWidth = computed(() => `calc(100% - ${mainWidth.value}px)`);
 </script>
 
 <style scoped>
