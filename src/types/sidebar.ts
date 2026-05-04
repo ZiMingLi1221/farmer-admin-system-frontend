@@ -4,7 +4,8 @@ export type ModuleType =
   | 'knowledge-base'
   | 'eform'
   | 'organization'
-  | 'logs';
+  | 'logs'
+  | 'user-settings';
 
 export interface MenuItem {
   id: ModuleType;

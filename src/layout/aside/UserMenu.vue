@@ -1,5 +1,9 @@
 <template>
-  <div ref="menuRef" class="user-menu-popover">
+  <div
+    ref="menuRef"
+    class="user-menu-popover"
+    :style="{ top: position.top + 'px', left: position.left + 'px' }"
+  >
     <div v-if="userInfo" class="user-info-section">
       <div class="user-avatar-large">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,6 +140,12 @@ import { useUserStore } from '@/stores/user';
 import type { ThemeMode } from '@/types/theme';
 import { ROLE_LABELS } from '@/types/user';
 
+interface Props {
+  position: { top: number; left: number };
+}
+
+defineProps<Props>();
+
 const emit = defineEmits<{
   close: [];
 }>();
@@ -190,9 +200,7 @@ onUnmounted(() => {
 
 <style scoped>
 .user-menu-popover {
-  position: absolute;
-  bottom: 1.5rem;
-  left: calc(100% + 0.75rem);
+  position: fixed;
   z-index: 100;
   width: 16rem;
   background: var(--bg-primary);
