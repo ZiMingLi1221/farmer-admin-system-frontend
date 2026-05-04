@@ -1,6 +1,11 @@
 <template>
   <SearchConversationModal v-model:open="showSearchModal" />
-  <div class="main-sidebar" :class="{ collapsed: sidebarStore.isCollapsed }">
+  <div
+    ref="sidebarRef"
+    class="main-sidebar"
+    :class="{ collapsed: sidebarStore.isCollapsed }"
+    :style="!sidebarStore.isCollapsed ? { width: sidebarStore.sidebarWidth + 'px' } : {}"
+  >
     <div class="logo-container">
       <SidebarLogo />
     </div>
@@ -43,6 +48,7 @@
         </Teleport>
       </div>
     </nav>
+    <div v-if="!sidebarStore.isCollapsed" class="resize-handle" @mousedown="startResize" />
   </div>
 </template>
 
@@ -70,6 +76,7 @@ const { hasRoutePermission } = usePermission();
 
 const showUserMenu = ref(false);
 const showSearchModal = ref(false);
+const sidebarRef = ref<HTMLElement | null>(null);
 const userButtonRef = ref<InstanceType<typeof SidebarMenu> | null>(null);
 const userMenuPosition = ref({ top: 0, left: 0 });
 
@@ -141,6 +148,32 @@ const handleItemClick = (item: MenuItem): void => {
     router.push(item.route);
   }
 };
+
+const startResize = (e: MouseEvent): void => {
+  e.preventDefault();
+  const startX = e.clientX;
+  const startWidth = sidebarStore.sidebarWidth;
+
+  sidebarRef.value?.classList.add('is-resizing');
+
+  const onMouseMove = (moveEvent: MouseEvent): void => {
+    const delta = moveEvent.clientX - startX;
+    sidebarStore.setSidebarWidth(startWidth + delta);
+  };
+
+  const onMouseUp = (): void => {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    sidebarRef.value?.classList.remove('is-resizing');
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+  document.body.style.cursor = 'ew-resize';
+  document.body.style.userSelect = 'none';
+};
 </script>
 
 <style scoped>
@@ -148,7 +181,6 @@ const handleItemClick = (item: MenuItem): void => {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 220px;
   height: 100vh;
   padding: 1.5rem 0 0;
   overflow: hidden;
@@ -160,6 +192,27 @@ const handleItemClick = (item: MenuItem): void => {
 
 .main-sidebar.collapsed {
   width: 64px;
+}
+
+.main-sidebar.is-resizing {
+  transition: none;
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+.resize-handle:hover {
+  background-color: var(--primary);
+  opacity: 0.4;
+  transition:
+    background-color 0.15s ease,
+    opacity 0.15s ease;
 }
 
 .logo-container {
