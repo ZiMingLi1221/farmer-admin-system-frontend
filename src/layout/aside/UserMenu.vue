@@ -2,7 +2,7 @@
   <div
     ref="menuRef"
     class="user-menu-popover"
-    :style="{ top: position.top + 'px', left: position.left + 'px' }"
+    :style="{ bottom: position.bottom + 'px', left: position.left + 'px' }"
   >
     <div v-if="userInfo" class="user-info-section">
       <div class="user-avatar-large">
@@ -141,7 +141,7 @@ import type { ThemeMode } from '@/types/theme';
 import { ROLE_LABELS } from '@/types/user';
 
 interface Props {
-  position: { top: number; left: number };
+  position: { bottom: number; left: number };
 }
 
 defineProps<Props>();
@@ -203,24 +203,24 @@ onUnmounted(() => {
   position: fixed;
   z-index: 1000;
   width: 16rem;
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
   box-shadow:
     0 10px 25px -5px rgb(0 0 0 / 15%),
     0 8px 10px -6px rgb(0 0 0 / 10%);
-  animation: slideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideUp 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes slideIn {
+@keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateX(-10px);
+    transform: translateY(10px);
   }
 
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
@@ -315,7 +315,7 @@ onUnmounted(() => {
 }
 
 .action-item:hover {
-  background: var(--bg-overlay);
+  background: var(--bg-tertiary);
   transition: background-color 0.15s ease;
 }
 
@@ -348,7 +348,7 @@ onUnmounted(() => {
   z-index: 101;
   width: 10rem;
   padding: 0.375rem;
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
   box-shadow:
@@ -372,7 +372,7 @@ onUnmounted(() => {
 }
 
 .submenu-item:hover {
-  background: var(--bg-overlay);
+  background: var(--bg-tertiary);
   transition: background-color 0.15s ease;
 }
 

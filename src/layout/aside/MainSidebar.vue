@@ -78,7 +78,7 @@ const showUserMenu = ref(false);
 const showSearchModal = ref(false);
 const sidebarRef = ref<HTMLElement | null>(null);
 const userButtonRef = ref<InstanceType<typeof SidebarMenu> | null>(null);
-const userMenuPosition = ref({ top: 0, left: 0 });
+const userMenuPosition = ref({ bottom: 0, left: 0 });
 
 const filteredMenuItems = computed(() => {
   return NAVIGATION_ITEMS.filter((item) => {
@@ -100,7 +100,7 @@ const recalculatePosition = (): void => {
   const el = userButtonRef.value?.$el as HTMLElement | undefined;
   if (!el) return;
   const rect = el.getBoundingClientRect();
-  userMenuPosition.value = { top: rect.top, left: rect.right + 12 };
+  userMenuPosition.value = { bottom: window.innerHeight - rect.bottom, left: rect.right + 12 };
 };
 
 const openUserMenu = (): void => {
@@ -111,7 +111,7 @@ const openUserMenu = (): void => {
   const el = userButtonRef.value?.$el as HTMLElement | undefined;
   if (!el) return;
   const rect = el.getBoundingClientRect();
-  userMenuPosition.value = { top: rect.top, left: rect.right + 12 };
+  userMenuPosition.value = { bottom: window.innerHeight - rect.bottom, left: rect.right + 12 };
   showUserMenu.value = true;
 };
 
