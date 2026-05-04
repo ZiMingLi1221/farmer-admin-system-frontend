@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useChatStore } from '@/stores/chat';
@@ -134,9 +134,8 @@ const clearItemTooltipTimer = (): void => {
 
 const handleItemMouseEnter = (event: MouseEvent, title: string): void => {
   clearItemTooltipTimer();
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
   itemTooltipTimer = window.setTimeout(() => {
-    const target = event.currentTarget as HTMLElement;
-    const rect = target.getBoundingClientRect();
     itemTooltipStyle.value = {
       top: `${rect.top + rect.height / 2}px`,
       left: `${rect.right + 12}px`,
@@ -178,11 +177,32 @@ onMounted(() => {
     },
     { threshold: 0.1 }
   );
+});
 
-  if (sentinelRef.value) {
-    observer.observe(sentinelRef.value);
+watch(
+  sentinelRef,
+  (el) => {
+    if (el && observer) {
+      observer.observe(el);
+    }
+  },
+  { immediate: true }
+);
+
+watch(isSectionOpen, (open) => {
+  if (!open) {
+    clearItemTooltipTimer();
+    showItemTooltip.value = false;
   }
 });
+
+watch(
+  () => chatStore.conversations,
+  () => {
+    displayCount.value = PAGE_SIZE;
+  },
+  { flush: 'sync' }
+);
 
 onUnmounted(() => {
   observer?.disconnect();
