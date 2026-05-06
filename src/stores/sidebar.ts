@@ -1,45 +1,39 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import type { ModuleType } from '@/types';
 
 export const useSidebarStore = defineStore(
   'sidebar',
   () => {
-    const activeModule = ref<ModuleType>('conversation');
-    const isSecondaryExpanded = ref<boolean>(true); // 預設展開（如 ChatGPT）
+    const activeModule = ref<ModuleType>('search-conversation');
     const isCollapsed = ref<boolean>(false);
+    const sidebarWidth = ref<number>(220);
+
+    const isChatModule = computed(
+      () => activeModule.value === 'search-conversation' || activeModule.value === 'new-chat'
+    );
 
     const setActiveModule = (module: ModuleType): void => {
-      // 如果點擊的是當前模組，則切換展開狀態
-      if (activeModule.value === module) {
-        isSecondaryExpanded.value = !isSecondaryExpanded.value;
-      } else {
-        activeModule.value = module;
-        isSecondaryExpanded.value = true;
-      }
-    };
-
-    const toggleSecondary = (): void => {
-      isSecondaryExpanded.value = !isSecondaryExpanded.value;
-    };
-
-    const setSecondaryExpanded = (value: boolean): void => {
-      isSecondaryExpanded.value = value;
+      activeModule.value = module;
     };
 
     const toggleCollapsed = (): void => {
       isCollapsed.value = !isCollapsed.value;
     };
 
+    const setSidebarWidth = (width: number): void => {
+      sidebarWidth.value = Math.min(360, Math.max(220, width));
+    };
+
     return {
       activeModule,
-      isSecondaryExpanded,
       isCollapsed,
+      sidebarWidth,
+      isChatModule,
       setActiveModule,
-      toggleSecondary,
-      setSecondaryExpanded,
       toggleCollapsed,
+      setSidebarWidth,
     };
   },
   {

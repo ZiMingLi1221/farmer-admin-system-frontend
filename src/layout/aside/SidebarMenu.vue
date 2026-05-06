@@ -127,12 +127,12 @@ const handleMouseLeave = (): void => {
 }
 
 .menu-button.active {
-  color: var(--primary);
-  background-color: var(--primary-active-bg);
+  color: var(--text-on-primary);
+  background-color: var(--primary);
 }
 
 .menu-button.active:hover:not(.disabled) {
-  background-color: var(--primary-active-bg-hover);
+  background-color: var(--primary-hover);
 }
 
 /* 展開狀態 */

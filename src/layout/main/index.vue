@@ -12,12 +12,10 @@ import { useSidebarStore } from '@/stores/sidebar';
 
 interface Props {
   hasHeader?: boolean;
-  hasSecondary?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   hasHeader: false,
-  hasSecondary: false,
 });
 
 const route = useRoute();
@@ -36,9 +34,8 @@ watch(
 );
 
 const mainLayoutStyles = computed(() => {
-  const mainWidth = sidebarStore.isCollapsed ? 64 : 220;
-  const secondaryWidth = 256;
-  const marginLeft = !props.hasSecondary ? `${mainWidth}px` : `${mainWidth + secondaryWidth}px`;
+  const mainWidth = sidebarStore.isCollapsed ? 64 : sidebarStore.sidebarWidth;
+  const marginLeft = `${mainWidth}px`;
   const width = `calc(100% - ${marginLeft})`;
   const paddingTop = props.hasHeader ? '4rem' : '0';
 

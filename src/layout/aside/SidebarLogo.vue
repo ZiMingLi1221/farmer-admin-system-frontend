@@ -1,5 +1,5 @@
 <template>
-  <!-- 收合狀態：漢堡圖示 -->
+  <!-- 收合狀態：panel-left 圖示 -->
   <button
     v-if="sidebarStore.isCollapsed"
     ref="hamburgerRef"
@@ -10,12 +10,7 @@
     @mouseleave="handleHamburgerMouseLeave"
   >
     <svg class="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M4 6h16M4 12h16M4 18h16"
-      />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.PANEL_LEFT" />
     </svg>
 
     <!-- Hamburger Tooltip -->
@@ -29,11 +24,10 @@
     </Teleport>
   </button>
 
-  <!-- 展開狀態：Logo + 系統名稱 + 收合按鈕 -->
+  <!-- 展開狀態：Logo + 收合按鈕 -->
   <div v-else class="logo-header">
-    <button class="logo-button" title="返回首頁" @click="handleLogoClick">
+    <button class="logo-button" title="新對話" @click="handleLogoClick">
       <img :src="farmersLogo" alt="農會 LOGO" class="logo-image" />
-      <span class="system-name">汐農管理系統</span>
     </button>
     <button
       ref="collapseRef"
@@ -65,10 +59,13 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import farmersLogo from '@/assets/images/national_farmers_logo.png';
+import { ICONS } from '@/constants/icons';
+import { useChatStore } from '@/stores/chat';
 import { useSidebarStore } from '@/stores/sidebar';
 
 const router = useRouter();
 const sidebarStore = useSidebarStore();
+const chatStore = useChatStore();
 
 const hamburgerRef = ref<HTMLButtonElement | null>(null);
 const collapseRef = ref<HTMLButtonElement | null>(null);
@@ -81,8 +78,9 @@ let hamburgerTooltipTimer: number | null = null;
 let collapseTooltipTimer: number | null = null;
 
 const handleLogoClick = (): void => {
+  chatStore.setCurrentConversation(null);
+  sidebarStore.setActiveModule('new-chat');
   router.push('/chat');
-  sidebarStore.setActiveModule('conversation');
 };
 
 const clearHamburgerTooltipTimer = (): void => {
@@ -148,7 +146,7 @@ const handleCollapseMouseLeave = (): void => {
   justify-content: center;
   width: 40px;
   height: 40px;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   cursor: pointer;
   background: transparent;
   border: none;
@@ -156,11 +154,8 @@ const handleCollapseMouseLeave = (): void => {
 }
 
 .hamburger-btn:hover {
-  color: var(--text-primary);
   background: var(--bg-overlay);
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+  transition: background-color 0.15s ease;
 }
 
 .menu-icon {
@@ -220,7 +215,7 @@ const handleCollapseMouseLeave = (): void => {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0 0.75rem;
+  padding: 0 0.5rem 0 0;
 }
 
 /* Logo 按鈕 */
@@ -228,7 +223,8 @@ const handleCollapseMouseLeave = (): void => {
   display: flex;
   gap: 0.625rem;
   align-items: center;
-  padding: 0.25rem;
+  height: 2.5rem;
+  padding: 0 0.75rem;
   color: var(--text-primary);
   cursor: pointer;
   background: transparent;
@@ -242,16 +238,9 @@ const handleCollapseMouseLeave = (): void => {
 }
 
 .logo-image {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2rem;
+  height: 2rem;
   object-fit: contain;
-}
-
-.system-name {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
 }
 
 /* 收合按鈕 */

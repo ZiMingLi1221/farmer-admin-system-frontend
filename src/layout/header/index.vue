@@ -5,6 +5,7 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 
 import { useSidebarStore } from '@/stores/sidebar';
@@ -12,15 +13,13 @@ import { useSidebarStore } from '@/stores/sidebar';
 import HeaderTitle from './HeaderTitle.vue';
 
 const sidebarStore = useSidebarStore();
+const { isCollapsed, sidebarWidth } = storeToRefs(sidebarStore);
 
-const mainWidth = computed(() => (sidebarStore.isCollapsed ? 64 : 220));
-const sidebarTotalWidth = computed(() =>
-  sidebarStore.isSecondaryExpanded ? mainWidth.value + 256 : mainWidth.value
-);
+const mainWidth = computed(() => (isCollapsed.value ? 64 : sidebarWidth.value));
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- consumed by v-bind() in <style scoped>
-const headerMarginLeft = computed(() => `${sidebarTotalWidth.value}px`);
+const headerMarginLeft = computed(() => `${mainWidth.value}px`);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- consumed by v-bind() in <style scoped>
-const headerWidth = computed(() => `calc(100% - ${sidebarTotalWidth.value}px)`);
+const headerWidth = computed(() => `calc(100% - ${mainWidth.value}px)`);
 </script>
 
 <style scoped>
