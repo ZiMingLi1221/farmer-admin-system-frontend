@@ -30,14 +30,27 @@ public/sample.pdf
 *.sln
 *.sw?
 
-# Release notes
-releases/
-
 # source
 source/
 
+# handoff
+handoff/
+
+# antigravity
+GEMINI.md
+
 # .agent
 .agent/
+
+# Claude Code
+CLAUDE.md
+
+# .claude
+.claude/
+.superpowers/
+
+# openspec
+openspec/
 
 # docs
 docs/
