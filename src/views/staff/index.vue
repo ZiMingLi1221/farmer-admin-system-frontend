@@ -1,24 +1,36 @@
 <template>
   <div class="staff-page">
-    <PageHeader title="人員管理">
-      <template #action>
+    <ViewToolbar
+      subtitle="管理組織內人員與權限"
+      :search="{ modelValue: searchQuery, placeholder: '搜尋姓名、Email、手機...' }"
+      @update:search="searchQuery = $event"
+    >
+      <template #actions>
         <IconBtn
           v-if="canManageStaff"
           icon="PLUS"
           label="新增使用者"
-          class="btn-primary"
+          variant="primary"
           @click="handleAdd"
         />
       </template>
-    </PageHeader>
-
-    <SearchToolbar
-      v-model:search-query="searchQuery"
-      v-model:filter-department="filterDepartment"
-      v-model:filter-role="filterRole"
-      v-model:filter-status="filterStatus"
-      :show-filters="isAdmin"
-    />
+      <template v-if="isAdmin" #filters>
+        <FilterSelect
+          v-model="filterDepartment"
+          :options="departmentOptions"
+          placeholder="全部部門"
+        />
+        <FilterSelect v-model="filterRole" :options="roleOptions" placeholder="全部角色" />
+        <FilterSelect v-model="filterStatus" :options="statusOptions" placeholder="全部狀態" />
+        <IconBtn
+          v-if="hasActiveFilter"
+          icon="CLOSE"
+          label="清除篩選"
+          variant="ghost"
+          @click="clearFilters"
+        />
+      </template>
+    </ViewToolbar>
 
     <StaffTable
       :users="paginatedUsers"
@@ -74,9 +86,11 @@
 import { computed, onMounted, ref } from 'vue';
 
 import IconBtn from '@/components/base/IconBtn.vue';
-import PageHeader from '@/components/common/PageHeader.vue';
+import FilterSelect from '@/components/common/FilterSelect.vue';
 import Pagination from '@/components/common/Pagination.vue';
+import ViewToolbar from '@/components/common/ViewToolbar.vue';
 import { usePermission } from '@/composables/usePermission';
+import { useDepartmentStore } from '@/stores/department';
 import { useStaffStore } from '@/stores/staff';
 import { useUserStore } from '@/stores/user';
 import type { UserInfo, UserRole } from '@/types/user';
@@ -85,15 +99,16 @@ import ChangeRoleModal from './components/modals/ChangeRoleModal.vue';
 import ConfirmDeleteModal from './components/modals/ConfirmDeleteModal.vue';
 import ResetPasswordModal from './components/modals/ResetPasswordModal.vue';
 import UserModal from './components/modals/UserModal.vue';
-import SearchToolbar from './components/SearchToolbar.vue';
 import StaffTable from './components/StaffTable.vue';
 
 const { isAdmin, isManager } = usePermission();
 const userStore = useUserStore();
 const staffStore = useStaffStore();
+const departmentStore = useDepartmentStore();
 
 onMounted(() => {
   staffStore.fetchStaff();
+  departmentStore.fetchDepartments();
 });
 
 const canManageStaff = computed(() => isAdmin.value || isManager.value);
@@ -110,6 +125,32 @@ const searchQuery = ref('');
 const filterDepartment = ref('');
 const filterRole = ref('');
 const filterStatus = ref('');
+
+const departmentOptions = computed(() =>
+  departmentStore.departments.filter((d) => d.active).map((d) => ({ value: d.name, label: d.name }))
+);
+
+const roleOptions = [
+  { value: 'admin', label: '系統管理員' },
+  { value: 'manager', label: '部門主管' },
+  { value: 'user', label: '一般員工' },
+];
+
+const statusOptions = [
+  { value: 'true', label: '啟用' },
+  { value: 'false', label: '停用' },
+];
+
+const hasActiveFilter = computed(
+  () => !!(filterDepartment.value || filterRole.value || filterStatus.value)
+);
+
+const clearFilters = () => {
+  searchQuery.value = '';
+  filterDepartment.value = '';
+  filterRole.value = '';
+  filterStatus.value = '';
+};
 
 // 排序
 const sortField = ref<string>('');
@@ -290,21 +331,5 @@ const handleConfirmDelete = () => {
   max-width: 1400px;
   padding: 2rem;
   margin: 0 auto;
-}
-
-.btn-primary {
-  padding: 0.625rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: white;
-  cursor: pointer;
-  background: var(--primary);
-  border: none;
-  border-radius: var(--radius-sm);
-  transition: background-color 0.2s;
-}
-
-.btn-primary:hover {
-  background: var(--primary-hover);
 }
 </style>

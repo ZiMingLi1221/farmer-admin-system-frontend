@@ -1,29 +1,37 @@
 <template>
   <div class="knowledge-page">
-    <PageHeader
-      title="知識庫管理"
+    <ViewToolbar
       subtitle="管理 AI 知識庫文件，文件上傳後將自動解析並建立可檢索的向量索引"
+      :search="{ modelValue: searchQuery, placeholder: '搜尋文件標題、標籤...' }"
+      @update:search="searchQuery = $event"
     >
-      <template #action>
+      <template #actions>
         <IconBtn
           v-if="canUpload"
-          icon="PLUS"
+          icon="UPLOAD"
           label="上傳文件"
-          class="btn-primary"
+          variant="primary"
           @click="showUploadModal = true"
         />
       </template>
-    </PageHeader>
-
-    <SearchToolbar
-      v-model:search-query="searchQuery"
-      v-model:filter-category="filterCategory"
-      v-model:filter-department="filterDepartment"
-      v-model:filter-status="filterStatus"
-      :categories="categories"
-      :departments="departments"
-      :is-admin="isAdmin"
-    />
+      <template #filters>
+        <FilterSelect v-model="filterCategory" :options="categories" placeholder="全部分類" />
+        <FilterSelect
+          v-if="isAdmin"
+          v-model="filterDepartment"
+          :options="departmentOptions"
+          placeholder="全部部門"
+        />
+        <FilterSelect v-model="filterStatus" :options="statusOptions" placeholder="全部狀態" />
+        <IconBtn
+          v-if="hasActiveFilter"
+          icon="CLOSE"
+          label="清除篩選"
+          variant="ghost"
+          @click="clearFilters"
+        />
+      </template>
+    </ViewToolbar>
 
     <DocumentTable
       :documents="paginatedDocuments"
@@ -98,8 +106,9 @@ import { computed, onMounted, ref } from 'vue';
 
 import BaseModal from '@/components/base/BaseModal.vue';
 import IconBtn from '@/components/base/IconBtn.vue';
-import PageHeader from '@/components/common/PageHeader.vue';
+import FilterSelect from '@/components/common/FilterSelect.vue';
 import Pagination from '@/components/common/Pagination.vue';
+import ViewToolbar from '@/components/common/ViewToolbar.vue';
 import { usePermission } from '@/composables/usePermission';
 import { useDepartmentStore } from '@/stores/department';
 import { useKnowledgeStore } from '@/stores/knowledge';
@@ -109,7 +118,6 @@ import type { KnowledgeDocument } from '@/types/knowledge';
 import DocumentTable from './components/DocumentTable.vue';
 import DocumentDetailModal from './components/modals/DocumentDetailModal.vue';
 import UploadDocumentModal from './components/modals/UploadDocumentModal.vue';
-import SearchToolbar from './components/SearchToolbar.vue';
 
 const { isAdmin, isManager } = usePermission();
 const userStore = useUserStore();
@@ -143,6 +151,28 @@ const searchQuery = ref('');
 const filterCategory = ref('');
 const filterDepartment = ref('');
 const filterStatus = ref('');
+
+const departmentOptions = computed(() => [
+  { value: '__public__', label: '公開（無部門限制）' },
+  ...departments.value.map((d) => ({ value: d, label: d })),
+]);
+
+const statusOptions = [
+  { value: 'ready', label: '已就緒' },
+  { value: 'processing', label: '處理中' },
+  { value: 'error', label: '錯誤' },
+];
+
+const hasActiveFilter = computed(
+  () => !!(filterCategory.value || filterDepartment.value || filterStatus.value)
+);
+
+const clearFilters = () => {
+  searchQuery.value = '';
+  filterCategory.value = '';
+  filterDepartment.value = '';
+  filterStatus.value = '';
+};
 
 // 排序
 const sortField = ref('uploadedAt');
@@ -286,22 +316,6 @@ const handleConfirmDelete = () => {
   max-width: 1400px;
   padding: 2rem;
   margin: 0 auto;
-}
-
-.btn-primary {
-  padding: 0.625rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: white;
-  cursor: pointer;
-  background: var(--primary);
-  border: none;
-  border-radius: var(--radius-sm);
-  transition: background-color 0.2s;
-}
-
-.btn-primary:hover {
-  background: var(--primary-hover);
 }
 
 /* 刪除確認 Modal */

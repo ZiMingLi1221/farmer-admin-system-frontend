@@ -1,42 +1,42 @@
+<template>
+  <div v-if="headerStore.tabs.length === 0" class="header-title">
+    <h1 class="title-text">{{ displayTitle }}</h1>
+  </div>
+</template>
+
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { useChatStore } from '@/stores/chat';
+import { useHeaderStore } from '@/stores/header';
 
 const route = useRoute();
 const chatStore = useChatStore();
+const headerStore = useHeaderStore();
 
 const displayTitle = computed(() => {
-  // ✅ 如果在聊天頁面，顯示對話標題
   if (route.name === 'chat' && route.params.id) {
     const conversationId = route.params.id as string;
     const conversation = chatStore.conversations.find((c) => c.id === conversationId);
 
     if (conversation && conversation.messages.length > 0) {
-      // 取第一條訊息作為標題，限制長度
       const firstMessage = conversation.messages[0].content;
       return firstMessage.length > 30 ? firstMessage.substring(0, 30) + '...' : firstMessage;
     }
+
+    return route.meta.title ?? 'AI 聊天';
   }
 
-  // ✅ 根據路由顯示標題
-  const routeTitles: Record<string, string> = {
-    chat: 'AI 聊天助手',
-    conversation: '對話歷史',
-    settings: '設定',
-    home: '首頁',
-  };
+  return route.meta.title ?? '';
+});
 
-  return routeTitles[route.name as string] || 'AI 聊天助手';
+watch(displayTitle, (t) => {
+  if (route.name === 'chat' && route.params.id && t && t !== 'AI 聊天') {
+    document.title = `${t} - Farmer Admin System`;
+  }
 });
 </script>
-
-<template>
-  <div class="header-title">
-    <h1 class="title-text">{{ displayTitle }}</h1>
-  </div>
-</template>
 
 <style scoped>
 .header-title {

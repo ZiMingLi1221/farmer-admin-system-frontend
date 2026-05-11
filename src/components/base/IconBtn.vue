@@ -1,5 +1,11 @@
 <template>
-  <button :type="type" class="icon-btn" :disabled="disabled" @click="handleClick">
+  <button
+    :type="type"
+    class="icon-btn"
+    :class="[`icon-btn--${variant}`, `icon-btn--${size}`]"
+    :disabled="disabled"
+    @click="handleClick"
+  >
     <slot name="icon">
       <svg v-if="icon" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS[icon]" />
@@ -18,11 +24,15 @@ interface Props {
   label?: string;
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 withDefaults(defineProps<Props>(), {
   type: 'button',
   disabled: false,
+  variant: 'ghost',
+  size: 'md',
 });
 
 const emit = defineEmits<{
@@ -41,19 +51,76 @@ const handleClick = (event: MouseEvent) => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border: 1px solid transparent;
   border-radius: var(--radius-sm);
-}
-
-.icon-btn:hover:not(:disabled) {
   transition:
     background-color 0.15s ease,
     color 0.15s ease,
-    border-color 0.15s ease;
+    border-color 0.15s ease,
+    opacity 0.15s ease;
 }
 
 .icon-btn:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+/* Variants */
+.icon-btn--primary {
+  color: var(--text-on-primary);
+  background-color: var(--primary);
+}
+
+.icon-btn--primary:hover:not(:disabled),
+.icon-btn--primary:active:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.icon-btn--secondary {
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  border-color: var(--border-primary);
+}
+
+.icon-btn--secondary:hover:not(:disabled) {
+  background-color: var(--bg-tertiary);
+}
+
+.icon-btn--ghost {
+  color: var(--text-primary);
+  background-color: transparent;
+}
+
+.icon-btn--ghost:hover:not(:disabled) {
+  background-color: var(--bg-overlay);
+}
+
+.icon-btn--danger {
+  color: var(--text-on-primary);
+  background-color: var(--error);
+}
+
+.icon-btn--danger:hover:not(:disabled) {
+  background-color: var(--error-hover);
+}
+
+/* Sizes */
+.icon-btn--sm {
+  min-height: 32px;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.8125rem;
+}
+
+.icon-btn--md {
+  min-height: 40px;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+}
+
+.icon-btn--lg {
+  min-height: 48px;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9375rem;
 }
 
 .btn-icon {
@@ -62,8 +129,12 @@ const handleClick = (event: MouseEvent) => {
   height: 1.25rem;
 }
 
+.icon-btn--sm .btn-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
 .btn-text {
-  font-size: 0.875rem;
   font-weight: 500;
 }
 </style>

@@ -10,6 +10,3 @@ export { default as ChatEmptyState } from './messages/ChatEmptyState.vue';
 export { default as ChatMessage } from './messages/ChatMessage.vue';
 export { default as SourceReference } from './messages/SourceReference.vue';
 export { default as TypingIndicator } from './messages/TypingIndicator.vue';
-
-// Modals
-export { default as DeleteConfirmModal } from './modals/DeleteConfirmModal.vue';

@@ -2,8 +2,17 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import AuthLayout from '@/layout/AuthLayout.vue';
 import AppLayout from '@/layout/index.vue';
+import type { ModuleType } from '@/types';
 
 import { setupAuthGuard } from './guard';
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    title?: string;
+    requiresAuth?: boolean;
+    activeModule?: ModuleType;
+  }
+}
 
 const routes: RouteRecordRaw[] = [
   // 登入路由（使用 AuthLayout）
@@ -62,11 +71,22 @@ const routes: RouteRecordRaw[] = [
         redirect: '/chat',
       },
       {
+        path: 'chat/search',
+        name: 'chat-search',
+        component: () => import('@/views/chat/search/index.vue'),
+        meta: {
+          title: '搜尋對話',
+          activeModule: 'search-conversation',
+          requiresAuth: true,
+        },
+      },
+      {
         path: 'chat/:id?',
         name: 'chat',
         component: () => import('@/views/chat/index.vue'),
         meta: {
           title: 'AI 聊天',
+          activeModule: 'new-chat',
           requiresAuth: true,
         },
       },
@@ -76,6 +96,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/knowledge-base/index.vue'),
         meta: {
           title: '知識庫',
+          activeModule: 'knowledge-base',
           requiresAuth: true,
         },
       },
@@ -85,6 +106,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/e-form/index.vue'),
         meta: {
           title: '電子表單',
+          activeModule: 'eform',
           requiresAuth: true,
         },
       },
@@ -94,6 +116,7 @@ const routes: RouteRecordRaw[] = [
         redirect: '/organization/departments',
         meta: {
           title: '組織管理',
+          activeModule: 'organization',
           requiresAuth: true,
         },
         children: [
@@ -101,11 +124,13 @@ const routes: RouteRecordRaw[] = [
             path: 'departments',
             name: 'organization-departments',
             component: () => import('@/views/organization/DepartmentsTab.vue'),
+            meta: { title: '部門管理', activeModule: 'organization' },
           },
           {
             path: 'staff',
             name: 'organization-staff',
             component: () => import('@/views/staff/index.vue'),
+            meta: { title: '員工管理', activeModule: 'organization' },
           },
         ],
       },
@@ -126,7 +151,14 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   // 設定頁面標題
   if (to.meta.title) {
-    document.title = `${to.meta.title} - Farmer Admin System`;
+    const matched = to.matched.filter((r) => r.meta?.title);
+    if (matched.length >= 2) {
+      const parentTitle = matched[matched.length - 2].meta.title as string;
+      const childTitle = matched[matched.length - 1].meta.title as string;
+      document.title = `${parentTitle}-${childTitle} - Farmer Admin System`;
+    } else {
+      document.title = `${to.meta.title} - Farmer Admin System`;
+    }
   }
 
   // 認證守衛

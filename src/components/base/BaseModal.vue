@@ -11,7 +11,7 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
+                  :d="ICONS.CLOSE"
                 />
               </svg>
             </button>
@@ -39,6 +39,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+
+import { ICONS } from '@/constants/icons';
 
 interface Props {
   modelValue: boolean;
@@ -222,18 +224,5 @@ const handleConfirm = () => {
 .modal-leave-to .modal-container {
   opacity: 0;
   transform: scale(0.95);
-}
-
-/* 響應式 */
-@media (width <=640px) {
-  .modal-container {
-    max-width: 100% !important;
-    max-height: 100vh;
-    border-radius: 0;
-  }
-
-  .modal-overlay {
-    padding: 0;
-  }
 }
 </style>

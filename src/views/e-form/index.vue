@@ -1,27 +1,26 @@
 <template>
   <div class="eform-page">
-    <PageHeader
-      title="電子表單生成"
+    <ViewToolbar
       subtitle="選擇業務別和所需表單，填入申請人基本資訊，系統將自動套用至各表單對應欄位"
     >
-      <template #action>
-        <!-- 歷程按鈕 -->
-        <button class="btn-history" @click="showHistory = true">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="btn-icon">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          生成歷程
+      <template #actions>
+        <IconBtn label="生成歷程" variant="primary" @click="showHistory = true">
+          <template #icon>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="btn-icon">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </template>
           <span v-if="eformStore.sessions.length" class="history-badge">{{
             eformStore.sessions.length
           }}</span>
-        </button>
+        </IconBtn>
       </template>
-    </PageHeader>
+    </ViewToolbar>
 
     <!-- 步驟進度條 -->
     <div class="step-card">
@@ -115,7 +114,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 
-import PageHeader from '@/components/common/PageHeader.vue';
+import IconBtn from '@/components/base/IconBtn.vue';
+import ViewToolbar from '@/components/common/ViewToolbar.vue';
 import { useEFormStore } from '@/stores/eform';
 import { useUserStore } from '@/stores/user';
 import type { ApplicantFieldDef, EFormTemplate } from '@/types/form';
@@ -215,32 +215,6 @@ function handleRestart() {
   max-width: 900px;
   padding: 2rem;
   margin: 0 auto;
-}
-
-/* 歷程按鈕 */
-.btn-history {
-  position: relative;
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 0.625rem 1.125rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  cursor: pointer;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: 0.5rem;
-}
-
-.btn-history:hover {
-  color: var(--primary);
-  background: color-mix(in srgb, var(--primary) 6%, var(--bg-tertiary));
-  border-color: var(--primary);
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
 }
 
 .history-badge {

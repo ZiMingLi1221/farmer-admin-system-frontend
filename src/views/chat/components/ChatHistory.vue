@@ -2,9 +2,8 @@
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+import BaseModal from '@/components/base/BaseModal.vue';
 import { useChatStore } from '@/stores/chat';
-
-import DeleteConfirmModal from './modals/DeleteConfirmModal.vue';
 
 /**
  * 對話歷史組件
@@ -112,7 +111,13 @@ const formatDateTime = (date: Date | string): string => {
       </div>
     </div>
 
-    <DeleteConfirmModal v-if="showDeleteModal" @confirm="confirmDelete" @cancel="cancelDelete" />
+    <BaseModal v-model="showDeleteModal" title="刪除對話" size="sm" @close="cancelDelete">
+      <p>確定要刪除此對話？此動作無法復原。</p>
+      <template #footer>
+        <button class="btn-cancel" @click="cancelDelete">取消</button>
+        <button class="btn-danger" @click="confirmDelete">確認刪除</button>
+      </template>
+    </BaseModal>
   </div>
 </template>
 
@@ -252,5 +257,38 @@ const formatDateTime = (date: Date | string): string => {
 .delete-button:hover {
   color: var(--error);
   background-color: color-mix(in srgb, var(--error) 10%, transparent);
+}
+
+.btn-cancel,
+.btn-danger {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-sm);
+}
+
+.btn-cancel {
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+.btn-cancel:hover {
+  color: var(--text-primary);
+  background: var(--bg-overlay);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.btn-danger {
+  color: white;
+  background: var(--error);
+}
+
+.btn-danger:hover {
+  background: var(--error-hover);
+  transition: background-color 0.15s ease;
 }
 </style>

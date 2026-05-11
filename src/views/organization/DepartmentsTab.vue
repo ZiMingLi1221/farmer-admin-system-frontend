@@ -1,5 +1,7 @@
 <template>
   <div class="departments-tab">
+    <ViewToolbar subtitle="管理組織部門結構" />
+
     <div class="toolbar">
       <BatchActionToolbar
         v-if="selectedIds.length > 0"
@@ -58,23 +60,29 @@
     />
 
     <!-- 刪除確認 Modal -->
-    <DeleteConfirmModal
-      :open="showDeleteModal"
+    <BaseModal
+      v-model="showDeleteModal"
       :title="deleteModalTitle"
-      detail="刪除後將無法恢復此資料"
-      @confirm="handleConfirmDelete"
-      @cancel="showDeleteModal = false"
-    />
+      size="sm"
+      @close="showDeleteModal = false"
+    >
+      <p>刪除後將無法恢復此資料</p>
+      <template #footer>
+        <button class="btn-cancel" @click="showDeleteModal = false">取消</button>
+        <button class="btn-danger" @click="handleConfirmDelete">確認刪除</button>
+      </template>
+    </BaseModal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 
+import BaseModal from '@/components/base/BaseModal.vue';
 import IconBtn from '@/components/base/IconBtn.vue';
 import BatchActionToolbar from '@/components/common/BatchActionToolbar.vue';
-import DeleteConfirmModal from '@/components/common/DeleteConfirmModal.vue';
 import Pagination from '@/components/common/Pagination.vue';
+import ViewToolbar from '@/components/common/ViewToolbar.vue';
 import { usePagination } from '@/composables/usePagination';
 import { usePermission } from '@/composables/usePermission';
 import { useTableSelection } from '@/composables/useTableSelection';
@@ -251,5 +259,38 @@ const handleBtSubmit = async (payload: CreateBusinessTypePayload | UpdateBusines
 .toolbar-placeholder {
   display: flex;
   justify-content: flex-end;
+}
+
+.btn-cancel,
+.btn-danger {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-sm);
+}
+
+.btn-cancel {
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+.btn-cancel:hover {
+  color: var(--text-primary);
+  background: var(--bg-overlay);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.btn-danger {
+  color: white;
+  background: var(--error);
+}
+
+.btn-danger:hover {
+  background: var(--error-hover);
+  transition: background-color 0.15s ease;
 }
 </style>

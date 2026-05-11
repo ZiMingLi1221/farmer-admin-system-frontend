@@ -12,10 +12,12 @@ import { useSidebarStore } from '@/stores/sidebar';
 
 interface Props {
   hasHeader?: boolean;
+  isMobile?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   hasHeader: false,
+  isMobile: false,
 });
 
 const route = useRoute();
@@ -34,18 +36,30 @@ watch(
 );
 
 const mainLayoutStyles = computed(() => {
-  const mainWidth = sidebarStore.isCollapsed ? 64 : sidebarStore.sidebarWidth;
+  const paddingTop = props.hasHeader ? '4rem' : '0';
+
+  if (props.isMobile) {
+    return {
+      marginLeft: '0',
+      width: '100%',
+      paddingTop,
+      transition: 'none',
+    };
+  }
+
+  const mainWidth = sidebarStore.isCollapsed ? 64 : sidebarStore.displayWidth;
   const marginLeft = `${mainWidth}px`;
   const width = `calc(100% - ${marginLeft})`;
-  const paddingTop = props.hasHeader ? '4rem' : '0';
+  const isResizing = sidebarStore.liveSidebarWidth !== null;
 
   return {
     marginLeft,
     width,
     paddingTop,
-    transition: isSwitchingRoute.value
-      ? 'none'
-      : 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    transition:
+      isSwitchingRoute.value || isResizing
+        ? 'none'
+        : 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   };
 });
 </script>
