@@ -29,6 +29,7 @@ public/sample.pdf
 *.njsproj
 *.sln
 *.sw?
+*.tsbuildinfo
 
 # source
 source/
