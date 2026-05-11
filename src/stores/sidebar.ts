@@ -1,22 +1,15 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import type { ModuleType } from '@/types';
-
 export const useSidebarStore = defineStore(
   'sidebar',
   () => {
-    const activeModule = ref<ModuleType>('search-conversation');
     const isCollapsed = ref<boolean>(false);
     const sidebarWidth = ref<number>(220);
+    // 拖拽期間的即時寬度（不寫入 localStorage），mouseup 後才同步到 sidebarWidth
+    const liveSidebarWidth = ref<number | null>(null);
 
-    const isChatModule = computed(
-      () => activeModule.value === 'search-conversation' || activeModule.value === 'new-chat'
-    );
-
-    const setActiveModule = (module: ModuleType): void => {
-      activeModule.value = module;
-    };
+    const displayWidth = computed(() => liveSidebarWidth.value ?? sidebarWidth.value);
 
     const toggleCollapsed = (): void => {
       isCollapsed.value = !isCollapsed.value;
@@ -26,17 +19,34 @@ export const useSidebarStore = defineStore(
       sidebarWidth.value = Math.min(360, Math.max(220, width));
     };
 
+    const isMobileDrawerOpen = ref<boolean>(false);
+
+    const openMobileDrawer = (): void => {
+      isMobileDrawerOpen.value = true;
+    };
+    const closeMobileDrawer = (): void => {
+      isMobileDrawerOpen.value = false;
+    };
+    const toggleMobileDrawer = (): void => {
+      isMobileDrawerOpen.value = !isMobileDrawerOpen.value;
+    };
+
     return {
-      activeModule,
       isCollapsed,
       sidebarWidth,
-      isChatModule,
-      setActiveModule,
+      liveSidebarWidth,
+      displayWidth,
+      isMobileDrawerOpen,
       toggleCollapsed,
       setSidebarWidth,
+      openMobileDrawer,
+      closeMobileDrawer,
+      toggleMobileDrawer,
     };
   },
   {
-    persist: true,
+    persist: {
+      pick: ['isCollapsed', 'sidebarWidth'],
+    },
   }
 );

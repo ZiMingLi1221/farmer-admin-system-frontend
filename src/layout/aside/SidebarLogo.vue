@@ -1,61 +1,56 @@
 <template>
-  <!-- 收合狀態：panel-left 圖示 -->
-  <button
-    v-if="sidebarStore.isCollapsed"
-    ref="hamburgerRef"
-    class="hamburger-btn"
-    aria-label="展開側邊欄"
-    @click="sidebarStore.toggleCollapsed()"
-    @mouseenter="handleHamburgerMouseEnter"
-    @mouseleave="handleHamburgerMouseLeave"
-  >
-    <svg class="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.PANEL_LEFT" />
-    </svg>
-
-    <!-- Hamburger Tooltip -->
-    <Teleport to="body">
-      <Transition name="tooltip">
-        <div v-if="showHamburgerTooltip" class="menu-tooltip" :style="hamburgerTooltipStyle">
-          展開側邊欄
-          <div class="tooltip-arrow"></div>
-        </div>
-      </Transition>
-    </Teleport>
-  </button>
-
-  <!-- 展開狀態：Logo + 收合按鈕 -->
-  <div v-else class="logo-header">
-    <button class="logo-button" title="新對話" @click="handleLogoClick">
-      <img :src="farmersLogo" alt="農會 LOGO" class="logo-image" />
+  <div class="logo-header" :class="{ collapsed: sidebarStore.isCollapsed }">
+    <button
+      ref="logoRef"
+      class="logo-button"
+      :aria-label="sidebarStore.isCollapsed ? '展開側邊欄' : '新對話'"
+      @click="handleLogoClick"
+      @mouseenter="handleLogoMouseEnter"
+      @mouseleave="handleLogoMouseLeave"
+    >
+      <img :src="farmersLogo" class="logo-default" alt="" />
+      <svg class="hamburger-hover" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          :d="ICONS.PANEL_LEFT"
+        />
+      </svg>
     </button>
+
     <button
       ref="collapseRef"
       class="collapse-btn"
-      title="收合側邊欄"
+      aria-label="收合側邊欄"
+      tabindex="-1"
       @click="sidebarStore.toggleCollapsed()"
       @mouseenter="handleCollapseMouseEnter"
       @mouseleave="handleCollapseMouseLeave"
     >
       <svg class="collapse-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          :d="ICONS.PANEL_LEFT"
+        />
       </svg>
-
-      <!-- Collapse Tooltip -->
-      <Teleport to="body">
-        <Transition name="tooltip">
-          <div v-if="showCollapseTooltip" class="menu-tooltip" :style="collapseTooltipStyle">
-            收合側邊欄
-            <div class="tooltip-arrow"></div>
-          </div>
-        </Transition>
-      </Teleport>
     </button>
+
+    <Teleport to="body">
+      <Transition name="tooltip">
+        <div v-if="activeTooltip" class="menu-tooltip" :style="tooltipStyle">
+          {{ activeTooltip }}
+          <div class="tooltip-arrow"></div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import farmersLogo from '@/assets/images/national_farmers_logo.png';
@@ -67,100 +62,167 @@ const router = useRouter();
 const sidebarStore = useSidebarStore();
 const chatStore = useChatStore();
 
-const hamburgerRef = ref<HTMLButtonElement | null>(null);
+const logoRef = ref<HTMLButtonElement | null>(null);
 const collapseRef = ref<HTMLButtonElement | null>(null);
-const showHamburgerTooltip = ref(false);
-const showCollapseTooltip = ref(false);
-const hamburgerTooltipStyle = ref({});
-const collapseTooltipStyle = ref({});
 
-let hamburgerTooltipTimer: number | null = null;
-let collapseTooltipTimer: number | null = null;
+const activeTooltip = ref<string | null>(null);
+const tooltipStyle = ref<Record<string, string>>({});
+let tooltipTimer: number | null = null;
+
+const clearTooltipTimer = (): void => {
+  if (tooltipTimer !== null) {
+    clearTimeout(tooltipTimer);
+    tooltipTimer = null;
+  }
+};
+
+const showTooltip = (el: HTMLElement, text: string): void => {
+  clearTooltipTimer();
+  tooltipTimer = window.setTimeout(() => {
+    const rect = el.getBoundingClientRect();
+    tooltipStyle.value = {
+      top: `${rect.top + rect.height / 2}px`,
+      left: `${rect.right + 12}px`,
+      transform: 'translateY(-50%)',
+    };
+    activeTooltip.value = text;
+  }, 500);
+};
+
+const hideTooltip = (): void => {
+  clearTooltipTimer();
+  activeTooltip.value = null;
+};
 
 const handleLogoClick = (): void => {
+  if (sidebarStore.isCollapsed) {
+    sidebarStore.toggleCollapsed();
+    return;
+  }
   chatStore.setCurrentConversation(null);
-  sidebarStore.setActiveModule('new-chat');
   router.push('/chat');
 };
 
-const clearHamburgerTooltipTimer = (): void => {
-  if (hamburgerTooltipTimer) {
-    clearTimeout(hamburgerTooltipTimer);
-    hamburgerTooltipTimer = null;
-  }
+const handleLogoMouseEnter = (): void => {
+  if (!sidebarStore.isCollapsed || !logoRef.value) return;
+  showTooltip(logoRef.value, '展開側邊欄');
 };
 
-const clearCollapseTooltipTimer = (): void => {
-  if (collapseTooltipTimer) {
-    clearTimeout(collapseTooltipTimer);
-    collapseTooltipTimer = null;
-  }
-};
-
-const handleHamburgerMouseEnter = (): void => {
-  clearHamburgerTooltipTimer();
-  hamburgerTooltipTimer = window.setTimeout(() => {
-    if (hamburgerRef.value) {
-      const rect = hamburgerRef.value.getBoundingClientRect();
-      hamburgerTooltipStyle.value = {
-        top: `${rect.top + rect.height / 2}px`,
-        left: `${rect.right + 12}px`,
-        transform: 'translateY(-50%)',
-      };
-      showHamburgerTooltip.value = true;
-    }
-  }, 500);
-};
-
-const handleHamburgerMouseLeave = (): void => {
-  clearHamburgerTooltipTimer();
-  showHamburgerTooltip.value = false;
+const handleLogoMouseLeave = (): void => {
+  hideTooltip();
 };
 
 const handleCollapseMouseEnter = (): void => {
-  clearCollapseTooltipTimer();
-  collapseTooltipTimer = window.setTimeout(() => {
-    if (collapseRef.value) {
-      const rect = collapseRef.value.getBoundingClientRect();
-      collapseTooltipStyle.value = {
-        top: `${rect.top + rect.height / 2}px`,
-        left: `${rect.right + 12}px`,
-        transform: 'translateY(-50%)',
-      };
-      showCollapseTooltip.value = true;
-    }
-  }, 500);
+  if (sidebarStore.isCollapsed || !collapseRef.value) return;
+  showTooltip(collapseRef.value, '收合側邊欄');
 };
 
 const handleCollapseMouseLeave = (): void => {
-  clearCollapseTooltipTimer();
-  showCollapseTooltip.value = false;
+  hideTooltip();
 };
+
+// 切換收合狀態時清掉殘留 tooltip
+watch(
+  () => sidebarStore.isCollapsed,
+  () => {
+    hideTooltip();
+  }
+);
 </script>
 
 <style scoped>
-/* 漢堡按鈕（收合狀態） */
-.hamburger-btn {
+.logo-header {
   display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.75rem;
+  overflow: hidden;
+}
+
+/* Logo 按鈕：左側固定位置，收合 / 展開皆同 */
+.logo-button {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   cursor: pointer;
   background: transparent;
   border: none;
   border-radius: var(--radius-sm);
 }
 
-.hamburger-btn:hover {
+.logo-button:hover {
   background: var(--bg-overlay);
   transition: background-color 0.15s ease;
 }
 
-.menu-icon {
+.logo-default {
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+}
+
+.hamburger-hover {
+  display: none;
   width: 1.25rem;
   height: 1.25rem;
+}
+
+/* 收合時 hover Logo → 顯示漢堡，提示可展開 */
+.logo-header.collapsed .logo-button:hover .logo-default {
+  display: none;
+}
+
+.logo-header.collapsed .logo-button:hover .hamburger-hover {
+  display: block;
+}
+
+/* 收合 / 展開按鈕：展開時在右側，收合時向左淡出 */
+.collapse-btn {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.collapse-btn:hover {
+  background: var(--bg-overlay);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.logo-header.collapsed .collapse-btn {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.collapse-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+@media (width <= 767px) {
+  .collapse-btn {
+    display: none;
+  }
 }
 
 /* Tooltip */
@@ -207,67 +269,5 @@ const handleCollapseMouseLeave = (): void => {
 .tooltip-enter-from,
 .tooltip-leave-to {
   opacity: 0;
-}
-
-/* 展開狀態標頭 */
-.logo-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0 0.5rem 0 0;
-}
-
-/* Logo 按鈕 */
-.logo-button {
-  display: flex;
-  gap: 0.625rem;
-  align-items: center;
-  height: 2.5rem;
-  padding: 0 0.75rem;
-  color: var(--text-primary);
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-}
-
-.logo-button:hover {
-  background: var(--bg-overlay);
-  transition: background-color 0.15s ease;
-}
-
-.logo-image {
-  width: 2rem;
-  height: 2rem;
-  object-fit: contain;
-}
-
-/* 收合按鈕 */
-.collapse-btn {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  color: var(--text-tertiary);
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-xs);
-}
-
-.collapse-btn:hover {
-  color: var(--text-secondary);
-  background: var(--bg-overlay);
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
-}
-
-.collapse-icon {
-  width: 1rem;
-  height: 1rem;
 }
 </style>

@@ -1,25 +1,21 @@
 <template>
-  <SearchConversationModal v-model:open="showSearchModal" />
   <div
     ref="sidebarRef"
     class="main-sidebar"
     :class="{ collapsed: sidebarStore.isCollapsed }"
-    :style="!sidebarStore.isCollapsed ? { width: sidebarStore.sidebarWidth + 'px' } : {}"
+    :style="!sidebarStore.isCollapsed ? { width: sidebarStore.displayWidth + 'px' } : {}"
   >
     <div class="logo-container">
       <SidebarLogo />
     </div>
 
     <nav class="menu-nav">
-      <div
-        class="menu-items-top scrollbar-custom"
-        :class="{ 'items-center': sidebarStore.isCollapsed }"
-      >
+      <div class="menu-items-top scrollbar-custom">
         <SidebarMenu
           v-for="item in filteredMenuItems"
           :key="item.id"
           :item="item"
-          :is-active="sidebarStore.activeModule === item.id"
+          :is-active="activeModule === item.id"
           :is-new-chat="item.id === 'new-chat'"
           :is-collapsed="sidebarStore.isCollapsed"
           @click="handleItemClick(item)"
@@ -30,7 +26,7 @@
         <RecentConversations />
       </div>
 
-      <div class="menu-items-bottom" :class="{ 'items-center': sidebarStore.isCollapsed }">
+      <div class="menu-items-bottom">
         <SidebarMenu
           ref="userButtonRef"
           :item="userItem"
@@ -56,7 +52,6 @@
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import SearchConversationModal from '@/components/SearchConversationModal.vue';
 import { usePermission } from '@/composables/usePermission';
 import { NAVIGATION_ITEMS } from '@/constants/navigation';
 import { useChatStore } from '@/stores/chat';
@@ -75,8 +70,9 @@ const route = useRoute();
 const { hasRoutePermission } = usePermission();
 
 const showUserMenu = ref(false);
-const showSearchModal = ref(false);
 const sidebarRef = ref<HTMLElement | null>(null);
+
+const activeModule = computed(() => route.meta?.activeModule ?? null);
 const userButtonRef = ref<InstanceType<typeof SidebarMenu> | null>(null);
 const userMenuPosition = ref({ bottom: 0, left: 0 });
 
@@ -100,7 +96,10 @@ const recalculatePosition = (): void => {
   const el = userButtonRef.value?.$el as HTMLElement | undefined;
   if (!el) return;
   const rect = el.getBoundingClientRect();
-  userMenuPosition.value = { bottom: window.innerHeight - rect.bottom, left: rect.right + 12 };
+  userMenuPosition.value = {
+    bottom: window.innerHeight - rect.top + 8,
+    left: rect.left,
+  };
 };
 
 const openUserMenu = (): void => {
@@ -111,9 +110,22 @@ const openUserMenu = (): void => {
   const el = userButtonRef.value?.$el as HTMLElement | undefined;
   if (!el) return;
   const rect = el.getBoundingClientRect();
-  userMenuPosition.value = { bottom: window.innerHeight - rect.bottom, left: rect.right + 12 };
+  userMenuPosition.value = {
+    bottom: window.innerHeight - rect.top + 8,
+    left: rect.left,
+  };
   showUserMenu.value = true;
 };
+
+watch(
+  () => [route.name, route.params.id] as const,
+  () => {
+    if (route.name !== 'chat' || !route.params.id) {
+      chatStore.setCurrentConversation(null);
+    }
+  },
+  { immediate: true }
+);
 
 watch(showUserMenu, (open) => {
   if (open) {
@@ -132,33 +144,42 @@ onUnmounted(() => {
 
 const handleItemClick = (item: MenuItem): void => {
   if (item.id === 'new-chat') {
-    router.push('/chat');
     chatStore.setCurrentConversation(null);
-    sidebarStore.setActiveModule('new-chat');
+    router.push('/chat');
+    sidebarStore.closeMobileDrawer();
     return;
   }
 
   if (item.id === 'search-conversation') {
-    showSearchModal.value = true;
+    router.push('/chat/search');
+    sidebarStore.closeMobileDrawer();
     return;
   }
 
-  sidebarStore.setActiveModule(item.id);
   if (item.route && route.path !== item.route) {
     router.push(item.route);
   }
+  sidebarStore.closeMobileDrawer();
 };
 
 const startResize = (e: MouseEvent): void => {
   e.preventDefault();
   const startX = e.clientX;
   const startWidth = sidebarStore.sidebarWidth;
+  let rafId = 0;
+  let pendingWidth = startWidth;
 
+  sidebarStore.liveSidebarWidth = startWidth;
   sidebarRef.value?.classList.add('is-resizing');
 
+  const flush = (): void => {
+    rafId = 0;
+    sidebarStore.liveSidebarWidth = Math.min(360, Math.max(220, pendingWidth));
+  };
+
   const onMouseMove = (moveEvent: MouseEvent): void => {
-    const delta = moveEvent.clientX - startX;
-    sidebarStore.setSidebarWidth(startWidth + delta);
+    pendingWidth = startWidth + (moveEvent.clientX - startX);
+    if (rafId === 0) rafId = requestAnimationFrame(flush);
   };
 
   const onMouseUp = (): void => {
@@ -167,6 +188,12 @@ const startResize = (e: MouseEvent): void => {
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
     sidebarRef.value?.classList.remove('is-resizing');
+    if (rafId !== 0) cancelAnimationFrame(rafId);
+    const finalWidth = sidebarStore.liveSidebarWidth;
+    if (finalWidth !== null) {
+      sidebarStore.setSidebarWidth(finalWidth);
+      sidebarStore.liveSidebarWidth = null;
+    }
   };
 
   document.addEventListener('mousemove', onMouseMove);
@@ -182,7 +209,7 @@ const startResize = (e: MouseEvent): void => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 1.5rem 0 0;
+  padding: 0;
   overflow: hidden;
   background-color: var(--bg-secondary);
 
@@ -220,8 +247,8 @@ const startResize = (e: MouseEvent): void => {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  height: 3.5rem;
-  margin-bottom: 1.5rem;
+  height: 4rem;
+  margin-bottom: 0;
   overflow: hidden;
 }
 
@@ -237,7 +264,7 @@ const startResize = (e: MouseEvent): void => {
   flex: 1;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 0 0.75rem;
+  padding: 0.5rem 0.75rem 0;
   overflow: hidden auto;
 }
 
@@ -255,5 +282,20 @@ const startResize = (e: MouseEvent): void => {
   padding: 1rem 0.75rem 1.5rem;
   margin-top: auto;
   background-color: var(--bg-secondary);
+}
+
+@media (width <= 767px) {
+  .main-sidebar {
+    width: 280px !important;
+    padding-top: 0;
+  }
+
+  .main-sidebar.collapsed {
+    width: 280px !important;
+  }
+
+  .resize-handle {
+    display: none;
+  }
 }
 </style>

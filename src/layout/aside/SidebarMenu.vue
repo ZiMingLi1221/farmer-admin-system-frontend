@@ -106,10 +106,12 @@ const handleMouseLeave = (): void => {
 <style scoped>
 .menu-button {
   display: flex;
+  gap: 0.75rem;
   align-items: center;
-  justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  justify-content: flex-start;
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 0.625rem;
   color: var(--text-secondary);
   cursor: pointer;
   background-color: transparent;
@@ -122,8 +124,7 @@ const handleMouseLeave = (): void => {
   background-color: var(--bg-tertiary);
   transition:
     background-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
+    color 0.2s ease;
 }
 
 .menu-button.active {
@@ -135,16 +136,6 @@ const handleMouseLeave = (): void => {
   background-color: var(--primary-hover);
 }
 
-/* 展開狀態 */
-.menu-button.expanded {
-  gap: 0.75rem;
-  justify-content: flex-start;
-  width: 100%;
-  height: 2.5rem;
-  padding: 0 0.75rem;
-  border-radius: var(--radius-sm);
-}
-
 .menu-label {
   font-size: 0.9375rem;
   font-weight: 500;
@@ -154,8 +145,8 @@ const handleMouseLeave = (): void => {
 
 .menu-icon {
   flex-shrink: 0;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 /* 新對話按鈕獨立樣式 */
@@ -174,8 +165,8 @@ const handleMouseLeave = (): void => {
 }
 
 .new-chat-button:active .new-chat-icon {
-  width: 1.35rem;
-  height: 1.35rem;
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
 /* Tooltip */

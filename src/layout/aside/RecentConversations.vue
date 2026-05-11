@@ -1,6 +1,9 @@
 <template>
   <div v-if="!sidebarStore.isCollapsed" class="recent-section">
     <button class="section-header" @click="isSectionOpen = !isSectionOpen">
+      <svg class="section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.CLOCK" />
+      </svg>
       <span class="section-title">最近對話</span>
       <svg
         class="chevron"
@@ -55,13 +58,22 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              :d="ICONS.DELETE"
             />
           </svg>
           <span>刪除對話</span>
         </button>
       </div>
     </Teleport>
+
+    <!-- 刪除確認 Modal -->
+    <BaseModal v-model="showDeleteModal" title="刪除對話" size="sm" @close="cancelDelete">
+      <p>確定要刪除此對話？此動作無法復原。</p>
+      <template #footer>
+        <button class="btn-cancel" @click="cancelDelete">取消</button>
+        <button class="btn-danger" @click="confirmDelete">確認刪除</button>
+      </template>
+    </BaseModal>
   </div>
 </template>
 
@@ -69,6 +81,8 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
+import BaseModal from '@/components/base/BaseModal.vue';
+import { ICONS } from '@/constants/icons';
 import { useChatStore } from '@/stores/chat';
 import { useSidebarStore } from '@/stores/sidebar';
 
@@ -114,6 +128,7 @@ const handleItemMouseLeave = (): void => {
 const handleConvClick = (id: string): void => {
   chatStore.setCurrentConversation(id);
   router.push(`/chat/${id}`);
+  sidebarStore.closeMobileDrawer();
 };
 
 // ⋮ Context menu
@@ -143,14 +158,30 @@ const closeContextMenu = (): void => {
   openMenuId.value = null;
 };
 
+const showDeleteModal = ref(false);
+const pendingDeleteId = ref<string | null>(null);
+
 const handleDeleteConv = (): void => {
   if (openMenuId.value === null) return;
-  const idToDelete = openMenuId.value;
+  pendingDeleteId.value = openMenuId.value;
   openMenuId.value = null;
+  showDeleteModal.value = true;
+};
+
+const confirmDelete = (): void => {
+  if (pendingDeleteId.value === null) return;
+  const idToDelete = pendingDeleteId.value;
   chatStore.deleteConversation(idToDelete);
   if (chatStore.currentConversationId === idToDelete) {
     router.push('/chat');
   }
+  pendingDeleteId.value = null;
+  showDeleteModal.value = false;
+};
+
+const cancelDelete = (): void => {
+  pendingDeleteId.value = null;
+  showDeleteModal.value = false;
 };
 
 // Lazy loading
@@ -215,11 +246,12 @@ onUnmounted(() => {
 
 .section-header {
   display: flex;
+  gap: 0.75rem;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   width: 100%;
-  padding: 0.375rem 0.75rem;
-  overflow: hidden;
+  height: 2.5rem;
+  padding: 0 0.625rem;
   color: var(--text-secondary);
   cursor: pointer;
   background-color: transparent;
@@ -235,11 +267,17 @@ onUnmounted(() => {
     color 0.2s ease;
 }
 
+.section-icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 .section-title {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  flex: 1;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-align: left;
   white-space: nowrap;
 }
 
@@ -316,29 +354,44 @@ onUnmounted(() => {
   padding: 0;
   font-size: 1rem;
   line-height: 1;
-  color: var(--text-tertiary);
+  color: var(--text-primary);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   opacity: 0;
 }
 
 .conversation-item:hover .more-btn {
   opacity: 1;
-  transition: opacity 0.15s ease;
-}
-
-.conversation-item.active .more-btn {
-  color: var(--text-on-primary);
-}
-
-.conversation-item.active:hover .more-btn {
-  opacity: 0.75;
+  transition:
+    opacity 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .more-btn:hover {
   background: var(--bg-overlay);
+}
+
+.conversation-item.active .more-btn {
+  color: var(--text-on-primary);
+  background: transparent;
+  opacity: 1;
+}
+
+.conversation-item.active:hover .more-btn {
+  opacity: 1;
+}
+
+.conversation-item.active .more-btn:hover {
+  color: var(--text-on-primary);
+  background: rgb(255 255 255 / 20%);
+}
+
+@media (width <= 767px) {
+  .more-btn {
+    opacity: 1;
+  }
 }
 
 .sentinel {
@@ -429,5 +482,39 @@ onUnmounted(() => {
 .tooltip-enter-from,
 .tooltip-leave-to {
   opacity: 0;
+}
+
+/* 刪除確認 Modal 按鈕 */
+.btn-cancel,
+.btn-danger {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-sm);
+}
+
+.btn-cancel {
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+.btn-cancel:hover {
+  color: var(--text-primary);
+  background: var(--bg-overlay);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.btn-danger {
+  color: white;
+  background: var(--error);
+}
+
+.btn-danger:hover {
+  background: var(--error-hover);
+  transition: background-color 0.15s ease;
 }
 </style>
