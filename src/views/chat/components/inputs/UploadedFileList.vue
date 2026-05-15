@@ -171,15 +171,15 @@ const handleRemove = (fileId: string): void => {
   min-width: 200px;
   padding: 0.75rem;
   cursor: default;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
+  background-color: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
   transition: all 0.2s;
 }
 
 .file-item:hover {
-  background-color: var(--bg-tertiary);
-  border-color: var(--border-secondary);
+  background-color: var(--bg-hover);
+  border-color: var(--border-strong);
 }
 
 /* ========== 文件名 ========== */
@@ -189,7 +189,7 @@ const handleRemove = (fileId: string): void => {
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.4;
-  color: var(--text-primary);
+  color: var(--text);
   white-space: nowrap;
 }
 
@@ -210,12 +210,12 @@ const handleRemove = (fileId: string): void => {
   flex-shrink: 0;
   width: 1rem;
   height: 1rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .file-size {
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .file-meta-right {
@@ -227,7 +227,7 @@ const handleRemove = (fileId: string): void => {
 .file-progress {
   font-size: 0.75rem;
   font-weight: 500;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .file-error {
@@ -240,13 +240,13 @@ const handleRemove = (fileId: string): void => {
   width: 100%;
   height: 0.25rem;
   overflow: hidden;
-  background-color: var(--bg-tertiary);
+  background-color: var(--bg-hover);
   border-radius: 9999px;
 }
 
 .progress-fill {
   height: 100%;
-  background-color: var(--primary);
+  background-color: var(--accent);
   border-radius: 9999px;
   transition: width 0.3s ease;
 }
@@ -265,7 +265,7 @@ const handleRemove = (fileId: string): void => {
 }
 
 .status-icon.loading {
-  color: var(--primary);
+  color: var(--accent);
   animation: spin 1s linear infinite;
 }
 
@@ -291,11 +291,11 @@ const handleRemove = (fileId: string): void => {
   justify-content: center;
   width: 1.5rem;
   height: 1.5rem;
-  color: var(--text-tertiary);
+  color: var(--text-3);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
   transition: all 0.2s;
 }
 

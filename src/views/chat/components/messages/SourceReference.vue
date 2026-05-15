@@ -1,48 +1,40 @@
 <template>
   <div v-if="references && references.length > 0" class="source-references">
-    <!-- Header -->
-    <div class="source-header">
-      <svg class="source-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-        />
-      </svg>
-      <span class="source-title">引用來源</span>
-      <span class="source-count">{{ references.length }}</span>
-    </div>
-
-    <!-- Source List -->
-    <div class="source-list">
-      <div
-        v-for="(reference, index) in references"
-        :key="reference.chunkId"
-        class="source-item"
-        @click="handleFileClick(reference)"
+    <button type="button" class="source-toggle" :aria-expanded="isOpen" @click="isOpen = !isOpen">
+      <svg
+        class="toggle-chevron"
+        :class="{ open: isOpen }"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
       >
-        <!-- 文件編號 -->
-        <div class="source-number">{{ index + 1 }}</div>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+      <span class="toggle-text">參考來源</span>
+      <span class="toggle-count">{{ references.length }}</span>
+    </button>
 
-        <!-- Source Info -->
-        <div class="source-info">
-          <span class="source-name">{{ reference.documentName }}</span>
-          <span class="source-snippet">{{
-            reference.content.slice(0, 60) + (reference.content.length > 60 ? '...' : '')
-          }}</span>
-        </div>
-
-        <!-- Source Score -->
-        <div class="source-score">
-          <span class="score-value">{{ formatScore(reference.relevanceScore) }}</span>
-        </div>
+    <Transition name="source-expand">
+      <div v-if="isOpen" class="source-chips">
+        <button
+          v-for="(reference, index) in references"
+          :key="reference.chunkId"
+          type="button"
+          class="source-chip"
+          :title="reference.documentName"
+          @click="handleFileClick(reference)"
+        >
+          <span class="chip-number">{{ index + 1 }}</span>
+          <span class="chip-name">{{ reference.documentName }}</span>
+        </button>
       </div>
-    </div>
+    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import { useFilePreview } from '@/composables/useFilePreview';
 import type { DocumentReference } from '@/types/rag';
 
@@ -54,163 +46,125 @@ defineProps<Props>();
 
 const { openPreview } = useFilePreview();
 
+const isOpen = ref(false);
+
 const handleFileClick = (reference: DocumentReference): void => {
   const fileUrl = `/api/v1/knowledge/documents/${reference.documentId}/download`;
-
   openPreview({
     fileName: reference.documentName,
     fileUrl,
     highlightText: reference.content,
   });
 };
-
-const formatScore = (score: number): string => {
-  return `${Math.round(score * 100)}%`;
-};
 </script>
 
 <style scoped>
-/* ========== 來源引用容器 ========== */
 .source-references {
-  padding: 0.875rem 1rem;
   margin-top: 1rem;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
 }
 
-/* ========== Header ========== */
-.source-header {
-  display: flex;
-  gap: 0.5rem;
+.source-toggle {
+  display: inline-flex;
+  gap: 0.375rem;
   align-items: center;
-  margin-bottom: 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.source-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  color: var(--primary);
-}
-
-.source-title {
-  flex: 1;
-}
-
-.source-count {
-  padding: 0.125rem 0.5rem;
-  font-size: 0.75rem;
-  color: var(--primary);
-  background-color: var(--primary-light);
-  border-radius: var(--radius-xs);
-}
-
-/* ========== Source List ========== */
-.source-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* ========== Source Item ========== */
-.source-item {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.625rem 0.75rem;
+  padding: 0.375rem 0.75rem 0.375rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-2);
   cursor: pointer;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
-
-  /* 修正：指定動畫屬性，防止主題切換時背景色彩過渡產生黑閃 */
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 9999px;
 }
 
-.source-item:hover {
-  background-color: var(--bg-tertiary);
-  border-color: var(--primary);
-  box-shadow: 0 2px 4px rgb(0 0 0 / 5%);
-  transform: translateY(-1px);
+.source-toggle:hover {
+  background-color: var(--bg-hover);
+  transition: background-color 0.15s ease;
 }
 
-/* ========== Source Number ========== */
-.source-number {
+.toggle-chevron {
+  width: 0.875rem;
+  height: 0.875rem;
+  transform: rotate(0);
+}
+
+.toggle-chevron.open {
+  transform: rotate(90deg);
+  transition: transform 0.2s ease;
+}
+
+.toggle-count {
+  padding: 0.0625rem 0.4375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  background-color: var(--accent-soft);
+  border-radius: 9999px;
+}
+
+.source-chips {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.625rem;
+}
+
+.source-chip {
+  display: inline-flex;
+  gap: 0.375rem;
+  align-items: center;
+  max-width: 18rem;
+  padding: 0.375rem 0.75rem 0.375rem 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--text);
+  cursor: pointer;
+  background-color: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 9999px;
+}
+
+.source-chip:hover {
+  background-color: var(--bg-hover);
+  transition: background-color 0.15s ease;
+}
+
+.chip-number {
+  display: inline-flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  font-size: 0.75rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: 0.6875rem;
   font-weight: 600;
-  color: var(--primary);
-  background-color: var(--primary-light);
+  color: var(--accent);
+  background-color: var(--accent-soft);
   border-radius: 50%;
 }
 
-/* ========== Source Info ========== */
-.source-info {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-}
-
-.source-name {
+.chip-name {
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-primary);
   white-space: nowrap;
 }
 
-.source-snippet {
+.source-expand-enter-active,
+.source-expand-leave-active {
   overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  white-space: nowrap;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
-/* ========== Source Score ========== */
-.source-score {
-  flex-shrink: 0;
+.source-expand-enter-from,
+.source-expand-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 
-.score-value {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--primary);
-}
-
-/* ========== 響應式設計 ========== */
-@media (width <=768px) {
-  .source-references {
-    padding: 0.75rem 0.875rem;
-  }
-
-  .source-item {
-    padding: 0.5rem 0.625rem;
-  }
-
-  .source-name {
-    font-size: 0.8125rem;
-  }
-
-  .source-snippet {
-    display: none;
-
-    /* 小螢幕隱藏片段 */
+@media (width <= 768px) {
+  .source-chip {
+    max-width: 100%;
   }
 }
 </style>

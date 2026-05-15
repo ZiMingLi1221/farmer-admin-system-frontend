@@ -1,100 +1,38 @@
 <template>
-  <div :class="['message-wrapper', isUser ? 'message-user-wrapper' : 'message-assistant-wrapper']">
-    <div :class="['message-container', isUser ? 'message-user' : 'message-assistant']">
-      <!-- Avatar (Assistant only) -->
-      <div v-if="!isUser" class="message-avatar">
-        <div class="avatar-circle avatar-assistant">
-          <svg class="avatar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-            />
-          </svg>
-        </div>
+  <div
+    :class="['message-wrapper', isUser ? 'message-wrapper-user' : 'message-wrapper-assistant']"
+    tabindex="-1"
+  >
+    <!-- AI 頭像 -->
+    <div v-if="!isUser" class="message-avatar">
+      <LeafIcon class="avatar-leaf" />
+    </div>
+
+    <!-- 訊息主體 -->
+    <div class="message-body">
+      <div v-if="isUser" class="bubble-user">
+        {{ message.content }}
       </div>
 
-      <!-- Message Content -->
-      <div class="message-content">
-        <!-- Attachments (outside bubble, before message) -->
+      <div v-else class="message-assistant-content">
         <div
-          v-if="isUser && message.attachments && message.attachments.length > 0"
-          class="message-attachments-outside"
-        >
-          <div
-            v-for="file in message.attachments"
-            :key="file.id"
-            class="attachment-card-outside"
-            @click="handleAttachmentClick(file)"
-          >
-            <svg class="file-icon-outside" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                :d="ICONS.DOCUMENT"
-              />
-            </svg>
-            <div class="file-info-outside">
-              <span class="file-name-outside">{{ file.name }}</span>
-              <span class="file-meta-outside">{{ formatFileSize(file.size) }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- User Message (with bubble) -->
-        <div v-if="isUser" class="message-bubble bubble-user">
-          <div class="message-text">
-            {{ message.content }}
-          </div>
-
-          <div class="message-timestamp">
-            {{ formattedTime }}
-          </div>
-        </div>
-
-        <!-- Assistant Message (no bubble, Gemini style) -->
-        <div v-else class="message-no-bubble">
-          <div class="message-markdown" v-html="formattedContent" />
-
-          <!-- RAG 引用來源 -->
-          <SourceReference v-if="message.references" :references="message.references" />
-
-          <div class="message-timestamp">
-            {{ formattedTime }}
-          </div>
-        </div>
-
-        <!-- Message Actions -->
-        <div class="message-actions">
-          <!-- 複製按鈕 -->
-          <button class="action-btn" title="複製" @click="handleCopy">
-            <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                :d="ICONS.COPY"
-              />
-            </svg>
-          </button>
-
-          <!-- 重新生成按鈕（僅 AI 消息） -->
-          <button v-if="!isUser" class="action-btn" title="重新生成" @click="handleRegenerate">
-            <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                :d="ICONS.REGENERATE"
-              />
-            </svg>
-          </button>
-        </div>
+          class="message-markdown"
+          :class="{ 'is-streaming': isStreaming }"
+          v-html="formattedContent"
+        />
+        <SourceReference
+          v-if="message.references && message.references.length > 0"
+          :references="message.references"
+        />
       </div>
 
-      <!-- User avatar removed for Gemini style -->
+      <MessageActions
+        v-if="!isStreaming && message.content"
+        :feedback="message.feedback"
+        :user-only="isUser"
+        @copy="handleCopy"
+        @feedback="handleFeedback"
+      />
     </div>
   </div>
 </template>
@@ -102,13 +40,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { useFilePreview } from '@/composables/useFilePreview';
-import { ICONS } from '@/constants/icons';
+import LeafIcon from '@/components/icons/LeafIcon.vue';
 import type { Message } from '@/types/chat';
-import type { UploadedFile } from '@/types/upload';
 import { formatMarkdown } from '@/utils/format';
 
 import { useChat } from '../../composables/useChat';
+import MessageActions from './MessageActions.vue';
 import SourceReference from './SourceReference.vue';
 
 interface Props {
@@ -116,255 +53,135 @@ interface Props {
   conversationId?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<Props>();
 
-const { copyMessage, regenerateMessage } = useChat({ conversationId: props.conversationId });
-const { openPreview } = useFilePreview();
+const { copyMessage, toggleFeedback } = useChat({ conversationId: props.conversationId });
 
 const isUser = computed(() => props.message.role === 'user');
+const isStreaming = computed(() => Boolean(props.message.isStreaming));
 
 const formattedContent = computed(() => {
-  if (isUser.value) {
-    return props.message.content;
-  }
+  if (isUser.value) return props.message.content;
   return formatMarkdown(props.message.content);
 });
 
-const formattedTime = computed(() => {
-  return new Date(props.message.timestamp).toLocaleTimeString('zh-TW', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-});
-
-const handleCopy = async () => {
+const handleCopy = async (): Promise<void> => {
   try {
     await copyMessage(props.message.id);
-  } catch (error) {
-    console.error('複製失敗:', error);
+  } catch (err) {
+    console.error('複製失敗:', err);
   }
 };
 
-const handleRegenerate = async () => {
-  try {
-    await regenerateMessage(props.message.id);
-  } catch (error) {
-    console.error('重新生成失敗:', error);
-  }
-};
-
-const handleAttachmentClick = (file: UploadedFile) => {
-  let url = file.url;
-
-  const rawFile: File | Blob | null | undefined = file.file;
-  if (!url && rawFile instanceof Blob) {
-    try {
-      url = URL.createObjectURL(rawFile);
-    } catch (e) {
-      console.error('無法建立文件預覽 URL:', e);
-    }
-  }
-
-  if (url) {
-    openPreview({
-      fileName: file.name,
-      fileUrl: url,
-    });
-  } else {
-    console.warn('無法預覽文件: 缺少 URL 或有效的文件對象', file);
-  }
-};
-
-const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 B';
-
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return `${Math.round(bytes / Math.pow(k, i))} ${sizes[i]}`;
+const handleFeedback = (kind: 'good' | 'bad'): void => {
+  toggleFeedback(props.message.id, kind);
 };
 </script>
 
 <style scoped>
-/* ========== 訊息包裝器（整體容器） ========== */
+/* ===== 整體 wrapper（每筆訊息） ===== */
 .message-wrapper {
-  width: 100%;
-  max-width: 52rem;
-
-  /* Y軸間距：增加到 2rem */
-  padding: 0 1rem;
-
-  /* 增加寬度：從 48rem (768px) 到 52rem (832px) */
-  margin: 0 auto 2rem;
-}
-
-/* ========== 訊息容器 ========== */
-.message-container {
   display: flex;
-  gap: 1.5rem;
-
-  /* X軸間距：從 1rem 增加到 1.5rem */
+  gap: 1rem;
   align-items: flex-start;
+  width: 100%;
+  padding: 0 1rem;
+  margin: 0 auto 1.75rem;
 }
 
-.message-user {
-  justify-content: flex-end;
+.message-wrapper-user {
+  flex-direction: row-reverse;
 
-  /* 用戶消息靠右對齊 */
+  /* 使用者訊息：靠右並去掉頭像槽位 */
 }
 
-.message-assistant {
+.message-wrapper-assistant {
   flex-direction: row;
-
-  /* AI：頭像在左 */
 }
 
-/* ========== 頭像 ========== */
+/* ===== AI 頭像（葉子無背景） ===== */
 .message-avatar {
-  flex-shrink: 0;
-}
-
-.avatar-circle {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  border-radius: 9999px;
+  margin-top: 0.125rem;
+  color: var(--accent);
 }
 
-.avatar-assistant {
-  background-color: var(--primary);
+.avatar-leaf {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
-.avatar-user {
-  background-color: var(--text-secondary);
-}
-
-.avatar-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: white;
-}
-
-/* ========== 訊息內容區域 ========== */
-.message-content {
+/* ===== 訊息主體 ===== */
+.message-body {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  max-width: 65%;
-
-  /* Gemini 風格：用戶消息最大寬度 */
 }
 
-/* AI 回覆使用全寬並填充可用空間 */
-.message-assistant .message-content {
+.message-wrapper-assistant .message-body {
   flex: 1;
+  align-items: flex-start;
   max-width: 100%;
 }
 
-/* ========== 用戶訊息氣泡（Gemini 風格：有氣泡） ========== */
-.message-bubble {
-  border-radius: var(--radius-md);
+.message-wrapper-user .message-body {
+  align-items: flex-end;
+  max-width: 70%;
 }
 
+/* ===== User：右靠輕泡泡 ===== */
 .bubble-user {
-  padding: 0.875rem 1.125rem;
-  color: white;
-  overflow-wrap: break-word;
-  background-color: var(--primary);
-
-  /* Gemini 風格：右上角直角化（聊天氣泡尾巴效果） */
-  border-top-right-radius: 0.25rem;
-}
-
-/* ========== AI 訊息（Gemini 風格：無氣泡） ========== */
-.message-no-bubble {
-  width: 100%;
-
-  /* Gemini 風格：AI 回覆使用全寬 */
-  padding: 0;
-}
-
-/* ========== 訊息文字 ========== */
-.message-text {
-  line-height: 1.6;
-  overflow-wrap: break-word;
-  white-space: pre-wrap;
-}
-
-/* ========== 時間戳記 ========== */
-.message-timestamp {
-  margin-top: 0.5rem;
-  font-size: 0.75rem;
-  opacity: 0.7;
-}
-
-/* ========== 附件顯示（氣泡外） ========== */
-.message-attachments-outside {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.attachment-card-outside {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
   padding: 0.75rem 1rem;
-  cursor: pointer;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
-}
-
-.attachment-card-outside:hover {
-  background-color: var(--bg-tertiary);
-  border-color: var(--primary);
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease;
-}
-
-.file-icon-outside {
-  flex-shrink: 0;
-  width: 1.5rem;
-  height: 1.5rem;
-  color: var(--text-secondary);
-}
-
-.file-info-outside {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-}
-
-.file-name-outside {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  white-space: nowrap;
-}
-
-.file-meta-outside {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-}
-
-/* ========== Markdown 內容樣式 ========== */
-.message-markdown {
+  font-size: 0.9375rem;
   line-height: 1.6;
+  color: var(--text);
+  word-break: normal;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  background-color: var(--bg-2);
+  border-radius: var(--r-xl) var(--r-sm) var(--r-xl) var(--r-xl);
+}
+
+/* ===== AI：全寬無背景 ===== */
+.message-assistant-content {
+  width: 100%;
+}
+
+.message-markdown {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text);
   overflow-wrap: break-word;
 }
 
+/* 串流中游標效果 */
+.message-markdown.is-streaming :deep(:last-child)::after {
+  display: inline-block;
+  width: 0.45rem;
+  height: 1em;
+  margin-left: 0.15rem;
+  vertical-align: text-bottom;
+  content: '';
+  background-color: var(--accent);
+  border-radius: 1px;
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ===== Markdown 內容樣式 ===== */
 .message-markdown :deep(p) {
   margin-bottom: 0.75rem;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .message-markdown :deep(p:last-child) {
@@ -377,7 +194,7 @@ const formatFileSize = (bytes: number): string => {
   margin-top: 1.25rem;
   margin-bottom: 0.625rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .message-markdown :deep(h1:first-child),
@@ -398,7 +215,6 @@ const formatFileSize = (bytes: number): string => {
   font-size: 1.125rem;
 }
 
-/* ========== 列表樣式 ========== */
 .message-markdown :deep(ul),
 .message-markdown :deep(ol) {
   padding-left: 1.5rem;
@@ -410,14 +226,13 @@ const formatFileSize = (bytes: number): string => {
   line-height: 1.6;
 }
 
-/* ========== 程式碼區塊 ========== */
 .message-markdown :deep(pre) {
   position: relative;
   padding: 1rem;
   margin: 0.75rem 0;
   overflow-x: auto;
-  background-color: var(--bg-tertiary);
-  border-radius: var(--radius-sm);
+  background-color: var(--bg-hover);
+  border-radius: var(--r-md);
 }
 
 .message-markdown :deep(pre code) {
@@ -425,29 +240,21 @@ const formatFileSize = (bytes: number): string => {
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--text);
   background-color: transparent;
 }
 
-/* ========== 行內程式碼 ========== */
 .message-markdown :deep(code) {
   padding: 0.125rem 0.375rem;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.875rem;
-  color: var(--primary);
-  background-color: var(--bg-tertiary);
-  border-radius: var(--radius-sm);
+  color: var(--accent);
+  background-color: var(--bg-hover);
+  border-radius: var(--r-xs);
 }
 
-.message-markdown :deep(pre code) {
-  padding: 0;
-  color: var(--text-primary);
-  background-color: transparent;
-}
-
-/* ========== 連結樣式 ========== */
 .message-markdown :deep(a) {
-  color: var(--primary);
+  color: var(--accent);
   text-decoration: underline;
 }
 
@@ -456,16 +263,14 @@ const formatFileSize = (bytes: number): string => {
   transition: opacity 0.15s ease;
 }
 
-/* ========== 引用樣式 ========== */
 .message-markdown :deep(blockquote) {
   padding-left: 1rem;
   margin: 0.75rem 0;
   font-style: italic;
-  color: var(--text-secondary);
-  border-left: 3px solid var(--primary);
+  color: var(--text-2);
+  border-left: 3px solid var(--accent);
 }
 
-/* ========== 表格樣式 ========== */
 .message-markdown :deep(table) {
   width: 100%;
   margin: 0.75rem 0;
@@ -477,115 +282,52 @@ const formatFileSize = (bytes: number): string => {
 .message-markdown :deep(td) {
   padding: 0.625rem 0.875rem;
   text-align: left;
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--border);
 }
 
 .message-markdown :deep(th) {
   font-weight: 600;
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-1);
 }
 
 .message-markdown :deep(tr:nth-child(even)) {
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-1);
 }
 
-/* ========== 水平線 ========== */
 .message-markdown :deep(hr) {
   margin: 1rem 0;
   border: none;
-  border-top: 1px solid var(--border-primary);
+  border-top: 1px solid var(--border);
 }
 
-/* ========== 圖片樣式 ========== */
 .message-markdown :deep(img) {
   max-width: 100%;
   height: auto;
   margin: 0.75rem 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
-/* ========== 強調樣式 ========== */
 .message-markdown :deep(strong) {
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .message-markdown :deep(em) {
   font-style: italic;
 }
 
-/* ========== 響應式設計 ========== */
-@media (width <=768px) {
-  .message-container {
-    max-width: 100%;
+/* ===== 響應式 ===== */
+@media (width <= 768px) {
+  .message-wrapper {
+    padding: 0 0.75rem;
   }
 
-  .bubble-user {
-    max-width: 80%;
+  .message-wrapper-user .message-body {
+    max-width: 85%;
   }
 
   .message-markdown :deep(pre) {
     font-size: 0.8125rem;
   }
-
-  .message-markdown :deep(table) {
-    font-size: 0.875rem;
-  }
-}
-
-@media (width <=480px) {
-  .bubble-user {
-    max-width: 90%;
-  }
-
-  .avatar-circle {
-    width: 1.75rem;
-    height: 1.75rem;
-  }
-
-  .avatar-icon {
-    width: 1rem;
-    height: 1rem;
-  }
-}
-
-/* ========== 消息操作按鈕 ========== */
-.message-actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  margin-top: 0.5rem;
-  opacity: 0;
-}
-
-.message-wrapper:hover .message-actions {
-  opacity: 1;
-  transition: opacity 0.15s ease;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-}
-
-.action-btn:hover {
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
-}
-
-.action-icon {
-  width: 1.125rem;
-  height: 1.125rem;
 }
 </style>

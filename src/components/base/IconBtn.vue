@@ -52,7 +52,7 @@ const handleClick = (event: MouseEvent) => {
   justify-content: center;
   cursor: pointer;
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
   transition:
     background-color 0.15s ease,
     color 0.15s ease,
@@ -66,37 +66,37 @@ const handleClick = (event: MouseEvent) => {
 }
 
 /* Variants */
-.icon-btn--primary {
-  color: var(--text-on-primary);
-  background-color: var(--primary);
+.icon-btn--accent {
+  color: var(--text-on-accent);
+  background-color: var(--accent);
 }
 
 .icon-btn--primary:hover:not(:disabled),
 .icon-btn--primary:active:not(:disabled) {
-  background-color: var(--primary-hover);
+  background-color: var(--accent-hover);
 }
 
 .icon-btn--secondary {
-  color: var(--text-primary);
-  background-color: var(--bg-secondary);
-  border-color: var(--border-primary);
+  color: var(--text);
+  background-color: var(--bg-1);
+  border-color: var(--border);
 }
 
 .icon-btn--secondary:hover:not(:disabled) {
-  background-color: var(--bg-tertiary);
+  background-color: var(--bg-hover);
 }
 
 .icon-btn--ghost {
-  color: var(--text-primary);
+  color: var(--text);
   background-color: transparent;
 }
 
 .icon-btn--ghost:hover:not(:disabled) {
-  background-color: var(--bg-overlay);
+  background-color: var(--bg-hover);
 }
 
 .icon-btn--danger {
-  color: var(--text-on-primary);
+  color: var(--text-on-accent);
   background-color: var(--error);
 }
 

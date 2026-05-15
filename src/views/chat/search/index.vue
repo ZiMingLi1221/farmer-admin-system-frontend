@@ -101,34 +101,40 @@ onMounted(async () => {
   left: 1rem;
   width: 1.25rem;
   height: 1.25rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   pointer-events: none;
 }
 
 .search-input {
   width: 100%;
-  padding: 0.875rem 1rem 0.875rem 2.75rem;
-  font-size: 1rem;
-  color: var(--text-primary);
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  font-size: 0.9375rem;
+  color: var(--text);
+  background-color: var(--bg-1);
+  border: 2px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.search-input::placeholder {
+  color: var(--text-3);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
+  transition: border-color 0.15s ease;
 }
 
 .conv-list {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .empty-state {
   padding: 2rem 1rem;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-3);
   text-align: center;
 }
 
@@ -138,32 +144,36 @@ onMounted(async () => {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0.875rem 1rem;
-  color: var(--text-primary);
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  color: var(--text-2);
   text-align: left;
   cursor: pointer;
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--border-primary);
+  border-radius: var(--r-md);
 }
 
 .conv-item:hover {
-  background: var(--bg-secondary);
-  transition: background-color 0.15s ease;
+  color: var(--text);
+  background-color: var(--bg-hover);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .conv-title {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 0.9375rem;
   white-space: nowrap;
 }
 
 .conv-time {
   flex-shrink: 0;
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.75rem;
+  color: var(--text-3);
 }
 
 @media (width <= 767px) {

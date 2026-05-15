@@ -249,8 +249,8 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
   /* 呼吸感設計：四周留白與圓角 */
   margin: 1rem 1rem 1rem 0;
   overflow: hidden;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-primary);
+  background-color: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: 0 10px 40px -10px rgb(0 0 0 / 15%);
 
@@ -261,17 +261,19 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
     opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 響應式：當視窗縮小時，面板撐滿剩餘空間（對話列表已被 index.vue 隱藏） */
+/* 響應式 ≤1024px：改為全螢幕 sheet 從右側覆蓋，不再分屏 */
 @media (width <=1024px) {
   .file-preview-panel {
-    /* 扣除左右各 1rem 的邊距 */
-    width: calc(100% - 2rem);
-
-    /* 在小螢幕也保持呼吸感 */
-    height: calc(100% - 2rem);
-    margin: 1rem;
-    border-radius: 16px;
-    box-shadow: none;
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: -8px 0 24px rgb(0 0 0 / 25%);
   }
 }
 
@@ -281,10 +283,10 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1.25rem;
-  background-color: var(--bg-primary, #fff);
+  background-color: var(--bg, #fff);
 
   /* 白色背景 */
-  border-bottom: 1px solid var(--border-primary, #e2e8f0);
+  border-bottom: 1px solid var(--border, #e2e8f0);
 }
 
 .header-left {
@@ -300,7 +302,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
   text-overflow: ellipsis;
   font-size: 1rem;
   font-weight: 500;
-  color: var(--text-primary, #1e293b);
+  color: var(--text, #1e293b);
   white-space: nowrap;
 }
 
@@ -320,13 +322,13 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
   font-weight: 500;
   cursor: pointer;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
   transition: all 0.2s;
 }
 
 .download-btn {
   color: white;
-  background-color: var(--primary, #00ad68);
+  background-color: var(--accent, #00ad68);
 }
 
 .download-btn:hover {
@@ -335,13 +337,13 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
 
 .close-btn {
   padding: 0.25rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   background: transparent;
 }
 
 .close-btn:hover {
   color: var(--error, #ef4444);
-  background-color: var(--bg-tertiary);
+  background-color: var(--bg-hover);
 }
 
 .panel-content {
@@ -447,28 +449,47 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
   滑入/滑出動畫優化 
   重點：同時過渡 opacity, transform, 和影響佈局的屬性 (width, margin, flex)
 */
+
+/* === 桌面 (≥1025px)：從右側推擠滑入 === */
 .slide-in-enter-active,
 .slide-in-leave-active {
   overflow: hidden;
-
-  /* 防止內容溢出 */
   white-space: nowrap;
   transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-
-  /* 防止文字換行導致高度劇烈變化 */
 }
 
 .slide-in-enter-from,
 .slide-in-leave-to {
   flex-grow: 0 !important;
   flex-basis: 0 !important;
-
-  /* 關鍵：讓所有影響寬度的屬性歸零，實現平滑推擠 */
   width: 0 !important;
   min-width: 0 !important;
   margin-right: 0 !important;
   margin-left: 0 !important;
   opacity: 0;
   transform: translateX(20px);
+}
+
+/* === 手機 (≤1024px)：fade + scale(0.96→1) 由中心放大柔和出現 === */
+@media (width <=1024px) {
+  .slide-in-enter-active,
+  .slide-in-leave-active {
+    overflow: visible;
+    white-space: normal;
+    transition:
+      opacity 250ms ease-out,
+      transform 250ms ease-out;
+  }
+
+  .slide-in-enter-from,
+  .slide-in-leave-to {
+    flex-grow: 1 !important;
+    flex-basis: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    opacity: 0;
+    transform: scale(0.96);
+  }
 }
 </style>

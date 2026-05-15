@@ -1,111 +1,13 @@
-<script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-
-import BaseModal from '@/components/base/BaseModal.vue';
-import IconBtn from '@/components/base/IconBtn.vue';
-import { useFilePreview } from '@/composables/useFilePreview';
-import { ICONS } from '@/constants/icons';
-import { useChatStore } from '@/stores/chat';
-
-import ChatInput from './components/inputs/ChatInput.vue';
-// Components
-import ChatEmptyState from './components/messages/ChatEmptyState.vue';
-import ChatMessage from './components/messages/ChatMessage.vue';
-import TypingIndicator from './components/messages/TypingIndicator.vue';
-// 引入文件預覽
-import FilePreviewModal from './components/modals/FilePreviewModal.vue';
-// Composables
-import { useScrollControl } from './composables/useScrollControl';
-
-const route = useRoute();
-const router = useRouter();
-const chatStore = useChatStore();
-const { isOpen } = useFilePreview();
-
-// --- 資料邏輯 ---
-const conversationId = computed(() => route.params.id as string | undefined);
-const currentConversation = computed(() =>
-  conversationId.value ? chatStore.conversations.find((c) => c.id === conversationId.value) : null
-);
-
-// 路由變化更新 Store
-watch(
-  conversationId,
-  (newId) => {
-    if (newId) chatStore.setCurrentConversation(newId);
-  },
-  { immediate: true }
-);
-
-// --- Header ⋮ menu ---
-const showMoreMenu = ref(false);
-const moreMenuStyle = ref<{ top: string; right: string }>({ top: '0px', right: '0px' });
-const showDeleteModal = ref(false);
-
-function toggleMoreMenu(e: MouseEvent) {
-  const btn = e.currentTarget as HTMLElement;
-  const rect = btn.getBoundingClientRect();
-  moreMenuStyle.value = {
-    top: `${rect.bottom + 4}px`,
-    right: `${window.innerWidth - rect.right}px`,
-  };
-  showMoreMenu.value = !showMoreMenu.value;
-}
-
-function handleDeleteCurrent() {
-  showMoreMenu.value = false;
-  showDeleteModal.value = true;
-}
-
-function cancelDelete() {
-  showDeleteModal.value = false;
-}
-
-function confirmDelete() {
-  if (currentConversation.value) {
-    chatStore.deleteConversation(currentConversation.value.id);
-  }
-  showDeleteModal.value = false;
-  router.push('/chat');
-}
-
-function closeMenuOnOutsideClick() {
-  showMoreMenu.value = false;
-}
-
-onMounted(() => window.addEventListener('click', closeMenuOnOutsideClick));
-onUnmounted(() => window.removeEventListener('click', closeMenuOnOutsideClick));
-
-// --- 滾動邏輯 ---
-const messagesContainerRef = ref<HTMLElement | null>(null);
-const { showScrollButton, scrollToBottom, checkScrollPosition } =
-  useScrollControl(messagesContainerRef);
-
-// 監聽訊息變化，自動滾動
-watch(
-  () => currentConversation.value?.messages,
-  async () => {
-    await nextTick();
-    await scrollToBottom(false);
-    nextTick(() => checkScrollPosition());
-  },
-  { deep: true }
-);
-</script>
-
 <template>
   <div class="chat-page" :class="{ 'preview-open': isOpen }">
-    <!-- 左側聊天主區域 -->
     <div ref="messagesContainerRef" class="chat-main-container scrollbar-custom">
       <main class="chat-content">
-        <div class="messages-content-wrapper">
-          <!-- 空狀態 -->
+        <div class="chat-column">
           <ChatEmptyState
             v-if="!currentConversation || currentConversation.messages.length === 0"
+            @select="handleSuggestionSelect"
           />
 
-          <!-- 訊息列表 -->
           <div v-else class="messages-list">
             <ChatMessage
               v-for="message in currentConversation.messages"
@@ -114,10 +16,8 @@ watch(
               :conversation-id="currentConversation.id"
             />
 
-            <!-- 打字指示器 -->
             <TypingIndicator v-if="chatStore.isLoading" />
 
-            <!-- 錯誤提示 -->
             <div v-if="chatStore.error" class="error-message">
               <div class="error-icon">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,7 +25,7 @@ watch(
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    :d="ICONS.ERROR"
                   />
                 </svg>
               </div>
@@ -137,11 +37,9 @@ watch(
           </div>
         </div>
 
-        <!-- 底部間距 -->
-        <div class="messages-bottom-spacing"></div>
+        <div class="messages-bottom-spacing" />
       </main>
 
-      <!-- 固定底部區域 -->
       <div class="chat-sticky-bottom">
         <Transition name="scroll-button-fade">
           <IconBtn
@@ -155,16 +53,14 @@ watch(
         </Transition>
 
         <div class="chat-input-wrapper">
-          <ChatInput :conversation-id="conversationId" />
+          <ChatInput ref="chatInputRef" :conversation-id="conversationId" />
         </div>
       </div>
     </div>
 
-    <!-- 右側預覽面板 (Split View) -->
     <FilePreviewModal />
   </div>
 
-  <!-- Header ⋮ 按鈕注入 -->
   <Teleport
     v-if="currentConversation && currentConversation.messages.length > 0"
     to="#header-actions"
@@ -172,7 +68,6 @@ watch(
     <button class="header-more-btn" aria-label="更多選項" @click.stop="toggleMoreMenu">⋮</button>
   </Teleport>
 
-  <!-- ⋮ Context menu -->
   <Teleport to="body">
     <div v-if="showMoreMenu" class="chat-context-menu" :style="moreMenuStyle">
       <button class="context-menu-item danger" @click="handleDeleteCurrent">
@@ -184,7 +79,6 @@ watch(
     </div>
   </Teleport>
 
-  <!-- 刪除確認 Modal（BaseModal 內部已自帶 Teleport to="body"） -->
   <BaseModal v-model="showDeleteModal" title="刪除對話" size="sm" @close="cancelDelete">
     <p>確定要刪除此對話？此動作無法復原。</p>
     <template #footer>
@@ -194,14 +88,117 @@ watch(
   </BaseModal>
 </template>
 
+<script setup lang="ts">
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+import BaseModal from '@/components/base/BaseModal.vue';
+import IconBtn from '@/components/base/IconBtn.vue';
+import { useFilePreview } from '@/composables/useFilePreview';
+import { ICONS } from '@/constants/icons';
+import { useChatStore } from '@/stores/chat';
+
+import ChatInput from './components/inputs/ChatInput.vue';
+import ChatEmptyState from './components/messages/ChatEmptyState.vue';
+import ChatMessage from './components/messages/ChatMessage.vue';
+import TypingIndicator from './components/messages/TypingIndicator.vue';
+import FilePreviewModal from './components/modals/FilePreviewModal.vue';
+import { useScrollControl } from './composables/useScrollControl';
+
+const route = useRoute();
+const router = useRouter();
+const chatStore = useChatStore();
+const { isOpen, closePreview } = useFilePreview();
+
+const conversationId = computed(() => route.params.id as string | undefined);
+const currentConversation = computed(() =>
+  conversationId.value ? chatStore.conversations.find((c) => c.id === conversationId.value) : null
+);
+
+watch(
+  conversationId,
+  (newId, oldId) => {
+    if (newId) chatStore.setCurrentConversation(newId);
+    // 切換對話時自動關閉預覽面板
+    if (oldId !== undefined && newId !== oldId && isOpen.value) {
+      closePreview();
+    }
+  },
+  { immediate: true }
+);
+
+// 點建議卡 → 填入輸入框
+const chatInputRef = ref<InstanceType<typeof ChatInput> | null>(null);
+const handleSuggestionSelect = (text: string): void => {
+  chatInputRef.value?.setText(text);
+};
+
+// Header ⋮ menu
+const showMoreMenu = ref(false);
+const moreMenuStyle = ref<{ top: string; right: string }>({ top: '0px', right: '0px' });
+const showDeleteModal = ref(false);
+
+const toggleMoreMenu = (e: MouseEvent): void => {
+  const btn = e.currentTarget as HTMLElement;
+  const rect = btn.getBoundingClientRect();
+  moreMenuStyle.value = {
+    top: `${rect.bottom + 4}px`,
+    right: `${window.innerWidth - rect.right}px`,
+  };
+  showMoreMenu.value = !showMoreMenu.value;
+};
+
+const handleDeleteCurrent = (): void => {
+  showMoreMenu.value = false;
+  showDeleteModal.value = true;
+};
+
+const cancelDelete = (): void => {
+  showDeleteModal.value = false;
+};
+
+const confirmDelete = (): void => {
+  if (currentConversation.value) {
+    chatStore.deleteConversation(currentConversation.value.id);
+  }
+  showDeleteModal.value = false;
+  router.push('/chat');
+};
+
+const closeMenuOnOutsideClick = (): void => {
+  showMoreMenu.value = false;
+};
+
+onMounted(() => window.addEventListener('click', closeMenuOnOutsideClick));
+onUnmounted(() => window.removeEventListener('click', closeMenuOnOutsideClick));
+
+// 滾動
+const messagesContainerRef = ref<HTMLElement | null>(null);
+const { showScrollButton, scrollToBottom, checkScrollPosition } =
+  useScrollControl(messagesContainerRef);
+
+watch(
+  () => {
+    const msgs = currentConversation.value?.messages;
+    if (!msgs?.length) return '0|';
+    const last = msgs[msgs.length - 1];
+    return `${msgs.length}|${last.content}`;
+  },
+  async () => {
+    await nextTick();
+    await scrollToBottom(false);
+    nextTick(() => checkScrollPosition());
+  }
+);
+</script>
+
 <style scoped>
-/* ========== 佈局 ========== */
 .chat-page {
   display: flex;
   flex-direction: row;
   height: 100%;
   overflow: hidden;
-  background-color: var(--bg-primary);
+  background-color: var(--bg);
 }
 
 .chat-main-container {
@@ -212,13 +209,10 @@ watch(
   min-width: 0;
   height: 100%;
   overflow-y: auto;
-
-  /* 移除 all，避免縮放時觸發 sticky re-layout 的動畫 */
   transition: opacity 0.3s ease;
   scroll-behavior: smooth;
 }
 
-/* 響應式：預覽開啟時，在小螢幕隱藏訊息列表 */
 @media (width <= 1024px) {
   .preview-open .chat-main-container {
     display: none;
@@ -232,15 +226,15 @@ watch(
   flex-direction: column;
 }
 
-.messages-content-wrapper {
+.chat-column {
   width: 100%;
-  max-width: 56rem;
+  max-width: 48rem;
   padding: 0 1rem;
   margin: 0 auto;
 }
 
 .messages-list {
-  padding: 1rem 0;
+  padding: 1.5rem 0;
 }
 
 .messages-bottom-spacing {
@@ -258,9 +252,25 @@ watch(
 }
 
 .chat-input-wrapper {
+  position: relative;
   pointer-events: auto;
-  background-color: var(--bg-primary);
-  border-top: 1px solid var(--border-secondary);
+  background-color: var(--bg);
+}
+
+.chat-input-wrapper::before {
+  position: absolute;
+  top: -3rem;
+  right: 0;
+  left: 0;
+  height: 3rem;
+  pointer-events: none;
+  content: '';
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--bg) 60%, transparent) 50%,
+    var(--bg) 100%
+  );
 }
 
 .scroll-to-bottom-button {
@@ -271,57 +281,17 @@ watch(
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  padding: 0.75rem 1.25rem;
-  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--text);
   white-space: nowrap;
   pointer-events: auto;
   cursor: pointer;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-primary);
+  background-color: var(--bg-1);
+  border: 1px solid var(--border);
   border-radius: 9999px;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
   transform: translateX(-50%);
-  transition: all 0.3s ease;
-}
-
-.error-message {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  max-width: 42rem;
-  padding: 1.25rem 1.5rem;
-  margin: 2rem auto;
-  background-color: rgb(239 68 68 / 10%);
-  border: 1px solid rgb(239 68 68 / 30%);
-  border-radius: var(--radius-md);
-}
-
-.error-icon {
-  flex-shrink: 0;
-  width: 1.5rem;
-  height: 1.5rem;
-  color: var(--error);
-}
-
-.error-icon svg {
-  width: 100%;
-  height: 100%;
-}
-
-.error-content {
-  flex: 1;
-}
-
-.error-title {
-  margin-bottom: 0.25rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--error);
-}
-
-.error-description {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
 }
 
 .scroll-button-fade-enter-active,
@@ -335,18 +305,43 @@ watch(
   transform: translateX(-50%) translateY(10px);
 }
 
-@media (width <=768px) {
-  .messages-content-wrapper {
-    padding: 0 0.75rem;
-  }
-
-  .scroll-to-bottom-button {
-    top: -3rem;
-    padding: 0.625rem 1rem;
-  }
+.error-message {
+  display: flex;
+  gap: 0.875rem;
+  align-items: flex-start;
+  padding: 0.875rem 1.125rem;
+  margin: 1.25rem 0;
+  background-color: color-mix(in srgb, var(--error) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--error) 30%, transparent);
+  border-radius: var(--r-lg);
 }
 
-/* ========== Header ⋮ 按鈕 ========== */
+.error-icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--error);
+}
+
+.error-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.error-title {
+  margin: 0 0 0.125rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--error);
+}
+
+.error-description {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-2);
+}
+
+/* Header ⋮ */
 .header-more-btn {
   display: flex;
   align-items: center;
@@ -355,26 +350,25 @@ watch(
   height: 2rem;
   font-size: 1.25rem;
   line-height: 1;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .header-more-btn:hover {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
-/* ========== Chat context menu ========== */
 .chat-context-menu {
   position: fixed;
   z-index: 9999;
   min-width: 8rem;
   padding: 0.375rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
   box-shadow:
     0 4px 12px rgb(0 0 0 / 15%),
     0 2px 4px rgb(0 0 0 / 10%);
@@ -390,7 +384,7 @@ watch(
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .context-menu-item.danger {
@@ -408,7 +402,6 @@ watch(
   height: 1rem;
 }
 
-/* ========== Modal 按鈕 ========== */
 .btn-cancel,
 .btn-danger {
   padding: 0.625rem 1.25rem;
@@ -416,17 +409,17 @@ watch(
   font-weight: 500;
   cursor: pointer;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .btn-cancel {
-  color: var(--text-secondary);
+  color: var(--text-2);
   background: transparent;
 }
 
 .btn-cancel:hover {
-  color: var(--text-primary);
-  background: var(--bg-overlay);
+  color: var(--text);
+  background: var(--bg-hover);
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
@@ -440,5 +433,11 @@ watch(
 .btn-danger:hover {
   background: var(--error-hover);
   transition: background-color 0.15s ease;
+}
+
+@media (width <= 768px) {
+  .chat-column {
+    padding: 0 0.5rem;
+  }
 }
 </style>
