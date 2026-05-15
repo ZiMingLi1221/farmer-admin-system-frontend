@@ -73,7 +73,7 @@ watch(
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-color: var(--bg-primary);
+  background-color: var(--bg);
 }
 
 .mobile-backdrop {

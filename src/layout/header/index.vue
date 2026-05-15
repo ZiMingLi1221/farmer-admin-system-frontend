@@ -77,7 +77,7 @@ const headerTransition = computed(() =>
   justify-content: space-between;
   height: 4rem;
   padding: 0 1.5rem;
-  background-color: var(--bg-primary);
+  background-color: var(--bg);
   transition: v-bind('headerTransition');
 }
 
@@ -114,15 +114,15 @@ const headerTransition = computed(() =>
   justify-content: center;
   width: 36px;
   height: 36px;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .header-hamburger:hover {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
@@ -156,19 +156,19 @@ const headerTransition = computed(() =>
   padding: 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-2);
   text-decoration: none;
   border-bottom: 2px solid transparent;
   transition: color 0.15s ease;
 }
 
 .tab-link:not(.tab-link--active):hover {
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .tab-link--active {
-  color: var(--text-primary);
-  border-bottom-color: var(--primary);
+  color: var(--text);
+  border-bottom-color: var(--accent);
 }
 
 @media (width <=767px) {

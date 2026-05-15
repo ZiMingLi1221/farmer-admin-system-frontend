@@ -52,7 +52,7 @@ watch(displayTitle, (t) => {
   text-overflow: ellipsis;
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
   white-space: nowrap;
 }
 </style>

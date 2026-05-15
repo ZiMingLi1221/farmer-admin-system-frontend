@@ -1,6 +1,8 @@
 <template>
   <main class="main-content" :style="mainLayoutStyles">
-    <router-view />
+    <div class="main-scroll">
+      <router-view />
+    </div>
   </main>
 </template>
 
@@ -68,9 +70,16 @@ const mainLayoutStyles = computed(() => {
 .main-content {
   box-sizing: border-box;
   height: 100vh;
-  overflow: hidden auto;
-  background-color: var(--bg-primary);
+  overflow: hidden;
+  background-color: var(--bg);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-1);
 
   /* 動態 transition, marginLeft 與 width 由 script 邏輯與 inline style 控制 */
+}
+
+.main-scroll {
+  height: 100%;
+  overflow: hidden auto;
 }
 </style>
