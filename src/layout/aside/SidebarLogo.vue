@@ -149,15 +149,15 @@ watch(
   justify-content: center;
   width: 40px;
   height: 40px;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .logo-button:hover {
-  background: var(--bg-overlay);
+  background: var(--bg-sidebar-hover);
   transition: background-color 0.15s ease;
 }
 
@@ -191,18 +191,18 @@ watch(
   width: 40px;
   height: 40px;
   margin-left: auto;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
   transition:
     opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .collapse-btn:hover {
-  background: var(--bg-overlay);
+  background: var(--bg-sidebar-hover);
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
@@ -225,24 +225,20 @@ watch(
   }
 }
 
-/* Tooltip */
+/* Tooltip — 對齊全域：淺色黑底白字 / 深色白底黑字 */
 .menu-tooltip {
   position: fixed;
   z-index: 9999;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  color: var(--text-primary);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--tooltip-text);
   white-space: nowrap;
   pointer-events: none;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
-}
-
-.dark .menu-tooltip {
-  color: var(--text-primary);
-  background-color: var(--bg-tertiary);
-  border-color: var(--border-primary);
+  background-color: var(--tooltip-bg);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-2);
 }
 
 .tooltip-arrow {
@@ -251,14 +247,10 @@ watch(
   right: 100%;
   width: 0;
   height: 0;
-  border-color: transparent var(--bg-primary) transparent transparent;
+  border-color: transparent var(--tooltip-bg) transparent transparent;
   border-style: solid;
   border-width: 5px 6px 5px 0;
   transform: translateY(-50%);
-}
-
-.dark .tooltip-arrow {
-  border-color: transparent var(--bg-tertiary) transparent transparent;
 }
 
 .tooltip-enter-active,

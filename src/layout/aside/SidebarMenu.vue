@@ -112,28 +112,28 @@ const handleMouseLeave = (): void => {
   width: 100%;
   height: 2.5rem;
   padding: 0 0.625rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background-color: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .menu-button:hover {
-  color: var(--primary);
-  background-color: var(--bg-tertiary);
+  color: var(--text);
+  background-color: var(--bg-sidebar-hover);
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
 }
 
 .menu-button.active {
-  color: var(--text-on-primary);
-  background-color: var(--primary);
+  color: var(--text);
+  background-color: var(--bg-sidebar-active);
 }
 
 .menu-button.active:hover:not(.disabled) {
-  background-color: var(--primary-hover);
+  background-color: var(--bg-sidebar-active);
 }
 
 .menu-label {
@@ -151,17 +151,17 @@ const handleMouseLeave = (): void => {
 
 /* 新對話按鈕獨立樣式 */
 .new-chat-button {
-  color: var(--text-secondary);
+  color: var(--text-2);
   background-color: transparent;
 }
 
 .new-chat-button:hover {
-  color: var(--primary);
-  background-color: var(--bg-tertiary);
+  color: var(--text);
+  background-color: var(--bg-sidebar-hover);
 }
 
 .new-chat-button:active {
-  background-color: var(--bg-tertiary);
+  background-color: var(--bg-sidebar-active);
 }
 
 .new-chat-button:active .new-chat-icon {
@@ -169,24 +169,20 @@ const handleMouseLeave = (): void => {
   height: 1.15rem;
 }
 
-/* Tooltip */
+/* Tooltip — 對齊全域：淺色黑底白字 / 深色白底黑字 */
 .menu-tooltip {
   position: fixed;
   z-index: 9999;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  color: var(--text-primary);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--tooltip-text);
   white-space: nowrap;
   pointer-events: none;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
-}
-
-.dark .menu-tooltip {
-  color: var(--text-primary);
-  background-color: var(--bg-tertiary);
-  border-color: var(--border-primary);
+  background-color: var(--tooltip-bg);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-2);
 }
 
 .tooltip-arrow {
@@ -195,14 +191,10 @@ const handleMouseLeave = (): void => {
   right: 100%;
   width: 0;
   height: 0;
-  border-color: transparent var(--bg-primary) transparent transparent;
+  border-color: transparent var(--tooltip-bg) transparent transparent;
   border-style: solid;
   border-width: 5px 6px 5px 0;
   transform: translateY(-50%);
-}
-
-.dark .tooltip-arrow {
-  border-color: transparent var(--bg-tertiary) transparent transparent;
 }
 
 .tooltip-enter-active,

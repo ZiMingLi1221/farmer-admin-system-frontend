@@ -27,14 +27,15 @@
       </div>
 
       <div class="menu-items-bottom">
-        <SidebarMenu
+        <button
           ref="userButtonRef"
-          :item="userItem"
-          :is-active="showUserMenu"
-          :is-collapsed="sidebarStore.isCollapsed"
-          :suppress-tooltip="showUserMenu"
+          class="user-button"
+          :class="{ active: showUserMenu, collapsed: sidebarStore.isCollapsed }"
           @click="openUserMenu"
-        />
+        >
+          <span class="user-avatar">{{ userInitial }}</span>
+          <span v-if="!sidebarStore.isCollapsed" class="user-label">使用者設定</span>
+        </button>
         <Teleport to="body">
           <UserMenu
             v-if="showUserMenu"
@@ -56,6 +57,7 @@ import { usePermission } from '@/composables/usePermission';
 import { NAVIGATION_ITEMS } from '@/constants/navigation';
 import { useChatStore } from '@/stores/chat';
 import { useSidebarStore } from '@/stores/sidebar';
+import { useUserStore } from '@/stores/user';
 import type { MenuItem } from '@/types/sidebar';
 
 import RecentConversations from './RecentConversations.vue';
@@ -65,6 +67,7 @@ import UserMenu from './UserMenu.vue';
 
 const sidebarStore = useSidebarStore();
 const chatStore = useChatStore();
+const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
 const { hasRoutePermission } = usePermission();
@@ -73,7 +76,7 @@ const showUserMenu = ref(false);
 const sidebarRef = ref<HTMLElement | null>(null);
 
 const activeModule = computed(() => route.meta?.activeModule ?? null);
-const userButtonRef = ref<InstanceType<typeof SidebarMenu> | null>(null);
+const userButtonRef = ref<HTMLButtonElement | null>(null);
 const userMenuPosition = ref({ bottom: 0, left: 0 });
 
 const filteredMenuItems = computed(() => {
@@ -85,15 +88,13 @@ const filteredMenuItems = computed(() => {
   });
 });
 
-const userItem: MenuItem = {
-  id: 'user-settings',
-  icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
-  label: '使用者設定',
-  route: '',
-};
+const userInitial = computed(() => {
+  const name = userStore.user?.name ?? '';
+  return name.charAt(0).toUpperCase() || '?';
+});
 
 const recalculatePosition = (): void => {
-  const el = userButtonRef.value?.$el as HTMLElement | undefined;
+  const el = userButtonRef.value;
   if (!el) return;
   const rect = el.getBoundingClientRect();
   userMenuPosition.value = {
@@ -107,7 +108,7 @@ const openUserMenu = (): void => {
     showUserMenu.value = false;
     return;
   }
-  const el = userButtonRef.value?.$el as HTMLElement | undefined;
+  const el = userButtonRef.value;
   if (!el) return;
   const rect = el.getBoundingClientRect();
   userMenuPosition.value = {
@@ -211,7 +212,7 @@ const startResize = (e: MouseEvent): void => {
   height: 100vh;
   padding: 0;
   overflow: hidden;
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-sidebar);
 
   /* width 動畫屬於 layout 位移，不會造成主題切換黑閃，可放基礎樣式 */
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -235,7 +236,7 @@ const startResize = (e: MouseEvent): void => {
 }
 
 .resize-handle:hover {
-  background-color: var(--primary);
+  background-color: var(--accent);
   opacity: 0.4;
   transition:
     background-color 0.15s ease,
@@ -264,14 +265,14 @@ const startResize = (e: MouseEvent): void => {
   flex: 1;
   flex-direction: column;
   gap: 0.5rem;
+  min-height: 0;
   padding: 0.5rem 0.75rem 0;
-  overflow: hidden auto;
 }
 
 .menu-divider {
   height: 1px;
   margin: 0.5rem 0.75rem;
-  background-color: var(--border-primary);
+  background-color: var(--border);
 }
 
 .menu-items-bottom {
@@ -281,7 +282,54 @@ const startResize = (e: MouseEvent): void => {
   flex-direction: column;
   padding: 1rem 0.75rem 1.5rem;
   margin-top: auto;
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-sidebar);
+}
+
+.user-button {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+  height: 2.75rem;
+  padding: 0 0.375rem;
+  color: var(--text-2);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: var(--r-md);
+}
+
+.user-button:hover {
+  color: var(--text);
+  background-color: var(--bg-sidebar-hover);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.user-button.active {
+  color: var(--text);
+  background-color: var(--bg-sidebar-active);
+}
+
+.user-avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-on-accent);
+  background-color: var(--accent);
+  border-radius: 50%;
+}
+
+.user-label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 @media (width <= 767px) {

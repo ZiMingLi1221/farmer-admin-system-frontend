@@ -241,27 +241,32 @@ onUnmounted(() => {
 <style scoped>
 /* Expanded mode */
 .recent-section {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   width: 100%;
+  min-height: 0;
 }
 
 .section-header {
   display: flex;
+  flex-shrink: 0;
   gap: 0.75rem;
   align-items: center;
   justify-content: flex-start;
   width: 100%;
   height: 2.5rem;
   padding: 0 0.625rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background-color: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .section-header:hover {
-  color: var(--text-primary);
-  background-color: var(--bg-tertiary);
+  color: var(--text);
+  background-color: var(--bg-sidebar-hover);
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
@@ -294,7 +299,8 @@ onUnmounted(() => {
 }
 
 .conversation-list {
-  max-height: 300px;
+  flex: 1;
+  min-height: 0;
   padding: 0.25rem 0;
   overflow: hidden auto;
 }
@@ -302,7 +308,7 @@ onUnmounted(() => {
 .empty-state {
   padding: 0.75rem;
   font-size: 0.875rem;
-  color: var(--text-tertiary);
+  color: var(--text-3);
   text-align: center;
 }
 
@@ -311,27 +317,27 @@ onUnmounted(() => {
   align-items: center;
   width: 100%;
   padding: 0.5rem 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background-color: transparent;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .conversation-item:hover {
-  color: var(--text-primary);
-  background-color: var(--bg-tertiary);
+  color: var(--text);
+  background-color: var(--bg-sidebar-hover);
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
 }
 
 .conversation-item.active {
-  color: var(--text-on-primary);
-  background-color: var(--primary);
+  color: var(--text);
+  background-color: var(--bg-sidebar-active);
 }
 
 .conversation-item.active:hover {
-  background-color: var(--primary-hover);
+  background-color: var(--bg-sidebar-active);
 }
 
 .conv-title {
@@ -354,11 +360,11 @@ onUnmounted(() => {
   padding: 0;
   font-size: 1rem;
   line-height: 1;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
   opacity: 0;
 }
 
@@ -370,11 +376,11 @@ onUnmounted(() => {
 }
 
 .more-btn:hover {
-  background: var(--bg-overlay);
+  background: var(--bg-hover);
 }
 
 .conversation-item.active .more-btn {
-  color: var(--text-on-primary);
+  color: var(--text);
   background: transparent;
   opacity: 1;
 }
@@ -384,8 +390,8 @@ onUnmounted(() => {
 }
 
 .conversation-item.active .more-btn:hover {
-  color: var(--text-on-primary);
-  background: rgb(255 255 255 / 20%);
+  color: var(--text);
+  background: var(--bg-sidebar-hover);
 }
 
 @media (width <= 767px) {
@@ -404,9 +410,9 @@ onUnmounted(() => {
   z-index: 9999;
   min-width: 8rem;
   padding: 0.375rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
   box-shadow:
     0 4px 12px rgb(0 0 0 / 15%),
     0 2px 4px rgb(0 0 0 / 10%);
@@ -422,7 +428,7 @@ onUnmounted(() => {
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .context-menu-item.danger {
@@ -440,22 +446,20 @@ onUnmounted(() => {
   height: 1rem;
 }
 
-/* Tooltip */
+/* Tooltip — 對齊全域：淺色黑底白字 / 深色白底黑字 */
 .conv-tooltip {
   position: fixed;
   z-index: 9999;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  color: var(--text-primary);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--tooltip-text);
   white-space: nowrap;
   pointer-events: none;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
-}
-
-.dark .conv-tooltip {
-  background-color: var(--bg-tertiary);
+  background-color: var(--tooltip-bg);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-2);
 }
 
 .tooltip-arrow {
@@ -464,14 +468,10 @@ onUnmounted(() => {
   right: 100%;
   width: 0;
   height: 0;
-  border-color: transparent var(--bg-primary) transparent transparent;
+  border-color: transparent var(--tooltip-bg) transparent transparent;
   border-style: solid;
   border-width: 5px 6px 5px 0;
   transform: translateY(-50%);
-}
-
-.dark .tooltip-arrow {
-  border-color: transparent var(--bg-tertiary) transparent transparent;
 }
 
 .tooltip-enter-active,
@@ -492,17 +492,17 @@ onUnmounted(() => {
   font-weight: 500;
   cursor: pointer;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .btn-cancel {
-  color: var(--text-secondary);
+  color: var(--text-2);
   background: transparent;
 }
 
 .btn-cancel:hover {
-  color: var(--text-primary);
-  background: var(--bg-overlay);
+  color: var(--text);
+  background: var(--bg-hover);
   transition:
     background-color 0.15s ease,
     color 0.15s ease;

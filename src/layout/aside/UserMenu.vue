@@ -11,11 +11,7 @@
     <!-- 主面板 -->
     <div v-show="!isMobile || currentPanel === 'main'" class="panel main-panel">
       <div v-if="userInfo" class="user-info-section">
-        <div class="user-avatar-large">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="ICONS.USER" />
-          </svg>
-        </div>
+        <div class="user-avatar-large">{{ userInitial }}</div>
         <div class="user-details">
           <div class="user-id">{{ userInfo.name }}</div>
           <div class="user-meta">
@@ -257,6 +253,10 @@ const handleAppearanceClick = (event: MouseEvent): void => {
 };
 
 const userInfo = computed(() => userStore.user);
+const userInitial = computed(() => {
+  const name = userInfo.value?.name ?? '';
+  return name.charAt(0).toUpperCase() || '?';
+});
 
 const themeOptions = [
   { value: 'light' as const, label: '淺色', icon: 'SUN' as const },
@@ -306,9 +306,9 @@ onUnmounted(() => {
   position: fixed;
   z-index: 1000;
   width: 16rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
   box-shadow:
     0 10px 25px -5px rgb(0 0 0 / 15%),
     0 8px 10px -6px rgb(0 0 0 / 10%);
@@ -322,7 +322,7 @@ onUnmounted(() => {
   left: 0;
   width: 100%;
   border-bottom: none;
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
   animation: sheetSlideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -372,7 +372,7 @@ onUnmounted(() => {
   gap: 0.5rem;
   align-items: center;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-primary);
+  border-bottom: 1px solid var(--border);
 }
 
 .back-btn {
@@ -381,15 +381,15 @@ onUnmounted(() => {
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .back-btn:hover {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
 .back-btn svg {
@@ -400,7 +400,7 @@ onUnmounted(() => {
 .panel-title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 /* 使用者資訊 */
@@ -418,14 +418,11 @@ onUnmounted(() => {
   justify-content: center;
   width: 3rem;
   height: 3rem;
-  color: var(--text-on-primary);
-  background: linear-gradient(135deg, var(--primary), var(--info-blue));
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-on-accent);
+  background-color: var(--accent);
   border-radius: 50%;
-}
-
-.user-avatar-large svg {
-  width: 1.5rem;
-  height: 1.5rem;
 }
 
 .user-details {
@@ -440,7 +437,7 @@ onUnmounted(() => {
   font-family: 'Segoe UI', sans-serif;
   font-size: 1rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .user-meta {
@@ -453,20 +450,20 @@ onUnmounted(() => {
   padding: 0.125rem 0.375rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--primary);
-  background: var(--primary-light);
-  border-radius: var(--radius-sm);
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--r-md);
 }
 
 .dept-text {
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 /* 區隔線 */
 .divider {
   height: 1px;
-  background-color: var(--border-primary);
+  background-color: var(--border);
 }
 
 /* 功能操作 */
@@ -486,15 +483,15 @@ onUnmounted(() => {
   padding: 0.75rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .action-item:hover {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
   transition: background-color 0.15s ease;
 }
 
@@ -516,7 +513,7 @@ onUnmounted(() => {
   width: 1rem;
   height: 1rem;
   margin-left: auto;
-  color: var(--text-tertiary);
+  color: var(--text-3);
 }
 
 /* 外觀子選單（桌面 hover popout） */
@@ -527,9 +524,9 @@ onUnmounted(() => {
   z-index: 101;
   width: 10rem;
   padding: 0.375rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
   box-shadow:
     0 10px 25px -5px rgb(0 0 0 / 15%),
     0 8px 10px -6px rgb(0 0 0 / 10%);
@@ -553,21 +550,21 @@ onUnmounted(() => {
   padding: 0.625rem 0.75rem;
   font-size: 0.875rem;
   font-weight: 400;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .submenu-item:hover {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
   transition: background-color 0.15s ease;
 }
 
 .submenu-item.active {
   font-weight: 500;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .submenu-icon {
@@ -581,6 +578,6 @@ onUnmounted(() => {
   width: 0.875rem;
   height: 0.875rem;
   margin-left: auto;
-  color: var(--primary);
+  color: var(--accent);
 }
 </style>
