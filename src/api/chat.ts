@@ -1,79 +1,39 @@
 /**
  * Chat API
- * 聊天相關的 API 接口
+ * 對話與訊息相關的 HTTP 端點封裝
  */
 
-import type {
-  ApiResponse,
-  Conversation,
-  Message,
-  PaginationParams,
-  PaginationResponse,
-  RAGQueryRequest,
-  RAGQueryResponse,
-} from '@/types';
+import type { ApiResponse } from '@/types/api';
+import type { Conversation, Message } from '@/types/chat';
 import { httpClient } from '@/utils/request';
 
+export interface SendMessageRequest {
+  conversationId: string;
+  query: string;
+  useRAG: boolean;
+}
+
+export interface SendMessageResponse {
+  conversationId: string;
+  message: Message;
+}
+
+export interface GetConversationsResponse {
+  items: Conversation[];
+}
+
 /**
- * 發送訊息
+ * 發送訊息並取得 AI 回覆
  */
 export const sendMessage = async (
-  conversationId: string | undefined,
-  content: string,
-  useRAG = false
-): Promise<ApiResponse<RAGQueryResponse>> => {
-  const payload: RAGQueryRequest = {
-    conversationId,
-    query: content,
-    useRAG,
-  };
-
-  return httpClient.post<RAGQueryResponse>('/chat/message', payload);
+  request: SendMessageRequest
+): Promise<ApiResponse<SendMessageResponse>> => {
+  return httpClient.post<SendMessageResponse>('/chat/message', request);
 };
 
 /**
- * 獲取對話列表
+ * 取得對話列表
  */
-export const getConversations = async (
-  params: PaginationParams
-): Promise<ApiResponse<PaginationResponse<Conversation>>> => {
-  return httpClient.get<PaginationResponse<Conversation>>('/chat/conversations', {
-    params,
-  });
-};
-
-/**
- * 獲取對話詳情
- */
-export const getConversation = async (
-  conversationId: string
-): Promise<ApiResponse<Conversation>> => {
-  return httpClient.get<Conversation>(`/chat/conversations/${conversationId}`);
-};
-
-/**
- * 創建新對話
- */
-export const createConversation = async (title?: string): Promise<ApiResponse<Conversation>> => {
-  return httpClient.post<Conversation>('/chat/conversations', { title });
-};
-
-/**
- * 刪除對話
- */
-export const deleteConversation = async (conversationId: string): Promise<ApiResponse<void>> => {
-  return httpClient.delete<void>(`/chat/conversations/${conversationId}`);
-};
-
-/**
- * 獲取對話訊息列表
- */
-export const getMessages = async (
-  conversationId: string,
-  params: PaginationParams
-): Promise<ApiResponse<PaginationResponse<Message>>> => {
-  return httpClient.get<PaginationResponse<Message>>(
-    `/chat/conversations/${conversationId}/messages`,
-    { params }
-  );
+export const getConversations = async (): Promise<ApiResponse<GetConversationsResponse>> => {
+  return httpClient.get<GetConversationsResponse>('/chat/conversations');
 };

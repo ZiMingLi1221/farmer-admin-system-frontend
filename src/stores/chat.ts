@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
+import { getConversations, sendMessage as sendMessageApi } from '@/api/chat';
 import { CHAT } from '@/config';
 import type { Conversation, Message } from '@/types';
-import { httpClient } from '@/utils/request';
 
 export const useChatStore = defineStore(
   'chat',
@@ -111,12 +111,19 @@ export const useChatStore = defineStore(
 
     /**
      * 背景處理 AI 回覆
+     *
+     * 後端 SSE 串流尚未上線（domain.md 標註規畫中），先在前端模擬串流：
+     * 拿到完整回覆後，將內容逐段填入 message.content 並維持 isStreaming = true，
+     * 直到全部寫完才設為 false。未來接 SSE 只需改成從 stream chunk 寫入 content。
      */
     const handleAIResponse = async (
       conversationId: string,
       userMessage: string,
       useRAG: boolean
     ): Promise<void> => {
+      const STREAM_CHUNK_SIZE = 2;
+      const STREAM_INTERVAL_MS = 20;
+
       try {
         isLoading.value = true;
         error.value = null;
@@ -124,24 +131,44 @@ export const useChatStore = defineStore(
         const conversation = conversations.value.find((c) => c.id === conversationId);
         if (!conversation) return;
 
-        const res = await httpClient.post<{ conversationId: string; message: Message }>(
-          '/chat/message',
-          {
-            conversationId,
-            query: userMessage,
-            useRAG,
-          }
-        );
+        const res = await sendMessageApi({
+          conversationId,
+          query: userMessage,
+          useRAG,
+        });
 
         const aiMessage = res.data.message;
-        conversation.messages.push({
+        const fullContent = aiMessage.content;
+
+        const placeholder: Message = {
           ...aiMessage,
+          content: '',
           timestamp: new Date(aiMessage.timestamp),
-        });
+          isStreaming: true,
+        };
+        conversation.messages.push(placeholder);
         conversation.updatedAt = new Date();
+
+        // 取消 loading（typing indicator 隱藏，改由 isStreaming 在 message 上呈現游標）
+        isLoading.value = false;
+
+        await new Promise<void>((resolve) => {
+          let cursor = 0;
+          const target = conversation.messages[conversation.messages.length - 1];
+          const timer = setInterval(() => {
+            cursor += STREAM_CHUNK_SIZE;
+            if (cursor >= fullContent.length) {
+              target.content = fullContent;
+              target.isStreaming = false;
+              clearInterval(timer);
+              resolve();
+              return;
+            }
+            target.content = fullContent.slice(0, cursor);
+          }, STREAM_INTERVAL_MS);
+        });
       } catch (err) {
         error.value = err instanceof Error ? err.message : 'AI 回覆失敗';
-      } finally {
         isLoading.value = false;
       }
     };
@@ -154,7 +181,7 @@ export const useChatStore = defineStore(
         isLoading.value = true;
         error.value = null;
 
-        const res = await httpClient.get<{ items: Conversation[] }>('/chat/conversations');
+        const res = await getConversations();
         conversations.value = res.data.items.map((conv) => ({
           ...conv,
           createdAt: new Date(conv.createdAt),
