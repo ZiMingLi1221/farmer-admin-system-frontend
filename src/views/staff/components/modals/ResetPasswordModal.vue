@@ -109,9 +109,9 @@ const handleClose = () => {
 
 .user-info {
   padding: 1rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
 }
 
 .info-row {
@@ -122,17 +122,17 @@ const handleClose = () => {
 }
 
 .info-row:not(:last-child) {
-  border-bottom: 1px solid var(--border-secondary);
+  border-bottom: 1px solid var(--border-strong);
 }
 
 .info-label {
   min-width: 80px;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .info-value {
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .form-group {
@@ -144,22 +144,22 @@ const handleClose = () => {
 .form-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .form-input {
   padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  color: var(--text);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
   transition: border-color 0.2s;
 }
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .form-checkbox {
@@ -167,7 +167,7 @@ const handleClose = () => {
   gap: 0.5rem;
   align-items: center;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
 }
 
@@ -183,7 +183,7 @@ const handleClose = () => {
   padding: 1rem;
   background: rgb(59 130 246 / 10%);
   border: 1px solid rgb(59 130 246 / 30%);
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .info-icon {
@@ -197,6 +197,6 @@ const handleClose = () => {
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--text);
 }
 </style>

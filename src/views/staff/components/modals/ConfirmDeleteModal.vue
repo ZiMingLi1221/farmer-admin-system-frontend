@@ -54,29 +54,29 @@ const handleConfirm = () => {
 .message-title {
   margin: 0;
   font-size: 0.9375rem;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .message-detail {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .btn-cancel {
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .btn-cancel:hover {
-  color: var(--text-primary);
-  background: var(--bg-overlay);
+  color: var(--text);
+  background: var(--bg-hover);
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
@@ -90,7 +90,7 @@ const handleConfirm = () => {
   cursor: pointer;
   background: var(--error);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .btn-danger:hover {

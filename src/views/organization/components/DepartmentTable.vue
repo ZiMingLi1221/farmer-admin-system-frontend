@@ -148,9 +148,9 @@ defineEmits<{
 .table-container {
   margin-bottom: 1.5rem;
   overflow: hidden;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
 }
 
 .data-table {
@@ -162,24 +162,24 @@ defineEmits<{
   padding: 1rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-2);
   text-align: left;
-  background: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border);
 }
 
 .data-table tbody tr {
-  border-bottom: 1px solid var(--border-secondary);
+  border-bottom: 1px solid var(--border-strong);
 }
 
 .data-table tbody tr:hover:not(.bt-row) {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
 .data-table tbody td {
   padding: 1rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .col-checkbox {
@@ -204,16 +204,16 @@ defineEmits<{
   justify-content: center;
   width: 1.75rem;
   height: 1.75rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-xs);
+  border-radius: var(--r-xs);
 }
 
 .btn-expand:hover {
-  color: var(--primary);
-  background: var(--bg-primary);
+  color: var(--accent);
+  background: var(--bg);
   transition:
     color 0.15s ease,
     background-color 0.15s ease;
@@ -233,15 +233,15 @@ defineEmits<{
   position: sticky;
   right: 0;
   width: 100px;
-  background: var(--bg-secondary);
+  background: var(--bg-1);
 }
 
 .data-table thead th.col-actions {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
 .data-table tbody tr:hover .col-actions {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
 .action-buttons {
@@ -252,16 +252,16 @@ defineEmits<{
 
 .btn-icon {
   padding: 0.5rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .btn-icon:hover {
-  color: var(--primary);
-  background: var(--bg-primary);
+  color: var(--accent);
+  background: var(--bg);
   transition:
     color 0.15s ease,
     background-color 0.15s ease;
@@ -279,7 +279,7 @@ defineEmits<{
   padding: 0.25rem 0.625rem;
   font-size: 0.75rem;
   font-weight: 500;
-  border-radius: var(--radius-xs);
+  border-radius: var(--r-xs);
 }
 
 .status-badge.active {

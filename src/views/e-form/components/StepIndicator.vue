@@ -89,22 +89,22 @@ const steps = STEPS;
 }
 
 .step-pending {
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
-  border: 2px solid var(--border-primary);
+  color: var(--text-2);
+  background: var(--bg-hover);
+  border: 2px solid var(--border);
 }
 
 .step-active {
   color: white;
-  background: var(--primary);
-  border: 2px solid var(--primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .step-completed {
   color: white;
-  background: var(--primary);
-  border: 2px solid var(--primary);
+  background: var(--accent);
+  border: 2px solid var(--accent);
 }
 
 /* 數字與勾勾 */
@@ -121,7 +121,7 @@ const steps = STEPS;
 .step-label {
   margin-top: 0.375rem;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   text-align: center;
   white-space: nowrap;
 }
@@ -129,7 +129,7 @@ const steps = STEPS;
 .label-active {
   max-height: 2rem;
   font-weight: 600;
-  color: var(--primary);
+  color: var(--accent);
   opacity: 1;
   transition: color 0.3s;
 }
@@ -141,11 +141,11 @@ const steps = STEPS;
   left: calc(50% + 1.25rem);
   width: calc(100% - 1.25rem);
   height: 1.5px;
-  background: var(--border-primary);
+  background: var(--border);
 }
 
 .connector-done {
-  background: var(--primary);
+  background: var(--accent);
   transition: background 0.3s ease;
 }
 </style>

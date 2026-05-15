@@ -256,7 +256,7 @@ const handleClose = () => {
   height: 3rem;
   font-size: 0.6875rem;
   font-weight: 700;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .icon-pdf {
@@ -281,8 +281,8 @@ const handleClose = () => {
 
 .icon-txt,
 .icon-default {
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
+  color: var(--text-2);
+  background: var(--bg-hover);
 }
 
 .doc-header-info {
@@ -295,7 +295,7 @@ const handleClose = () => {
   margin: 0;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .doc-meta-row {
@@ -304,17 +304,17 @@ const handleClose = () => {
   gap: 0.375rem;
   align-items: center;
   font-size: 0.8125rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .dot {
-  color: var(--border-primary);
+  color: var(--border);
 }
 
 .divider {
   margin: 0;
   border: none;
-  border-top: 1px solid var(--border-primary);
+  border-top: 1px solid var(--border);
 }
 
 /* ── 表單 ── */
@@ -333,7 +333,7 @@ const handleClose = () => {
 .form-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .form-label.required::after {
@@ -345,7 +345,7 @@ const handleClose = () => {
   min-height: 1.25rem;
   margin: 0;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .form-input,
@@ -353,10 +353,10 @@ const handleClose = () => {
 .form-textarea {
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  color: var(--text);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
   transition: border-color 0.2s;
 }
 
@@ -364,7 +364,7 @@ const handleClose = () => {
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .form-textarea {
@@ -373,16 +373,16 @@ const handleClose = () => {
 }
 
 .text-secondary {
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 /* ── 分類/部門標籤 ── */
 .category-badge {
   padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  color: var(--text-2);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 1rem;
 }
 
@@ -397,14 +397,14 @@ const handleClose = () => {
 /* ── 標籤 ── */
 .tag-input-wrapper {
   padding: 0.375rem 0.5rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
   transition: border-color 0.2s;
 }
 
 .tag-input-wrapper:focus-within {
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .tag-list,
@@ -425,9 +425,9 @@ const handleClose = () => {
   align-items: center;
   padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
-  color: var(--primary);
-  background: rgb(var(--primary-rgb), 0.1);
-  border-radius: var(--radius-sm);
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--r-md);
 }
 
 .tag-remove {
@@ -449,14 +449,14 @@ const handleClose = () => {
   width: 100%;
   padding: 0.25rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
   outline: none;
   background: transparent;
   border: none;
 }
 
 .tag-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-3);
 }
 
 /* ── 狀態標籤 ── */
@@ -488,8 +488,8 @@ const handleClose = () => {
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
   padding: 1rem;
-  background: var(--bg-tertiary);
-  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  border-radius: var(--r-md);
 }
 
 .info-item {
@@ -500,17 +500,17 @@ const handleClose = () => {
 
 .info-label {
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .info-value {
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .info-id {
   font-family: monospace;
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 </style>

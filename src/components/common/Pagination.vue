@@ -94,7 +94,7 @@ const handleJump = () => {
 
 .pagination-info {
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .pagination-controls {
@@ -108,16 +108,16 @@ const handleJump = () => {
   height: 2.5rem;
   padding: 0.5rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
 }
 
 .pagination-btn:hover:not(:disabled) {
-  color: var(--primary);
-  border-color: var(--primary);
+  color: var(--accent);
+  border-color: var(--accent);
   transition:
     color 0.15s ease,
     border-color 0.15s ease;
@@ -125,8 +125,8 @@ const handleJump = () => {
 
 .pagination-btn.active {
   color: white;
-  background: var(--primary);
-  border-color: var(--primary);
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .pagination-btn:disabled {
@@ -140,23 +140,23 @@ const handleJump = () => {
   align-items: center;
   margin-left: 1rem;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .pagination-jump input {
   width: 4rem;
   padding: 0.5rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
   text-align: center;
-  background: var(--bg-muted);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
 }
 
 .pagination-jump input:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
   transition: border-color 0.15s ease;
 }
 </style>

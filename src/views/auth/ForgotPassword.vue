@@ -167,7 +167,7 @@ const goToLogin = () => {
 .header-icon {
   width: 1.5rem;
   height: 1.5rem;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .header-title {
@@ -202,7 +202,7 @@ const goToLogin = () => {
   padding: 1rem;
   background: rgb(255 255 255 / 3%);
   border: 1px solid rgb(255 255 255 / 8%);
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .contact-header {
@@ -215,7 +215,7 @@ const goToLogin = () => {
 .contact-icon {
   width: 1.125rem;
   height: 1.125rem;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .contact-role {
@@ -252,14 +252,14 @@ const goToLogin = () => {
   padding: 1rem;
   background: rgb(0 173 104 / 10%);
   border: 1px solid rgb(0 173 104 / 25%);
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .notice-icon {
   flex-shrink: 0;
   width: 1.25rem;
   height: 1.25rem;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .notice-text {

@@ -227,7 +227,7 @@ function handleRestart() {
   font-size: 0.7rem;
   font-weight: 700;
   color: white;
-  background: var(--primary);
+  background: var(--accent);
   border-radius: 1rem;
 }
 
@@ -235,8 +235,8 @@ function handleRestart() {
 .content-card {
   min-height: 300px;
   padding: 1.75rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
   border-radius: 0.875rem;
 }
 
@@ -250,8 +250,8 @@ function handleRestart() {
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.75rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
   border-radius: 0.875rem;
 }
 
@@ -262,10 +262,10 @@ function handleRestart() {
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
 }
 
@@ -275,7 +275,7 @@ function handleRestart() {
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--bg-primary);
+  background: var(--bg);
   transition: background-color 0.2s ease;
 }
 
@@ -288,7 +288,7 @@ function handleRestart() {
   font-weight: 600;
   color: white;
   cursor: pointer;
-  background: var(--primary);
+  background: var(--accent);
   border: none;
   border-radius: 0.5rem;
 }
@@ -299,7 +299,7 @@ function handleRestart() {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--primary-hover);
+  background: var(--accent-hover);
   transition: background-color 0.2s ease;
 }
 
@@ -315,17 +315,17 @@ function handleRestart() {
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
 }
 
 .btn-restart-nav:hover {
-  color: var(--primary);
-  background: color-mix(in srgb, var(--primary) 6%, var(--bg-tertiary));
-  border-color: var(--primary);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--bg-hover));
+  border-color: var(--accent);
   transition:
     background-color 0.2s ease,
     color 0.2s ease,
@@ -342,12 +342,12 @@ function handleRestart() {
 .step-count {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .nav-hint {
   font-size: 0.8rem;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 /* 步驟切換動畫 */

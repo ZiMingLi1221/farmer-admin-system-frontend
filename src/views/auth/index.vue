@@ -233,7 +233,7 @@ const togglePasswordVisibility = () => {
   color: var(--error);
   background: rgb(239 68 68 / 10%);
   border: 1px solid rgb(239 68 68 / 25%);
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .error-icon {
@@ -283,13 +283,13 @@ const togglePasswordVisibility = () => {
 
 .forgot-password-link a {
   font-size: 0.875rem;
-  color: var(--primary);
+  color: var(--accent);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .forgot-password-link a:hover {
-  color: var(--primary-hover);
+  color: var(--accent-hover);
   text-decoration: underline;
 }
 

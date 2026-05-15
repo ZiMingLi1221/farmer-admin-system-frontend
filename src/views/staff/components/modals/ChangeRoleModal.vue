@@ -107,9 +107,9 @@ const handleClose = () => {
 
 .user-info {
   padding: 1rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
 }
 
 .info-row {
@@ -120,17 +120,17 @@ const handleClose = () => {
 }
 
 .info-row:not(:last-child) {
-  border-bottom: 1px solid var(--border-secondary);
+  border-bottom: 1px solid var(--border-strong);
 }
 
 .info-label {
   min-width: 80px;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .info-value {
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .form-group {
@@ -142,7 +142,7 @@ const handleClose = () => {
 .form-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .form-label.required::after {
@@ -153,17 +153,17 @@ const handleClose = () => {
 .form-select {
   padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
   transition: border-color 0.2s;
 }
 
 .form-select:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .warning-box {
@@ -172,7 +172,7 @@ const handleClose = () => {
   padding: 1rem;
   background: rgb(245 158 11 / 10%);
   border: 1px solid rgb(245 158 11 / 30%);
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .warning-icon {
@@ -186,6 +186,6 @@ const handleClose = () => {
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--text);
 }
 </style>

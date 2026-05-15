@@ -59,7 +59,7 @@ const handleClick = (event: MouseEvent) => {
   cursor: pointer;
   outline: none;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 /* 尺寸變體 */
@@ -81,46 +81,46 @@ const handleClick = (event: MouseEvent) => {
 /* 樣式變體 */
 .variant-primary {
   color: white;
-  background: var(--primary);
+  background: var(--accent);
 }
 
 .variant-primary:hover:not(.disabled) {
-  background: var(--primary-hover);
+  background: var(--accent-hover);
   transition: background-color 0.15s ease;
 }
 
 .variant-primary:active:not(.disabled) {
-  background: var(--primary-hover);
+  background: var(--accent-hover);
 }
 
 .variant-secondary {
-  color: var(--text-primary);
-  background: var(--bg-secondary);
+  color: var(--text);
+  background: var(--bg-1);
 }
 
 .variant-secondary:hover:not(.disabled) {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
   transition: background-color 0.15s ease;
 }
 
 .variant-outline {
-  color: var(--text-primary);
+  color: var(--text);
   background: transparent;
-  border: 1px solid var(--border-primary, #d1d5db);
+  border: 1px solid var(--border, #d1d5db);
 }
 
 .variant-outline:hover:not(.disabled) {
-  background: var(--bg-elevated);
+  background: var(--bg-1);
   transition: background-color 0.15s ease;
 }
 
 .variant-ghost {
-  color: var(--text-primary);
+  color: var(--text);
   background: transparent;
 }
 
 .variant-ghost:hover:not(.disabled) {
-  background: var(--bg-overlay);
+  background: var(--bg-hover);
   transition: background-color 0.15s ease;
 }
 

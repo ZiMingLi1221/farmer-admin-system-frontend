@@ -10,6 +10,7 @@ export interface Message {
   isStreaming?: boolean;
   references?: import('./rag').DocumentReference[]; // RAG 引用來源
   attachments?: import('./upload').UploadedFile[]; // 文件附件
+  feedback?: 'good' | 'bad'; // 使用者本地評價，不打 API
 }
 
 // 對話

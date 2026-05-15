@@ -73,7 +73,7 @@ const handleFocus = () => {
 .input-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .required-mark {
@@ -85,22 +85,22 @@ const handleFocus = () => {
   width: 100%;
   padding: 0.875rem 1.125rem;
   font-size: 0.9375rem;
-  color: var(--text-primary);
+  color: var(--text);
   outline: none;
-  background: var(--bg-muted);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
 
   /* transition 不能加在基礎樣式，否則主題切換會黑閃 */
   transition: none;
 }
 
 .input-field::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-3);
 }
 
 .input-field:focus {
-  border-color: var(--primary);
+  border-color: var(--accent);
   transition: border-color 0.15s ease;
 }
 
@@ -114,7 +114,7 @@ const handleFocus = () => {
 
 .input-field.disabled {
   cursor: not-allowed;
-  background: var(--bg-secondary);
+  background: var(--bg-1);
   opacity: 0.5;
 }
 

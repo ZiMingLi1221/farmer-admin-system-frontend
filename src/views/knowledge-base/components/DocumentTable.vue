@@ -217,9 +217,9 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
 .table-container {
   margin-bottom: 1.5rem;
   overflow-x: auto;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
 }
 
 .data-table {
@@ -233,11 +233,11 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   padding: 1rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-2);
   text-align: left;
   white-space: nowrap;
-  background: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border);
 }
 
 .data-table thead th.sortable {
@@ -247,7 +247,7 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
 }
 
 .data-table thead th.sortable:hover {
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .sort-icon {
@@ -258,7 +258,7 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
 
 /* ── Body ── */
 .data-table tbody tr {
-  border-bottom: 1px solid var(--border-secondary);
+  border-bottom: 1px solid var(--border-strong);
 }
 
 .data-table tbody tr:last-child {
@@ -270,14 +270,14 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
 }
 
 .data-table tbody tr:hover {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
 .data-table tbody td {
   padding: 1rem;
   font-size: 0.875rem;
   vertical-align: middle;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .col-nowrap {
@@ -301,7 +301,7 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   margin-top: 0.125rem;
   font-size: 0.625rem;
   font-weight: 700;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .icon-pdf {
@@ -326,8 +326,8 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
 
 .icon-txt,
 .icon-default {
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
+  color: var(--text-2);
+  background: var(--bg-hover);
 }
 
 .doc-info {
@@ -348,7 +348,7 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.75rem;
-  color: var(--text-tertiary);
+  color: var(--text-3);
   white-space: nowrap;
 }
 
@@ -362,9 +362,9 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
 .doc-tag {
   padding: 0.1rem 0.4rem;
   font-size: 0.6875rem;
-  color: var(--primary);
-  background: rgb(var(--primary-rgb), 0.1);
-  border-radius: var(--radius-sm);
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--r-md);
 }
 
 /* ── 狀態徽章 ── */
@@ -375,7 +375,7 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   font-size: 0.75rem;
   font-weight: 500;
   white-space: nowrap;
-  border-radius: var(--radius-xs);
+  border-radius: var(--r-xs);
 }
 
 .status-ready {
@@ -398,15 +398,15 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   position: sticky;
   right: 0;
   width: 120px;
-  background: var(--bg-secondary);
+  background: var(--bg-1);
 }
 
 .data-table thead th.col-actions {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
 .data-table tbody tr:hover .col-actions {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
 .action-buttons {
@@ -418,17 +418,17 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
 /* 統一 btn-icon（與 DepartmentTable / StaffTable 完全一致） */
 .btn-icon {
   padding: 0.5rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
   transition: all 0.2s;
 }
 
 .btn-icon:hover {
-  color: var(--primary);
-  background: var(--bg-primary);
+  color: var(--accent);
+  background: var(--bg);
 }
 
 .btn-icon.btn-danger:hover {
@@ -451,7 +451,7 @@ const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
   flex-direction: column;
   gap: 0.75rem;
   align-items: center;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .empty-icon {

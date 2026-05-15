@@ -127,7 +127,7 @@ defineExpose({ setError });
 .form-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .form-label.required::after {
@@ -138,15 +138,15 @@ defineExpose({ setError });
 .form-input {
   padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  color: var(--text);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
 }
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .form-checkbox {
@@ -154,7 +154,7 @@ defineExpose({ setError });
   gap: 0.5rem;
   align-items: center;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
 }
 

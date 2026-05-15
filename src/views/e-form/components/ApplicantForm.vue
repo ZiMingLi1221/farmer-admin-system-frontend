@@ -203,8 +203,8 @@ function placeholder(field: ApplicantFieldDef): string {
 /* Header */
 .form-header {
   padding: 1rem 1.25rem;
-  background: color-mix(in srgb, var(--primary) 6%, var(--bg-secondary));
-  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--bg-1));
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
   border-radius: 0.625rem;
 }
 
@@ -218,20 +218,20 @@ function placeholder(field: ApplicantFieldDef): string {
   flex-shrink: 0;
   width: 1.5rem;
   height: 1.5rem;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .header-title {
   margin: 0 0 0.2rem;
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .header-sub {
   margin: 0;
   font-size: 0.8125rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 /* Fields grid */
@@ -253,7 +253,7 @@ function placeholder(field: ApplicantFieldDef): string {
   align-items: center;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .required-mark {
@@ -265,15 +265,15 @@ function placeholder(field: ApplicantFieldDef): string {
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 0.9375rem;
-  color: var(--text-primary);
+  color: var(--text);
   outline: none;
-  background: var(--bg-tertiary);
-  border: 1.5px solid var(--border-primary);
+  background: var(--bg-hover);
+  border: 1.5px solid var(--border);
   border-radius: 0.5rem;
 }
 
 .field-input:focus {
-  border-color: var(--primary);
+  border-color: var(--accent);
   transition: border-color 0.2s ease;
 }
 
@@ -304,8 +304,8 @@ function placeholder(field: ApplicantFieldDef): string {
   align-items: center;
   padding: 0.75rem 1rem;
   font-size: 0.8125rem;
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
+  color: var(--text-2);
+  background: var(--bg-hover);
   border-radius: 0.5rem;
 }
 

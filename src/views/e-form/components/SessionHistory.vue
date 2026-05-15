@@ -192,8 +192,8 @@ function formatTime(dateStr: string): string {
   width: 360px;
   max-width: 90vw;
   height: 100%;
-  background: var(--bg-secondary);
-  border-left: 1px solid var(--border-primary);
+  background: var(--bg-1);
+  border-left: 1px solid var(--border);
   box-shadow: -8px 0 32px rgb(0 0 0 / 25%);
 }
 
@@ -204,7 +204,7 @@ function formatTime(dateStr: string): string {
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.25rem 1rem;
-  border-bottom: 1px solid var(--border-primary);
+  border-bottom: 1px solid var(--border);
 }
 
 .drawer-title-wrap {
@@ -216,19 +216,19 @@ function formatTime(dateStr: string): string {
 .title-icon {
   width: 1.25rem;
   height: 1.25rem;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .drawer-title {
   margin: 0;
   font-size: 1.0625rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .drawer-close {
   padding: 0.4rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
@@ -236,8 +236,8 @@ function formatTime(dateStr: string): string {
 }
 
 .drawer-close:hover {
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
+  color: var(--text);
+  background: var(--bg-hover);
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
@@ -263,7 +263,7 @@ function formatTime(dateStr: string): string {
   align-items: center;
   padding: 3rem 1rem;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .empty-icon {
@@ -282,18 +282,18 @@ function formatTime(dateStr: string): string {
 .session-card {
   overflow: hidden;
   cursor: pointer;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 0.625rem;
 }
 
 .session-card:hover {
-  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
   transition: border-color 0.2s ease;
 }
 
 .session-card.expanded {
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .session-summary {
@@ -315,7 +315,7 @@ function formatTime(dateStr: string): string {
 .session-business {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .session-meta {
@@ -330,7 +330,7 @@ function formatTime(dateStr: string): string {
   gap: 0.25rem;
   align-items: center;
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .meta-icon {
@@ -340,7 +340,7 @@ function formatTime(dateStr: string): string {
 
 .meta-dot {
   font-size: 0.75rem;
-  color: var(--border-primary);
+  color: var(--border);
 }
 
 .session-right {
@@ -353,14 +353,14 @@ function formatTime(dateStr: string): string {
 
 .session-time {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   white-space: nowrap;
 }
 
 .chevron-icon {
   width: 1rem;
   height: 1rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   transition: transform 0.25s ease;
 }
 
@@ -375,13 +375,13 @@ function formatTime(dateStr: string): string {
   gap: 0.5rem;
   padding: 0 1rem 0.875rem;
   padding-top: 0.75rem;
-  border-top: 1px solid var(--border-primary);
+  border-top: 1px solid var(--border);
 }
 
 .detail-label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .detail-templates {
@@ -397,8 +397,8 @@ function formatTime(dateStr: string): string {
   padding: 0.25rem 0.625rem;
   font-size: 0.8rem;
   font-weight: 500;
-  color: var(--primary);
-  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
   border-radius: 1rem;
 }
 
@@ -409,7 +409,7 @@ function formatTime(dateStr: string): string {
 
 .detail-time {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 /* 抽屜動畫 */

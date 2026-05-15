@@ -97,9 +97,9 @@ const handleConfirm = () => {
   flex-direction: column;
   width: 100%;
   max-height: 90vh;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
   box-shadow: 0 20px 25px -5px rgb(0 0 0 / 30%);
 }
 
@@ -125,21 +125,21 @@ const handleConfirm = () => {
 .modal-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .modal-close {
   padding: 0.5rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .modal-close:hover {
-  color: var(--text-primary);
-  background: var(--bg-overlay);
+  color: var(--text);
+  background: var(--bg-hover);
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
@@ -170,7 +170,7 @@ const handleConfirm = () => {
   font-weight: 500;
   cursor: pointer;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .btn:disabled {
@@ -180,23 +180,23 @@ const handleConfirm = () => {
 
 .btn-primary {
   color: white;
-  background: var(--primary);
+  background: var(--accent);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--primary-hover);
+  background: var(--accent-hover);
   transition: background-color 0.15s ease;
 }
 
 .btn-secondary {
-  color: var(--text-secondary);
+  color: var(--text-2);
   background: transparent;
   border: none;
 }
 
 .btn-secondary:hover {
-  color: var(--text-primary);
-  background: var(--bg-overlay);
+  color: var(--text);
+  background: var(--bg-hover);
   transition:
     background-color 0.15s ease,
     color 0.15s ease;

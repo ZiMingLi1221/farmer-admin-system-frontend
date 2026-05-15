@@ -259,21 +259,21 @@ const handleClose = () => {
   min-height: 7rem;
   padding: 1.5rem;
   cursor: pointer;
-  background: var(--bg-tertiary);
-  border: 2px dashed var(--border-primary);
-  border-radius: var(--radius-md);
+  background: var(--bg-hover);
+  border: 2px dashed var(--border);
+  border-radius: var(--r-lg);
   transition: all 0.2s;
 }
 
 .drop-zone:hover,
 .drop-zone-active {
-  background: rgb(var(--primary-rgb), 0.04);
-  border-color: var(--primary);
+  background: var(--accent-soft);
+  border-color: var(--accent);
 }
 
 .drop-zone-has-file {
-  background: rgb(var(--primary-rgb), 0.04);
-  border-color: var(--primary);
+  background: var(--accent-soft);
+  border-color: var(--accent);
   border-style: solid;
 }
 
@@ -285,25 +285,25 @@ const handleClose = () => {
   width: 2.5rem;
   height: 2.5rem;
   margin-bottom: 0.5rem;
-  color: var(--text-tertiary);
+  color: var(--text-3);
 }
 
 .drop-title {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .drop-link {
   margin-left: 0.25rem;
-  color: var(--primary);
+  color: var(--accent);
   cursor: pointer;
 }
 
 .drop-hint {
   margin: 0.25rem 0 0;
   font-size: 0.75rem;
-  color: var(--text-tertiary);
+  color: var(--text-3);
 }
 
 /* ── 已選檔案預覽 ── */
@@ -323,7 +323,7 @@ const handleClose = () => {
   height: 2.5rem;
   font-size: 0.625rem;
   font-weight: 700;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .icon-pdf {
@@ -347,13 +347,13 @@ const handleClose = () => {
 }
 
 .icon-txt {
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
+  color: var(--text-2);
+  background: var(--bg-hover);
 }
 
 .icon-default {
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
+  color: var(--text-2);
+  background: var(--bg-hover);
 }
 
 .file-preview-info {
@@ -367,14 +367,14 @@ const handleClose = () => {
   text-overflow: ellipsis;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
   white-space: nowrap;
 }
 
 .file-preview-size {
   margin: 0;
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .file-remove-btn {
@@ -384,11 +384,11 @@ const handleClose = () => {
   justify-content: center;
   width: 1.5rem;
   height: 1.5rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
   transition: all 0.15s;
 }
 
@@ -418,7 +418,7 @@ const handleClose = () => {
 .form-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .form-label.required::after {
@@ -431,10 +431,10 @@ const handleClose = () => {
 .form-textarea {
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  color: var(--text);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
   transition: border-color 0.2s;
 }
 
@@ -442,7 +442,7 @@ const handleClose = () => {
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .form-textarea {
@@ -453,14 +453,14 @@ const handleClose = () => {
 /* ── 標籤輸入 ── */
 .tag-input-wrapper {
   padding: 0.375rem 0.5rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
   transition: border-color 0.2s;
 }
 
 .tag-input-wrapper:focus-within {
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .tag-list {
@@ -476,9 +476,9 @@ const handleClose = () => {
   align-items: center;
   padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
-  color: var(--primary);
-  background: rgb(var(--primary-rgb), 0.1);
-  border-radius: var(--radius-sm);
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--r-md);
 }
 
 .tag-remove {
@@ -500,13 +500,13 @@ const handleClose = () => {
   width: 100%;
   padding: 0.25rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
   outline: none;
   background: transparent;
   border: none;
 }
 
 .tag-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-3);
 }
 </style>

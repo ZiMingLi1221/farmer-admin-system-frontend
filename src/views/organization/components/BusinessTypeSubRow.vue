@@ -87,8 +87,8 @@ const columns: ColumnDef[] = [
 <style scoped>
 .bt-sub-row {
   padding: 1rem 1.5rem 1rem 3rem;
-  background: var(--bg-primary);
-  border-top: 1px solid var(--border-secondary);
+  background: var(--bg);
+  border-top: 1px solid var(--border-strong);
 }
 
 .bt-header {
@@ -101,7 +101,7 @@ const columns: ColumnDef[] = [
 .bt-title {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-2);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -110,37 +110,37 @@ const columns: ColumnDef[] = [
   padding: 0.375rem 0.75rem;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--primary);
+  color: var(--accent);
   cursor: pointer;
   background: transparent;
-  border: 1px solid var(--primary);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent);
+  border-radius: var(--r-md);
 }
 
 .btn-add:hover {
   color: white;
-  background: var(--primary);
+  background: var(--accent);
   transition: background-color 0.15s ease;
 }
 
 .bt-loading {
   padding: 1rem 0;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .btn-icon {
   padding: 0.375rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .btn-icon:hover {
-  color: var(--primary);
-  background: var(--bg-secondary);
+  color: var(--accent);
+  background: var(--bg-1);
   transition:
     color 0.15s ease,
     background-color 0.2s ease;
@@ -161,7 +161,7 @@ const columns: ColumnDef[] = [
   padding: 0.125rem 0.5rem;
   font-size: 0.75rem;
   font-weight: 500;
-  border-radius: var(--radius-xs);
+  border-radius: var(--r-xs);
 }
 
 .status-badge.active {

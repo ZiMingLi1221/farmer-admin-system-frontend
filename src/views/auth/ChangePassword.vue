@@ -327,7 +327,7 @@ const backToLogin = () => {
   color: var(--error);
   background: rgb(239 68 68 / 10%);
   border: 1px solid rgb(239 68 68 / 25%);
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .error-icon {
@@ -374,7 +374,7 @@ const backToLogin = () => {
   padding: 1rem;
   background: rgb(255 255 255 / 3%);
   border: 1px solid rgb(255 255 255 / 8%);
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .rules-title {

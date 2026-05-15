@@ -268,17 +268,17 @@ const handleBtSubmit = async (payload: CreateBusinessTypePayload | UpdateBusines
   font-weight: 500;
   cursor: pointer;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .btn-cancel {
-  color: var(--text-secondary);
+  color: var(--text-2);
   background: transparent;
 }
 
 .btn-cancel:hover {
-  color: var(--text-primary);
-  background: var(--bg-overlay);
+  color: var(--text);
+  background: var(--bg-hover);
   transition:
     background-color 0.15s ease,
     color 0.15s ease;

@@ -68,9 +68,19 @@ class HttpClient {
           const { status } = error.response;
           this.handleHttpError(status);
         } else if (error.request) {
-          // 請求已送出但無回應（網路斷線、timeout）
+          // 請求已送出但無回應（多半是 MSW worker 啟動 race 或網路抖動）
+          // 自動重試 1 次，200ms 延遲後重發；以 _retryCount 旗標避免無限循環
+          const config = error.config as
+            | (AxiosRequestConfig & { _retryCount?: number })
+            | undefined;
+          if (config && (config._retryCount ?? 0) < 1) {
+            config._retryCount = (config._retryCount ?? 0) + 1;
+            return new Promise((resolve) => {
+              setTimeout(() => resolve(this.instance.request(config)), 200);
+            });
+          }
           if (import.meta.env.DEV) {
-            console.error('[API 網路錯誤] 請求已送出但未收到回應，請檢查網路連線');
+            console.error('[API 網路錯誤] 重試後仍未收到回應，請檢查網路連線');
           }
         } else {
           // axios 設定階段即發生錯誤

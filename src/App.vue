@@ -17,7 +17,7 @@ initTheme();
 .app-root {
   height: 100%;
   min-height: 100vh;
-  color: var(--text-primary);
-  background: var(--bg-primary);
+  color: var(--text);
+  background: var(--bg);
 }
 </style>

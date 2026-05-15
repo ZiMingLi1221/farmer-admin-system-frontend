@@ -67,7 +67,7 @@ const hasFilters = computed(() => !!slots.filters?.());
   margin: 0;
   font-size: 1rem;
   font-weight: 400;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .view-header-actions {
@@ -93,7 +93,7 @@ const hasFilters = computed(() => !!slots.filters?.());
   left: 0.75rem;
   width: 1rem;
   height: 1rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   pointer-events: none;
 }
 
@@ -101,15 +101,15 @@ const hasFilters = computed(() => !!slots.filters?.());
   width: 100%;
   padding: 0.5rem 0.75rem 0.5rem 2.25rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
+  color: var(--text);
+  background-color: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
 }
 
 .filters {

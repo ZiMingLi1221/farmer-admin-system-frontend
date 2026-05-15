@@ -353,13 +353,13 @@ const handleConfirmDelete = () => {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .message-detail {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .warning-box {
@@ -367,12 +367,12 @@ const handleConfirmDelete = () => {
   padding: 0.75rem;
   background: rgb(239 68 68 / 10%);
   border: 1px solid rgb(239 68 68 / 30%);
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .warning-text {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
 }
 </style>

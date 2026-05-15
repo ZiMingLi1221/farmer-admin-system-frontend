@@ -159,7 +159,7 @@ function handleDownloadAll() {
   gap: 1rem;
   align-items: center;
   padding: 1.25rem 1.5rem;
-  background: color-mix(in srgb, #22c55e 8%, var(--bg-secondary));
+  background: color-mix(in srgb, #22c55e 8%, var(--bg-1));
   border: 1px solid color-mix(in srgb, #22c55e 30%, transparent);
   border-radius: 0.75rem;
 }
@@ -186,7 +186,7 @@ function handleDownloadAll() {
   margin: 0 0 0.2rem;
   font-size: 1rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .success-sub {
@@ -195,23 +195,23 @@ function handleDownloadAll() {
   align-items: center;
   margin: 0;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .business-badge {
   padding: 0.2rem 0.625rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--primary);
-  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
   border-radius: 1rem;
 }
 
 /* 摘要 */
 .info-summary {
   padding: 1rem 1.25rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 0.625rem;
 }
 
@@ -219,7 +219,7 @@ function handleDownloadAll() {
   margin-bottom: 0.75rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .summary-grid {
@@ -236,13 +236,13 @@ function handleDownloadAll() {
 
 .summary-key {
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .summary-val {
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 /* 檔案列表 */
@@ -261,7 +261,7 @@ function handleDownloadAll() {
 .files-title {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .btn-zip {
@@ -271,15 +271,15 @@ function handleDownloadAll() {
   padding: 0.5rem 1rem;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--primary);
+  color: var(--accent);
   cursor: pointer;
-  background: color-mix(in srgb, var(--primary) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
   border-radius: 0.5rem;
 }
 
 .btn-zip:hover {
-  background: color-mix(in srgb, var(--primary) 18%, transparent);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
   transition: background-color 0.2s ease;
 }
 
@@ -294,13 +294,13 @@ function handleDownloadAll() {
   align-items: center;
   justify-content: space-between;
   padding: 0.875rem 1.25rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 0.625rem;
 }
 
 .file-item:hover {
-  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
   transition: border-color 0.2s ease;
 }
 
@@ -336,12 +336,12 @@ function handleDownloadAll() {
 .file-name {
   font-size: 0.9375rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .file-pdf {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .btn-download {
@@ -354,13 +354,13 @@ function handleDownloadAll() {
   font-weight: 500;
   color: white;
   cursor: pointer;
-  background: var(--primary);
+  background: var(--accent);
   border: none;
   border-radius: 0.5rem;
 }
 
 .btn-download:hover {
-  background: var(--primary-hover);
+  background: var(--accent-hover);
   transition: background-color 0.2s ease;
 }
 
@@ -382,17 +382,17 @@ function handleDownloadAll() {
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
   cursor: pointer;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
 }
 
 .btn-restart:hover {
-  color: var(--primary);
-  background: var(--bg-primary);
-  border-color: var(--primary);
+  color: var(--accent);
+  background: var(--bg);
+  border-color: var(--accent);
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,

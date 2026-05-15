@@ -157,9 +157,9 @@ const canResetPassword = (user: UserInfo) => {
 .table-container {
   margin-bottom: 1.5rem;
   overflow-x: auto;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
 }
 
 .data-table {
@@ -172,11 +172,11 @@ const canResetPassword = (user: UserInfo) => {
   padding: 1rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-2);
   text-align: left;
   white-space: nowrap;
-  background: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border);
 }
 
 .data-table thead th.sortable {
@@ -186,7 +186,7 @@ const canResetPassword = (user: UserInfo) => {
 }
 
 .data-table thead th.sortable:hover {
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .sort-icon {
@@ -196,32 +196,32 @@ const canResetPassword = (user: UserInfo) => {
 }
 
 .data-table tbody tr {
-  border-bottom: 1px solid var(--border-secondary);
+  border-bottom: 1px solid var(--border-strong);
 }
 
 .data-table tbody tr:hover {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
 .data-table tbody td {
   padding: 1rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .col-actions {
   position: sticky;
   right: 0;
   width: 200px;
-  background: var(--bg-secondary);
+  background: var(--bg-1);
 }
 
 .data-table thead th.col-actions {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
 .data-table tbody tr:hover .col-actions {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
 .action-buttons {
@@ -232,17 +232,17 @@ const canResetPassword = (user: UserInfo) => {
 
 .btn-icon {
   padding: 0.5rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
   transition: all 0.2s;
 }
 
 .btn-icon:hover {
-  color: var(--primary);
-  background: var(--bg-primary);
+  color: var(--accent);
+  background: var(--bg);
 }
 
 .btn-icon.btn-danger:hover {
@@ -261,7 +261,7 @@ const canResetPassword = (user: UserInfo) => {
   padding: 0.25rem 0.625rem;
   font-size: 0.75rem;
   font-weight: 500;
-  border-radius: var(--radius-xs);
+  border-radius: var(--r-xs);
 }
 
 .status-badge.active {

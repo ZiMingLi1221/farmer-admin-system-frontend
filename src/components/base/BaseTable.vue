@@ -126,9 +126,9 @@ const totalColumns = computed(() => {
 <style scoped>
 .base-table-container {
   overflow: hidden;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
 }
 
 .base-table {
@@ -140,14 +140,14 @@ const totalColumns = computed(() => {
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-2);
   text-align: left;
-  background: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border);
 }
 
 .base-table tbody tr {
-  border-bottom: 1px solid var(--border-secondary);
+  border-bottom: 1px solid var(--border-strong);
 }
 
 .base-table tbody tr:last-child {
@@ -155,13 +155,13 @@ const totalColumns = computed(() => {
 }
 
 .base-table tbody tr:hover {
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
 }
 
 .base-table tbody td {
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .col-checkbox {
@@ -188,16 +188,16 @@ const totalColumns = computed(() => {
 
 .btn-icon {
   padding: 0.375rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
 }
 
 .btn-icon:hover {
-  color: var(--primary);
-  background: var(--bg-primary);
+  color: var(--accent);
+  background: var(--bg);
   transition:
     color 0.15s ease,
     background-color 0.15s ease;
@@ -211,7 +211,7 @@ const totalColumns = computed(() => {
 .empty-cell {
   padding: 2rem 1rem;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   text-align: center;
 }
 </style>

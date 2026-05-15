@@ -146,7 +146,7 @@ function onTemplateToggle(id: string) {
 .field-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .select-wrapper {
@@ -159,17 +159,17 @@ function onTemplateToggle(id: string) {
   width: 100%;
   padding: 0.75rem 2.5rem 0.75rem 1rem;
   font-size: 0.9375rem;
-  color: var(--text-primary);
+  color: var(--text);
   appearance: none;
   cursor: pointer;
   outline: none;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
 }
 
 .base-select:focus {
-  border-color: var(--primary);
+  border-color: var(--accent);
   transition: border-color 0.2s ease;
 }
 
@@ -179,7 +179,7 @@ function onTemplateToggle(id: string) {
   right: 0.75rem;
   width: 1rem;
   height: 1rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   pointer-events: none;
   transform: translateY(-50%);
 }
@@ -187,7 +187,7 @@ function onTemplateToggle(id: string) {
 .business-desc {
   margin: 0.25rem 0 0;
   font-size: 0.8125rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 /* --- 表單列表 --- */
@@ -206,12 +206,12 @@ function onTemplateToggle(id: string) {
 .templates-title {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .templates-hint {
   font-size: 0.8125rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .template-list {
@@ -227,29 +227,29 @@ function onTemplateToggle(id: string) {
   padding: 1rem 1.25rem;
   cursor: pointer;
   user-select: none;
-  background: var(--bg-tertiary);
-  border: 1.5px solid var(--border-primary);
+  background: var(--bg-hover);
+  border: 1.5px solid var(--border);
   border-radius: 0.625rem;
 }
 
 .template-item:hover {
-  background: color-mix(in srgb, var(--primary) 5%, var(--bg-tertiary));
-  border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--bg-hover));
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease;
 }
 
 .template-checked {
-  background: color-mix(in srgb, var(--primary) 8%, var(--bg-tertiary)) !important;
-  border-color: var(--primary) !important;
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg-hover)) !important;
+  border-color: var(--accent) !important;
 }
 
 .template-checkbox {
   flex-shrink: 0;
   width: 1.125rem;
   height: 1.125rem;
-  accent-color: var(--primary);
+  accent-color: var(--accent);
   cursor: pointer;
 }
 
@@ -266,14 +266,14 @@ function onTemplateToggle(id: string) {
   align-items: center;
   font-size: 0.9375rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .doc-icon {
   flex-shrink: 0;
   width: 1.125rem;
   height: 1.125rem;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .template-field-count {
@@ -284,16 +284,16 @@ function onTemplateToggle(id: string) {
   padding: 0.25rem 0.625rem;
   font-size: 0.75rem;
   font-weight: 500;
-  color: var(--primary);
-  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
   border-radius: 1rem;
 }
 
 /* --- 聯集預覽 --- */
 .union-preview {
   padding: 1rem 1.25rem;
-  background: color-mix(in srgb, var(--primary) 5%, var(--bg-secondary));
-  border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--bg-1));
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
   border-radius: 0.625rem;
 }
 
@@ -304,7 +304,7 @@ function onTemplateToggle(id: string) {
   margin-bottom: 0.75rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .union-icon {
@@ -326,16 +326,16 @@ function onTemplateToggle(id: string) {
   padding: 0.3125rem 0.75rem;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  color: var(--text);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 1rem;
 }
 
 .chip-required {
-  color: var(--primary);
-  background: color-mix(in srgb, var(--primary) 8%, var(--bg-tertiary));
-  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg-hover));
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
 .chip-req-mark {
@@ -350,9 +350,9 @@ function onTemplateToggle(id: string) {
   align-items: center;
   padding: 0.875rem 1.25rem;
   font-size: 0.875rem;
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
-  border: 1px dashed var(--border-primary);
+  color: var(--text-2);
+  background: var(--bg-hover);
+  border: 1px dashed var(--border);
   border-radius: 0.5rem;
 }
 
