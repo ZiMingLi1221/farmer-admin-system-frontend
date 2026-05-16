@@ -2,17 +2,17 @@
   <BaseModal
     v-model="isOpen"
     title="上傳文件"
-    size="md"
+    size="lg"
     confirm-text="確認上傳"
     :confirm-disabled="!isFormValid || isUploading"
     @confirm="handleSubmit"
     @close="handleClose"
   >
     <div class="upload-form">
-      <!-- 拖拽上傳區 -->
+      <!-- 拖曳區（多檔） -->
       <div
         class="drop-zone"
-        :class="{ 'drop-zone-active': isDragging, 'drop-zone-has-file': selectedFile }"
+        :class="{ 'drop-zone-active': isDragging }"
         @dragover.prevent="isDragging = true"
         @dragleave.prevent="isDragging = false"
         @drop.prevent="handleDrop"
@@ -22,35 +22,35 @@
           ref="fileInputRef"
           type="file"
           class="file-input-hidden"
-          accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
+          accept=".pdf,.doc,.docx,.txt"
+          multiple
           @change="handleFileSelect"
         />
+        <div class="drop-zone-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+            />
+          </svg>
+        </div>
+        <p class="drop-title">拖曳文件至此，或<span class="drop-link">點擊選取</span></p>
+        <p class="drop-hint">支援 PDF、Word（doc/docx）、TXT，單檔上限 10 MB，可多選</p>
+      </div>
 
-        <template v-if="!selectedFile">
-          <div class="drop-zone-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-              />
-            </svg>
-          </div>
-          <p class="drop-title">拖曳文件至此，或<span class="drop-link">點擊選取</span></p>
-          <p class="drop-hint">支援 PDF、Word、Excel、PowerPoint、TXT</p>
-        </template>
-
-        <template v-else>
-          <div class="file-preview">
-            <span class="file-type-badge" :class="getFileIconClass(selectedFile.type)">
-              {{ getFileIconLabel(selectedFile.type) }}
+      <!-- 待上傳清單 -->
+      <div v-if="fileItems.length" class="file-list">
+        <div v-for="(item, idx) in fileItems" :key="idx" class="file-card">
+          <!-- 檔案列標題行 -->
+          <div class="file-card-header">
+            <span class="file-icon-sm" :class="iconClass(item.file.type)">
+              {{ iconLabel(item.file.type) }}
             </span>
-            <div class="file-preview-info">
-              <p class="file-preview-name">{{ selectedFile.name }}</p>
-              <p class="file-preview-size">{{ formatFileSize(selectedFile.size) }}</p>
-            </div>
-            <button class="file-remove-btn" @click.stop="removeFile">
+            <span class="file-card-name">{{ item.file.name }}</span>
+            <span class="file-card-size">{{ formatFileSize(item.file.size) }}</span>
+            <button class="file-remove-btn" @click="removeFile(idx)">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
@@ -61,185 +61,227 @@
               </svg>
             </button>
           </div>
-        </template>
-      </div>
+          <p v-if="item.error" class="file-error">{{ item.error }}</p>
 
-      <!-- 表單欄位 -->
-      <div class="form-group">
-        <label class="form-label required">文件標題</label>
-        <input
-          v-model="formData.title"
-          type="text"
-          class="form-input"
-          placeholder="請輸入文件標題"
-          required
-        />
-      </div>
+          <!-- 每檔各自欄位 -->
+          <div class="file-fields">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label required">文件類別</label>
+                <select v-model="item.docType" class="form-select">
+                  <option value="">請選擇類別</option>
+                  <option v-for="o in docTypeOptions" :key="o.value" :value="o.value">
+                    {{ o.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">版本</label>
+                <input
+                  v-model="item.version"
+                  type="text"
+                  class="form-input"
+                  placeholder="如 2024-v1（選填）"
+                />
+              </div>
+            </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label required">分類</label>
-          <select v-model="formData.category" class="form-select" required>
-            <option value="">請選擇分類</option>
-            <option v-for="cat in CATEGORIES" :key="cat" :value="cat">{{ cat }}</option>
-          </select>
-        </div>
+            <div v-if="item.docType !== 'public_regulation'" class="form-row">
+              <div class="form-group">
+                <label class="form-label">所屬部門</label>
+                <select
+                  v-model="item.departmentId"
+                  class="form-select"
+                  @change="item.businessTypeIds = []"
+                >
+                  <option :value="null">全機關公開</option>
+                  <option v-for="o in departmentOptions" :key="o.value" :value="o.value">
+                    {{ o.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">所屬業務別</label>
+                <div v-if="!item.departmentId" class="bt-hint">請先選擇所屬部門</div>
+                <div v-else-if="!filteredBtOptions(item.departmentId).length" class="bt-hint">
+                  此部門無業務別
+                </div>
+                <div v-else class="bt-checklist">
+                  <label
+                    v-for="o in filteredBtOptions(item.departmentId)"
+                    :key="o.value"
+                    class="bt-check"
+                  >
+                    <input
+                      type="checkbox"
+                      :value="o.value"
+                      :checked="item.businessTypeIds.includes(o.value)"
+                      @change="toggleBt(item, o.value)"
+                    />
+                    {{ o.label }}
+                  </label>
+                </div>
+              </div>
+            </div>
 
-        <div class="form-group">
-          <label class="form-label">所屬部門</label>
-          <select v-model="formData.department" class="form-select">
-            <option value="">公開（無限制）</option>
-            <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">標籤</label>
-        <div class="tag-input-wrapper">
-          <div class="tag-list">
-            <span v-for="tag in formData.tags" :key="tag" class="tag-item">
-              {{ tag }}
-              <button class="tag-remove" @click="removeTag(tag)">×</button>
-            </span>
+            <div class="form-group">
+              <label class="form-label">說明</label>
+              <textarea
+                v-model="item.description"
+                class="form-textarea"
+                rows="2"
+                placeholder="選填，簡短描述文件內容"
+              />
+            </div>
           </div>
-          <input
-            v-model="tagInput"
-            type="text"
-            class="tag-input"
-            placeholder="輸入標籤後按 Enter"
-            @keyup.enter="addTag"
-          />
         </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">說明</label>
-        <textarea
-          v-model="formData.description"
-          class="form-textarea"
-          rows="2"
-          placeholder="選填，簡短描述文件內容"
-        />
       </div>
     </div>
   </BaseModal>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 
 import BaseModal from '@/components/base/BaseModal.vue';
+import { fileTypeOf } from '@/constants/fileType';
+import type {
+  DocType,
+  DocTypeOption,
+  UploadDocumentItem,
+  UploadKnowledgeDocumentRequest,
+} from '@/types/knowledge';
 
-const CATEGORIES = ['業務規章', '業務流程', '法規', '內部知識'];
-
-const MIME_MAP: Record<string, { label: string; cls: string }> = {
-  'application/pdf': { label: 'PDF', cls: 'icon-pdf' },
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
-    label: 'DOC',
-    cls: 'icon-word',
-  },
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
-    label: 'XLS',
-    cls: 'icon-excel',
-  },
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation': {
-    label: 'PPT',
-    cls: 'icon-ppt',
-  },
-  'text/plain': { label: 'TXT', cls: 'icon-txt' },
-};
-const getFileIconLabel = (mime: string) => MIME_MAP[mime]?.label ?? 'FILE';
-const getFileIconClass = (mime: string) => MIME_MAP[mime]?.cls ?? 'icon-default';
-const formatFileSize = (bytes: number) => {
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-};
-
-interface Props {
-  modelValue: boolean;
-  departments: string[];
+interface SelectOption {
+  value: string;
+  label: string;
 }
 
-const props = defineProps<Props>();
+interface BusinessTypeChoice {
+  value: string;
+  label: string;
+  departmentId: string;
+}
+
+const props = defineProps<{
+  modelValue: boolean;
+  docTypeOptions: DocTypeOption[];
+  departmentOptions: SelectOption[];
+  /** 全部業務別（含所屬部門 id），供每檔依其所屬部門連動過濾 */
+  businessTypeOptions: BusinessTypeChoice[];
+}>();
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
-  (e: 'submit', file: File, formData: any): void;
+  (e: 'submit', payload: UploadKnowledgeDocumentRequest): void;
 }>();
 
 const isOpen = computed({
   get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value),
+  set: (v) => emit('update:modelValue', v),
 });
+
+const ALLOWED_EXT = ['pdf', 'doc', 'docx', 'txt'];
+const MAX_SIZE = 10 * 1024 * 1024;
+
+interface FileItem {
+  file: File;
+  docType: DocType | '';
+  version: string;
+  departmentId: string | null;
+  businessTypeIds: string[];
+  description: string;
+  error: string;
+}
 
 const isUploading = ref(false);
 const isDragging = ref(false);
 const fileInputRef = ref<HTMLInputElement | null>(null);
-const selectedFile = ref<File | null>(null);
-const tagInput = ref('');
+const fileItems = ref<FileItem[]>([]);
 
-const defaultForm = () => ({
-  title: '',
-  category: '',
-  department: '',
-  tags: [] as string[],
+const validateFile = (file: File): string => {
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+  if (!ALLOWED_EXT.includes(ext)) return `不支援的格式（僅限 ${ALLOWED_EXT.join(' / ')}）`;
+  if (file.size > MAX_SIZE) return '檔案超過 10 MB 上限';
+  return '';
+};
+
+const makeItem = (file: File): FileItem => ({
+  file,
+  docType: '',
+  version: '',
+  departmentId: null,
+  businessTypeIds: [],
   description: '',
+  error: validateFile(file),
 });
-const formData = ref(defaultForm());
 
-const isFormValid = computed(
-  () =>
-    selectedFile.value !== null &&
-    formData.value.title.trim() !== '' &&
-    formData.value.category !== ''
-);
-
-// 當檔案選取時，自動帶入原始檔名作為標題建議
-watch(selectedFile, (file) => {
-  if (file && !formData.value.title) {
-    formData.value.title = file.name.replace(/\.[^.]+$/, ''); // 去除副檔名
+const addFiles = (files: FileList | File[]) => {
+  const list = Array.from(files);
+  for (const f of list) {
+    if (!fileItems.value.some((i) => i.file.name === f.name && i.file.size === f.size)) {
+      fileItems.value.push(makeItem(f));
+    }
   }
-});
+};
 
 const handleFileSelect = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0];
-  if (file) selectedFile.value = file;
+  const files = (e.target as HTMLInputElement).files;
+  if (files) addFiles(files);
+  if (fileInputRef.value) fileInputRef.value.value = '';
 };
 
 const handleDrop = (e: DragEvent) => {
   isDragging.value = false;
-  const file = e.dataTransfer?.files?.[0];
-  if (file) selectedFile.value = file;
+  if (e.dataTransfer?.files) addFiles(e.dataTransfer.files);
 };
 
-const removeFile = () => {
-  selectedFile.value = null;
-  if (fileInputRef.value) fileInputRef.value.value = '';
+const removeFile = (idx: number) => {
+  fileItems.value.splice(idx, 1);
 };
 
-const addTag = () => {
-  const tag = tagInput.value.trim();
-  if (tag && !formData.value.tags.includes(tag)) {
-    formData.value.tags.push(tag);
-  }
-  tagInput.value = '';
+/** 過濾出屬於該部門的業務別選項；departmentId 為 null 時回傳空陣列 */
+const filteredBtOptions = (departmentId: string | null): BusinessTypeChoice[] => {
+  if (!departmentId) return [];
+  return props.businessTypeOptions.filter((o) => o.departmentId === departmentId);
 };
 
-const removeTag = (tag: string) => {
-  formData.value.tags = formData.value.tags.filter((t) => t !== tag);
+const toggleBt = (item: FileItem, id: string) => {
+  item.businessTypeIds = item.businessTypeIds.includes(id)
+    ? item.businessTypeIds.filter((x) => x !== id)
+    : [...item.businessTypeIds, id];
 };
+
+const isFormValid = computed(
+  () => fileItems.value.length > 0 && fileItems.value.every((i) => !i.error && i.docType !== '')
+);
 
 const handleSubmit = () => {
-  if (!isFormValid.value || !selectedFile.value) return;
-  emit('submit', selectedFile.value, { ...formData.value });
+  if (!isFormValid.value) return;
+  const items: UploadDocumentItem[] = fileItems.value.map((i) => ({
+    file: i.file,
+    docType: i.docType as DocType,
+    version: i.version || '',
+    departmentId: i.docType === 'public_regulation' ? null : i.departmentId,
+    businessTypeIds: i.docType === 'public_regulation' || !i.departmentId ? [] : i.businessTypeIds,
+    description: i.description || undefined,
+  }));
+  emit('submit', { items });
   handleClose();
 };
 
 const handleClose = () => {
-  formData.value = defaultForm();
-  selectedFile.value = null;
-  tagInput.value = '';
+  fileItems.value = [];
+  isDragging.value = false;
+  isOpen.value = false;
+};
+
+const iconLabel = (mime: string) => fileTypeOf(mime).label;
+const iconClass = (mime: string) => fileTypeOf(mime).cls;
+const formatFileSize = (bytes: number) => {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 </script>
 
@@ -250,31 +292,26 @@ const handleClose = () => {
   gap: 1.25rem;
 }
 
-/* ── 拖拽區 ── */
 .drop-zone {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 7rem;
+  min-height: 6rem;
   padding: 1.5rem;
   cursor: pointer;
   background: var(--bg-hover);
   border: 2px dashed var(--border);
   border-radius: var(--r-lg);
-  transition: all 0.2s;
 }
 
 .drop-zone:hover,
 .drop-zone-active {
   background: var(--accent-soft);
   border-color: var(--accent);
-}
-
-.drop-zone-has-file {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  border-style: solid;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .file-input-hidden {
@@ -282,9 +319,9 @@ const handleClose = () => {
 }
 
 .drop-zone-icon svg {
-  width: 2.5rem;
-  height: 2.5rem;
-  margin-bottom: 0.5rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-bottom: 0.375rem;
   color: var(--text-3);
 }
 
@@ -297,7 +334,6 @@ const handleClose = () => {
 .drop-link {
   margin-left: 0.25rem;
   color: var(--accent);
-  cursor: pointer;
 }
 
 .drop-hint {
@@ -306,63 +342,57 @@ const handleClose = () => {
   color: var(--text-3);
 }
 
-/* ── 已選檔案預覽 ── */
-.file-preview {
+/* 清單 */
+.file-list {
   display: flex;
+  flex-direction: column;
   gap: 0.75rem;
-  align-items: center;
-  width: 100%;
 }
 
-.file-type-badge {
+.file-card {
+  padding: 0.875rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.file-card-header {
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+/* 實心高對比檔案圖示 */
+.file-icon-sm {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  font-size: 0.625rem;
+  width: 1.875rem;
+  height: 1.875rem;
+  font-size: 0.5rem;
   font-weight: 700;
-  border-radius: var(--r-md);
+  color: #fff;
+  letter-spacing: 0.04em;
+  border-radius: var(--r-xs);
 }
 
 .icon-pdf {
-  color: #ef4444;
-  background: rgb(239 68 68 / 12%);
+  background: #c0392b;
 }
 
 .icon-word {
-  color: #3b82f6;
-  background: rgb(59 130 246 / 12%);
+  background: #1d4ed8;
 }
 
-.icon-excel {
-  color: #22c55e;
-  background: rgb(34 197 94 / 12%);
-}
-
-.icon-ppt {
-  color: #f97316;
-  background: rgb(249 115 22 / 12%);
-}
-
-.icon-txt {
-  color: var(--text-2);
-  background: var(--bg-hover);
-}
-
+.icon-txt,
 .icon-default {
-  color: var(--text-2);
-  background: var(--bg-hover);
+  background: #475569;
 }
 
-.file-preview-info {
+.file-card-name {
   flex: 1;
-  min-width: 0;
-}
-
-.file-preview-name {
-  margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.875rem;
@@ -371,10 +401,10 @@ const handleClose = () => {
   white-space: nowrap;
 }
 
-.file-preview-size {
-  margin: 0;
+.file-card-size {
   font-size: 0.75rem;
-  color: var(--text-2);
+  color: var(--text-3);
+  white-space: nowrap;
 }
 
 .file-remove-btn {
@@ -388,13 +418,15 @@ const handleClose = () => {
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--r-md);
-  transition: all 0.15s;
+  border-radius: var(--r-sm);
 }
 
 .file-remove-btn:hover {
   color: var(--error);
-  background: rgb(239 68 68 / 10%);
+  background: var(--error-soft);
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .file-remove-btn svg {
@@ -402,7 +434,18 @@ const handleClose = () => {
   height: 0.875rem;
 }
 
-/* ── 表單 ── */
+.file-error {
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--error);
+}
+
+.file-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -429,13 +472,20 @@ const handleClose = () => {
 .form-input,
 .form-select,
 .form-textarea {
-  padding: 0.5rem 0.75rem;
+  box-sizing: border-box;
+  padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
   color: var(--text);
-  background: var(--bg-hover);
-  border: 1px solid var(--border);
+  background: var(--bg-1);
+  border: 2px solid var(--border);
   border-radius: var(--r-md);
-  transition: border-color 0.2s;
+  transition: border-color 0.15s ease;
+}
+
+.form-input:hover,
+.form-select:hover,
+.form-textarea:hover {
+  border-color: var(--border-strong);
 }
 
 .form-input:focus,
@@ -445,68 +495,63 @@ const handleClose = () => {
   border-color: var(--accent);
 }
 
+/* select 統一外觀：自繪箭頭，離右邊界 16px（與篩選列一致） */
+.form-select {
+  padding-right: 2.25rem;
+  appearance: none;
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-2) 50%),
+    linear-gradient(135deg, var(--text-2) 50%, transparent 50%);
+  background-repeat: no-repeat;
+  background-position:
+    right 16px center,
+    right 11px center;
+  background-size:
+    5px 5px,
+    5px 5px;
+}
+
 .form-textarea {
   font-family: inherit;
-  resize: none;
+  resize: vertical;
 }
 
-/* ── 標籤輸入 ── */
-.tag-input-wrapper {
-  padding: 0.375rem 0.5rem;
-  background: var(--bg-hover);
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  transition: border-color 0.2s;
-}
-
-.tag-input-wrapper:focus-within {
-  border-color: var(--accent);
-}
-
-.tag-list {
+.bt-checklist {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-  margin-bottom: 0.25rem;
-}
-
-.tag-item {
-  display: inline-flex;
+  flex-direction: column;
   gap: 0.25rem;
-  align-items: center;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.75rem;
-  color: var(--accent);
-  background: var(--accent-soft);
+  max-height: 7rem;
+  padding: 0.5rem;
+  overflow-y: auto;
+  background: var(--bg-1);
+  border: 2px solid var(--border);
   border-radius: var(--r-md);
 }
 
-.tag-remove {
-  padding: 0;
-  font-size: 0.875rem;
-  line-height: 1;
-  color: inherit;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  opacity: 0.7;
-}
-
-.tag-remove:hover {
-  opacity: 1;
-}
-
-.tag-input {
-  width: 100%;
-  padding: 0.25rem;
-  font-size: 0.875rem;
+.bt-check {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.8125rem;
   color: var(--text);
-  outline: none;
-  background: transparent;
-  border: none;
 }
 
-.tag-input::placeholder {
+.bt-hint {
+  display: flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0 0.875rem;
+  font-size: 0.8125rem;
   color: var(--text-3);
+  background: var(--bg-1);
+  border: 2px dashed var(--border);
+  border-radius: var(--r-md);
+}
+
+@media (width <= 767px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

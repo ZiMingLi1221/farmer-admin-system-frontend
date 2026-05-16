@@ -3,234 +3,323 @@
     v-model="isOpen"
     :title="isEdit ? '編輯文件資訊' : '文件詳情'"
     size="md"
-    :confirm-text="isEdit ? '儲存' : '編輯'"
+    :confirm-text="isEdit ? '儲存' : editable ? '編輯' : '關閉'"
     :cancel-text="isEdit ? '取消' : '關閉'"
-    @confirm="isEdit ? handleSave() : (isEdit = true)"
+    @confirm="onConfirm"
     @close="handleClose"
   >
     <div v-if="document" class="detail-form">
-      <!-- 唯讀：基本資訊 Header -->
-      <div class="doc-header">
-        <span class="file-icon-lg" :class="getFileIconClass(document.mimeType)">
-          {{ getFileIconLabel(document.mimeType) }}
+      <!-- 資訊卡：檔案概要 -->
+      <div class="info-card">
+        <span class="file-icon-lg" :class="iconClass(document.mimeType)">
+          {{ iconLabel(document.mimeType) }}
         </span>
-        <div class="doc-header-info">
-          <p class="doc-original-name">{{ document.filename }}</p>
-          <div class="doc-meta-row">
+        <div class="info-card-body">
+          <p class="doc-name">{{ document.filename }}</p>
+          <div class="meta-row">
             <span>{{ formatFileSize(document.fileSize) }}</span>
             <span class="dot">·</span>
-            <StatusBadge :status="document.status" />
+            <span class="lbl" :class="statusLblClass(document.status)">{{
+              statusLabel(document.status)
+            }}</span>
             <span class="dot">·</span>
             <span>{{ document.chunkCount }} 個切片</span>
           </div>
+          <p v-if="document.versionNote" class="version-note">{{ document.versionNote }}</p>
         </div>
       </div>
 
       <hr class="divider" />
 
-      <!-- 可編輯欄位 -->
-      <div class="form-group">
-        <label class="form-label required">文件標題</label>
-        <input
-          v-if="isEdit"
-          v-model="formData.title"
-          type="text"
-          class="form-input"
-          placeholder="文件標題"
-        />
-        <p v-else class="form-value">{{ document.title }}</p>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label required">分類</label>
-          <select v-if="isEdit" v-model="formData.category" class="form-select">
-            <option v-for="cat in CATEGORIES" :key="cat" :value="cat">{{ cat }}</option>
-          </select>
-          <p v-else class="form-value">
-            <span class="category-badge">{{ document.category }}</span>
-          </p>
+      <!-- 資訊格（唯讀詳情；對齊樣板 .kb-info-grid） -->
+      <div class="kb-info-grid">
+        <div class="kb-info-item">
+          <span class="kb-info-k">文件類別</span>
+          <span class="kb-info-v">{{ docTypeLabel(document.docType) }}</span>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">所屬部門</label>
-          <select v-if="isEdit" v-model="formData.department" class="form-select">
-            <option value="">公開（無限制）</option>
-            <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
-          </select>
-          <p v-else class="form-value">
-            <span v-if="document.department" class="dept-badge">{{ document.department }}</span>
-            <span v-else class="text-secondary">公開</span>
-          </p>
+        <div class="kb-info-item">
+          <span class="kb-info-k">部門 / 業務別</span>
+          <span class="kb-info-v">
+            {{ deptLabel(document.departmentId) }}
+            <template v-if="document.businessTypeIds.length">
+              · {{ btLabel(document.businessTypeIds) }}
+            </template>
+          </span>
+        </div>
+        <div class="kb-info-item">
+          <span class="kb-info-k">上傳者</span>
+          <span class="kb-info-v">{{ document.uploadedBy }}</span>
+        </div>
+        <div class="kb-info-item">
+          <span class="kb-info-k">上傳時間</span>
+          <span class="kb-info-v">{{ formatDateFull(document.uploadedAt) }}</span>
+        </div>
+        <div class="kb-info-item">
+          <span class="kb-info-k">最後更新</span>
+          <span class="kb-info-v">{{ formatDateFull(document.updatedAt) }}</span>
+        </div>
+        <div v-if="document.description" class="kb-info-item kb-info-span">
+          <span class="kb-info-k">說明</span>
+          <span class="kb-info-v">{{ document.description }}</span>
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">標籤</label>
-        <template v-if="isEdit">
-          <div class="tag-input-wrapper">
-            <div class="tag-list">
-              <span v-for="tag in formData.tags" :key="tag" class="tag-item">
-                {{ tag }}
-                <button class="tag-remove" @click="removeTag(tag)">×</button>
-              </span>
-            </div>
-            <input
-              v-model="tagInput"
-              type="text"
-              class="tag-input"
-              placeholder="輸入標籤後按 Enter"
-              @keyup.enter="addTag"
-            />
+      <!-- 編輯模式下的可編輯欄位 -->
+      <template v-if="isEdit">
+        <hr class="divider" />
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label required">文件類別</label>
+            <select v-model="form.docType" class="form-select">
+              <option v-for="o in docTypeOptions" :key="o.value" :value="o.value">
+                {{ o.label }}
+              </option>
+            </select>
           </div>
-        </template>
-        <div v-else class="tag-list-readonly">
-          <span v-for="tag in document.tags" :key="tag" class="tag-item">{{ tag }}</span>
-          <span v-if="!document.tags.length" class="text-secondary">—</span>
+          <div class="form-group">
+            <label class="form-label">版本</label>
+            <input v-model="form.version" type="text" class="form-input" placeholder="如 2024-v1" />
+          </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label class="form-label">說明</label>
-        <textarea v-if="isEdit" v-model="formData.description" class="form-textarea" rows="2" />
-        <p v-else class="form-value">{{ document.description || '—' }}</p>
-      </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">所屬部門</label>
+            <select v-model="form.departmentId" class="form-select" @change="onDepartmentChange">
+              <option :value="null">全機關公開</option>
+              <option v-for="o in departmentOptions" :key="o.value" :value="o.value">
+                {{ o.label }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">業務別</label>
+            <div v-if="!form.departmentId" class="bt-hint">請先選擇所屬部門</div>
+            <div v-else-if="!filteredBtOptions.length" class="bt-hint">此部門無業務別</div>
+            <div v-else class="bt-checklist">
+              <label v-for="o in filteredBtOptions" :key="o.value" class="bt-check">
+                <input
+                  type="checkbox"
+                  :value="o.value"
+                  :checked="form.businessTypeIds.includes(o.value)"
+                  @change="toggleBt(o.value)"
+                />
+                {{ o.label }}
+              </label>
+            </div>
+          </div>
+        </div>
 
-      <!-- 唯讀：上傳資訊 -->
-      <div v-if="!isEdit" class="info-grid">
-        <div class="info-item">
-          <span class="info-label">上傳者</span>
-          <span class="info-value">{{ document.uploadedBy }}</span>
+        <div class="form-group">
+          <label class="form-label">說明</label>
+          <textarea v-model="form.description" class="form-textarea" rows="2" />
         </div>
-        <div class="info-item">
-          <span class="info-label">上傳時間</span>
-          <span class="info-value">{{ document.uploadedAt }}</span>
+      </template>
+
+      <!-- 版本鏈區（唯讀模式顯示） -->
+      <template v-if="!isEdit && (currentVersions.length > 1 || isLoadingVersions)">
+        <hr class="divider" />
+        <div class="kb-ver">
+          <p class="ver-section-title">版本歷程（{{ currentVersions.length }} 版）</p>
+          <div v-if="isLoadingVersions" class="ver-loading">載入中...</div>
+          <div v-else class="ver-list">
+            <div
+              v-for="ver in currentVersions"
+              :key="ver.id"
+              class="kb-ver-item"
+              :class="{ current: !ver.supersededBy }"
+            >
+              <div class="kb-ver-dot" />
+              <div class="kb-ver-main">
+                <p class="kb-ver-no">
+                  {{ ver.version }}
+                  <span v-if="!ver.supersededBy" class="ver-badge-current">目前版本</span>
+                  <span v-else class="ver-badge-old">已淘汰</span>
+                </p>
+                <p v-if="ver.versionNote" class="kb-ver-note">{{ ver.versionNote }}</p>
+                <p class="kb-ver-meta">
+                  {{ formatDateFull(ver.uploadedAt) }} · {{ ver.uploadedBy }}
+                </p>
+              </div>
+              <button
+                v-if="ver.status === 'ready' && ver.fileUrl"
+                class="ver-open-btn"
+                @click="openFile(ver.fileUrl)"
+              >
+                開啟
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="info-item">
-          <span class="info-label">最後更新</span>
-          <span class="info-value">{{ document.updatedAt }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">文件 ID</span>
-          <span class="info-value info-id">{{ document.id }}</span>
-        </div>
-      </div>
+      </template>
     </div>
   </BaseModal>
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, h, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import BaseModal from '@/components/base/BaseModal.vue';
-import type { KnowledgeDocument } from '@/types/knowledge';
+import { fileTypeOf } from '@/constants/fileType';
+import { useKnowledgeStore } from '@/stores/knowledge';
+import type { DocType, DocTypeOption, KnowledgeDocument } from '@/types/knowledge';
+import { DOC_TYPE_LABELS } from '@/types/knowledge';
 
-const CATEGORIES = ['業務規章', '業務流程', '法規', '內部知識'];
+interface SelectOption {
+  value: string;
+  label: string;
+}
 
-/* ── StatusBadge（行內子組件）── */
-const StatusBadge = defineComponent({
-  props: { status: String },
-  setup(props) {
-    return () => {
-      const map: Record<string, { label: string; cls: string }> = {
-        ready: { label: '已就緒', class: 'status-ready' } as any,
-        processing: { label: '處理中', class: 'status-processing' } as any,
-        uploading: { label: '上傳中', class: 'status-processing' } as any,
-        error: { label: '錯誤', class: 'status-error' } as any,
-      };
-      const info = map[props.status as string] ?? { label: props.status ?? '', class: '' };
-      return h('span', { class: ['status-badge', (info as any).class] }, (info as any).label);
-    };
-  },
-});
+interface BusinessTypeChoice {
+  value: string;
+  label: string;
+  departmentId: string;
+}
 
-/* ── 工具 ── */
-const MIME_MAP: Record<string, { label: string; cls: string }> = {
-  'application/pdf': { label: 'PDF', cls: 'icon-pdf' },
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
-    label: 'DOC',
-    cls: 'icon-word',
-  },
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
-    label: 'XLS',
-    cls: 'icon-excel',
-  },
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation': {
-    label: 'PPT',
-    cls: 'icon-ppt',
-  },
-  'text/plain': { label: 'TXT', cls: 'icon-txt' },
-};
-const getFileIconLabel = (mime: string) => MIME_MAP[mime]?.label ?? 'FILE';
-const getFileIconClass = (mime: string) => MIME_MAP[mime]?.cls ?? 'icon-default';
-const formatFileSize = (bytes: number) => {
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-};
-
-/* ── Props / Emits ── */
 const props = defineProps<{
   modelValue: boolean;
   document: KnowledgeDocument | null;
-  departments: string[];
+  editable: boolean;
+  docTypeOptions: DocTypeOption[];
+  departmentOptions: SelectOption[];
+  businessTypeOptions: BusinessTypeChoice[];
+  deptNameMap: Record<string, string>;
+  btNameMap: Record<string, string>;
 }>();
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
-  (e: 'save', id: string, data: any): void;
+  (
+    e: 'save',
+    id: string,
+    data: {
+      docType: DocType;
+      version: string;
+      departmentId: string | null;
+      businessTypeIds: string[];
+      description: string;
+    }
+  ): void;
 }>();
 
-/* ── 狀態 ── */
+const knowledgeStore = useKnowledgeStore();
+
 const isOpen = computed({
   get: () => props.modelValue,
   set: (v) => emit('update:modelValue', v),
 });
+
 const isEdit = ref(false);
-const tagInput = ref('');
-const formData = ref({
-  title: '',
-  category: '',
-  department: '',
-  tags: [] as string[],
+const isLoadingVersions = ref(false);
+
+const currentVersions = computed(() => knowledgeStore.currentVersions);
+
+const form = ref({
+  docType: 'internal_regulation' as DocType,
+  version: '',
+  departmentId: null as string | null,
+  businessTypeIds: [] as string[],
   description: '',
 });
 
 watch(
   () => props.document,
-  (doc) => {
+  async (doc) => {
     isEdit.value = false;
     if (doc) {
-      formData.value = {
-        title: doc.title,
-        category: doc.category,
-        department: doc.department,
-        tags: [...doc.tags],
+      form.value = {
+        docType: doc.docType,
+        version: doc.version,
+        departmentId: doc.departmentId,
+        businessTypeIds: [...doc.businessTypeIds],
         description: doc.description ?? '',
       };
+      isLoadingVersions.value = true;
+      try {
+        await knowledgeStore.fetchDocument(doc.id);
+      } finally {
+        isLoadingVersions.value = false;
+      }
     }
   },
   { immediate: true }
 );
 
-/* ── 操作 ── */
-const addTag = () => {
-  const tag = tagInput.value.trim();
-  if (tag && !formData.value.tags.includes(tag)) formData.value.tags.push(tag);
-  tagInput.value = '';
-};
-const removeTag = (tag: string) => {
-  formData.value.tags = formData.value.tags.filter((t) => t !== tag);
+const docTypeLabel = (t: DocType) => DOC_TYPE_LABELS[t] ?? t;
+const deptLabel = (id: string | null) => (id ? (props.deptNameMap[id] ?? id) : '全機關公開');
+const btLabel = (ids: string[]) => ids.map((id) => props.btNameMap[id] ?? id).join('、');
+
+// 業務別依所選部門連動過濾
+const filteredBtOptions = computed(() =>
+  form.value.departmentId
+    ? props.businessTypeOptions.filter((o) => o.departmentId === form.value.departmentId)
+    : []
+);
+
+const onDepartmentChange = () => {
+  form.value.businessTypeIds = [];
 };
 
-const handleSave = () => {
+const toggleBt = (id: string) => {
+  const list = form.value.businessTypeIds;
+  form.value.businessTypeIds = list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
+};
+
+const onConfirm = () => {
+  if (!isEdit.value) {
+    if (props.editable) isEdit.value = true;
+    else isOpen.value = false;
+    return;
+  }
   if (!props.document) return;
-  emit('save', props.document.id, { ...formData.value });
+  emit('save', props.document.id, {
+    docType: form.value.docType,
+    version: form.value.version,
+    departmentId: form.value.docType === 'public_regulation' ? null : form.value.departmentId,
+    businessTypeIds: form.value.businessTypeIds,
+    description: form.value.description,
+  });
   isEdit.value = false;
+  isOpen.value = false;
 };
 
 const handleClose = () => {
   isEdit.value = false;
 };
+
+const openFile = (url: string) => {
+  window.open(url, '_blank', 'noopener,noreferrer');
+};
+
+const iconLabel = (mime: string) => fileTypeOf(mime).label;
+const iconClass = (mime: string) => fileTypeOf(mime).cls;
+
+const formatFileSize = (bytes: number) => {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+/** YYYY-MM-DD HH:mm */
+const formatDateFull = (iso: string): string => {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const y = d.getFullYear();
+  const mo = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const h = String(d.getHours()).padStart(2, '0');
+  const min = String(d.getMinutes()).padStart(2, '0');
+  return `${y}-${mo}-${day} ${h}:${min}`;
+};
+
+const STATUS_LBL: Record<string, { label: string; cls: string }> = {
+  ready: { label: '已就緒', cls: 'lbl-accent' },
+  processing: { label: '處理中', cls: 'lbl-warning' },
+  uploading: { label: '處理中', cls: 'lbl-warning' },
+  error: { label: '錯誤', cls: 'lbl-error' },
+};
+const statusLabel = (s: string) => STATUS_LBL[s]?.label ?? s;
+const statusLblClass = (s: string) => STATUS_LBL[s]?.cls ?? 'lbl-default';
 </script>
 
 <style scoped>
@@ -240,13 +329,18 @@ const handleClose = () => {
   gap: 1.25rem;
 }
 
-/* ── Header ── */
-.doc-header {
+/* 資訊卡 */
+.info-card {
   display: flex;
   gap: 1rem;
   align-items: flex-start;
+  padding: 1rem;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
 }
 
+/* 實心高對比檔案圖示 */
 .file-icon-lg {
   display: inline-flex;
   flex-shrink: 0;
@@ -256,49 +350,40 @@ const handleClose = () => {
   height: 3rem;
   font-size: 0.6875rem;
   font-weight: 700;
-  border-radius: var(--r-md);
+  color: #fff;
+  letter-spacing: 0.04em;
+  border-radius: var(--r-xs);
 }
 
 .icon-pdf {
-  color: #ef4444;
-  background: rgb(239 68 68 / 12%);
+  background: #c0392b;
 }
 
 .icon-word {
-  color: #3b82f6;
-  background: rgb(59 130 246 / 12%);
-}
-
-.icon-excel {
-  color: #22c55e;
-  background: rgb(34 197 94 / 12%);
-}
-
-.icon-ppt {
-  color: #f97316;
-  background: rgb(249 115 22 / 12%);
+  background: #1d4ed8;
 }
 
 .icon-txt,
 .icon-default {
-  color: var(--text-2);
-  background: var(--bg-hover);
+  background: #475569;
 }
 
-.doc-header-info {
+.info-card-body {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
+  min-width: 0;
 }
 
-.doc-original-name {
+.doc-name {
   margin: 0;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.9375rem;
+  font-weight: 600;
   color: var(--text);
+  word-break: break-all;
 }
 
-.doc-meta-row {
+.meta-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
@@ -308,7 +393,43 @@ const handleClose = () => {
 }
 
 .dot {
-  color: var(--border);
+  color: var(--border-strong);
+}
+
+.version-note {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--warning);
+}
+
+/* lbl 家族 */
+.lbl {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: var(--r-pill);
+}
+
+.lbl-accent {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.lbl-warning {
+  color: var(--warning);
+  background: var(--warning-soft);
+}
+
+.lbl-error {
+  color: var(--error);
+  background: var(--error-soft);
+}
+
+.lbl-default {
+  color: var(--text-2);
+  background: var(--bg-2);
 }
 
 .divider {
@@ -317,7 +438,150 @@ const handleClose = () => {
   border-top: 1px solid var(--border);
 }
 
-/* ── 表單 ── */
+/* 資訊格（對齊樣板 .kb-info-grid） */
+.kb-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem 1.5rem;
+  padding: 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+
+.kb-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.kb-info-span {
+  grid-column: 1 / -1;
+}
+
+.kb-info-k {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.kb-info-v {
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+/* 版本鏈區 */
+.ver-section-title {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ver-loading {
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.ver-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.kb-ver-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.kb-ver-item.current {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.kb-ver-dot {
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.3125rem;
+  background: var(--text-3);
+  border-radius: 50%;
+}
+
+.kb-ver-item.current .kb-ver-dot {
+  background: var(--accent);
+}
+
+.kb-ver-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.kb-ver-no {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ver-badge-current {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  margin-left: 0.375rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--r-pill);
+}
+
+.ver-badge-old {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  margin-left: 0.375rem;
+  font-size: 0.6875rem;
+  color: var(--text-3);
+  background: var(--bg-2);
+  border-radius: var(--r-pill);
+}
+
+.kb-ver-note {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-2);
+}
+
+.kb-ver-meta {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.ver-open-btn {
+  flex-shrink: 0;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.8125rem;
+  color: var(--accent);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: var(--r-md);
+}
+
+.ver-open-btn:hover {
+  color: #fff;
+  background: var(--accent);
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+/* 編輯欄位 */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -341,23 +605,23 @@ const handleClose = () => {
   content: ' *';
 }
 
-.form-value {
-  min-height: 1.25rem;
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--text);
-}
-
 .form-input,
 .form-select,
 .form-textarea {
-  padding: 0.5rem 0.75rem;
+  box-sizing: border-box;
+  padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
   color: var(--text);
-  background: var(--bg-hover);
-  border: 1px solid var(--border);
+  background: var(--bg-1);
+  border: 2px solid var(--border);
   border-radius: var(--r-md);
-  transition: border-color 0.2s;
+  transition: border-color 0.15s ease;
+}
+
+.form-input:hover,
+.form-select:hover,
+.form-textarea:hover {
+  border-color: var(--border-strong);
 }
 
 .form-input:focus,
@@ -367,150 +631,66 @@ const handleClose = () => {
   border-color: var(--accent);
 }
 
+.form-select {
+  padding-right: 2.25rem;
+  appearance: none;
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-2) 50%),
+    linear-gradient(135deg, var(--text-2) 50%, transparent 50%);
+  background-repeat: no-repeat;
+  background-position:
+    right 16px center,
+    right 11px center;
+  background-size:
+    5px 5px,
+    5px 5px;
+}
+
 .form-textarea {
   font-family: inherit;
-  resize: none;
+  resize: vertical;
 }
 
-.text-secondary {
-  color: var(--text-2);
-}
-
-/* ── 分類/部門標籤 ── */
-.category-badge {
-  padding: 0.2rem 0.5rem;
-  font-size: 0.75rem;
-  color: var(--text-2);
-  background: var(--bg-hover);
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-}
-
-.dept-badge {
-  padding: 0.2rem 0.5rem;
-  font-size: 0.75rem;
-  color: #7c3aed;
-  background: rgb(124 58 237 / 10%);
-  border-radius: 1rem;
-}
-
-/* ── 標籤 ── */
-.tag-input-wrapper {
-  padding: 0.375rem 0.5rem;
-  background: var(--bg-hover);
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  transition: border-color 0.2s;
-}
-
-.tag-input-wrapper:focus-within {
-  border-color: var(--accent);
-}
-
-.tag-list,
-.tag-list-readonly {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-  margin-bottom: 0.25rem;
-}
-
-.tag-list-readonly {
-  margin-bottom: 0;
-}
-
-.tag-item {
-  display: inline-flex;
-  gap: 0.25rem;
-  align-items: center;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.75rem;
-  color: var(--accent);
-  background: var(--accent-soft);
-  border-radius: var(--r-md);
-}
-
-.tag-remove {
-  padding: 0;
-  font-size: 0.875rem;
-  line-height: 1;
-  color: inherit;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  opacity: 0.7;
-}
-
-.tag-remove:hover {
-  opacity: 1;
-}
-
-.tag-input {
-  width: 100%;
-  padding: 0.25rem;
-  font-size: 0.875rem;
-  color: var(--text);
-  outline: none;
-  background: transparent;
-  border: none;
-}
-
-.tag-input::placeholder {
-  color: var(--text-3);
-}
-
-/* ── 狀態標籤 ── */
-.status-badge {
-  padding: 0.15rem 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border-radius: 1rem;
-}
-
-.status-ready {
-  color: #16a34a;
-  background: rgb(34 197 94 / 12%);
-}
-
-.status-processing {
-  color: #d97706;
-  background: rgb(245 158 11 / 12%);
-}
-
-.status-error {
-  color: #dc2626;
-  background: rgb(239 68 68 / 12%);
-}
-
-/* ── 資訊格 ── */
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  padding: 1rem;
-  background: var(--bg-hover);
-  border-radius: var(--r-md);
-}
-
-.info-item {
+.bt-checklist {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.25rem;
+  max-height: 7rem;
+  padding: 0.5rem;
+  overflow-y: auto;
+  background: var(--bg-1);
+  border: 2px solid var(--border);
+  border-radius: var(--r-md);
 }
 
-.info-label {
-  font-size: 0.75rem;
-  color: var(--text-2);
-}
-
-.info-value {
-  font-size: 0.875rem;
+.bt-check {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.8125rem;
   color: var(--text);
 }
 
-.info-id {
-  font-family: monospace;
-  font-size: 0.75rem;
-  color: var(--text-2);
+.bt-hint {
+  display: flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0 0.875rem;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  background: var(--bg-1);
+  border: 2px dashed var(--border);
+  border-radius: var(--r-md);
+}
+
+@media (width <= 767px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .kb-info-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
