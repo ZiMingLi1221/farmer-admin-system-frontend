@@ -50,38 +50,36 @@
     </Teleport>
 
     <!-- ⋮ Context menu -->
-    <Teleport to="body">
-      <div v-if="openMenuId !== null" class="conv-context-menu" :style="contextMenuStyle">
-        <button class="context-menu-item danger" @click="handleDeleteConv">
-          <svg class="context-menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              :d="ICONS.DELETE"
-            />
-          </svg>
-          <span>刪除對話</span>
-        </button>
-      </div>
-    </Teleport>
+    <DropdownMenu
+      :items="convMenuItems"
+      :open="openMenuId !== null"
+      :anchor="menuAnchorEl"
+      align="left"
+      @select="handleConvMenuSelect"
+      @close="openMenuId = null"
+    />
 
     <!-- 刪除確認 Modal -->
-    <BaseModal v-model="showDeleteModal" title="刪除對話" size="sm" @close="cancelDelete">
-      <p>確定要刪除此對話？此動作無法復原。</p>
-      <template #footer>
-        <button class="btn-cancel" @click="cancelDelete">取消</button>
-        <button class="btn-danger" @click="confirmDelete">確認刪除</button>
-      </template>
+    <BaseModal
+      v-model="showDeleteModal"
+      title="刪除對話"
+      size="sm"
+      confirm-text="確認刪除"
+      confirm-variant="danger"
+      @confirm="confirmDelete"
+      @close="cancelDelete"
+    >
+      <p class="delete-confirm-text">確定要刪除此對話？此動作無法復原。</p>
     </BaseModal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import BaseModal from '@/components/base/BaseModal.vue';
+import DropdownMenu from '@/components/common/DropdownMenu.vue';
 import { ICONS } from '@/constants/icons';
 import { useChatStore } from '@/stores/chat';
 import { useSidebarStore } from '@/stores/sidebar';
@@ -133,39 +131,30 @@ const handleConvClick = (id: string): void => {
 
 // ⋮ Context menu
 const openMenuId = ref<string | null>(null);
-const contextMenuStyle = ref<Record<string, string>>({});
+const menuAnchorEl = ref<HTMLElement | null>(null);
+
+const convMenuItems = [{ key: 'delete', label: '刪除對話', icon: ICONS.DELETE, danger: true }];
 
 const handleMoreClick = (event: MouseEvent, convId: string): void => {
-  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-
   if (openMenuId.value === convId) {
     openMenuId.value = null;
+    menuAnchorEl.value = null;
     return;
   }
-
-  contextMenuStyle.value = {
-    top: `${rect.bottom + 4}px`,
-    left: `${rect.left}px`,
-  };
+  menuAnchorEl.value = event.currentTarget as HTMLElement;
   openMenuId.value = convId;
-
-  nextTick(() => {
-    window.addEventListener('click', closeContextMenu, { once: true });
-  });
-};
-
-const closeContextMenu = (): void => {
-  openMenuId.value = null;
 };
 
 const showDeleteModal = ref(false);
 const pendingDeleteId = ref<string | null>(null);
 
-const handleDeleteConv = (): void => {
-  if (openMenuId.value === null) return;
-  pendingDeleteId.value = openMenuId.value;
-  openMenuId.value = null;
-  showDeleteModal.value = true;
+const handleConvMenuSelect = (key: string): void => {
+  if (key === 'delete' && openMenuId.value !== null) {
+    pendingDeleteId.value = openMenuId.value;
+    openMenuId.value = null;
+    menuAnchorEl.value = null;
+    showDeleteModal.value = true;
+  }
 };
 
 const confirmDelete = (): void => {
@@ -234,7 +223,6 @@ watch(
 onUnmounted(() => {
   observer?.disconnect();
   clearItemTooltipTimer();
-  window.removeEventListener('click', closeContextMenu);
 });
 </script>
 
@@ -404,48 +392,6 @@ onUnmounted(() => {
   height: 1px;
 }
 
-/* Context menu popover */
-.conv-context-menu {
-  position: fixed;
-  z-index: 9999;
-  min-width: 8rem;
-  padding: 0.375rem;
-  background: var(--bg-1);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  box-shadow:
-    0 4px 12px rgb(0 0 0 / 15%),
-    0 2px 4px rgb(0 0 0 / 10%);
-}
-
-.context-menu-item {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  border-radius: var(--r-md);
-}
-
-.context-menu-item.danger {
-  color: var(--error);
-}
-
-.context-menu-item.danger:hover {
-  background: color-mix(in srgb, var(--error) 10%, transparent);
-  transition: background-color 0.15s ease;
-}
-
-.context-menu-icon {
-  flex-shrink: 0;
-  width: 1rem;
-  height: 1rem;
-}
-
 /* Tooltip — 對齊全域：淺色黑底白字 / 深色白底黑字 */
 .conv-tooltip {
   position: fixed;
@@ -484,37 +430,10 @@ onUnmounted(() => {
   opacity: 0;
 }
 
-/* 刪除確認 Modal 按鈕 */
-.btn-cancel,
-.btn-danger {
-  padding: 0.625rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  border-radius: var(--r-md);
-}
-
-.btn-cancel {
-  color: var(--text-2);
-  background: transparent;
-}
-
-.btn-cancel:hover {
+.delete-confirm-text {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
   color: var(--text);
-  background: var(--bg-hover);
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
-}
-
-.btn-danger {
-  color: white;
-  background: var(--error);
-}
-
-.btn-danger:hover {
-  background: var(--error-hover);
-  transition: background-color 0.15s ease;
 }
 </style>

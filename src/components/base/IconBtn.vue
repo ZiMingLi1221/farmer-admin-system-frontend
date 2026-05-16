@@ -66,9 +66,12 @@ const handleClick = (event: MouseEvent) => {
 }
 
 /* Variants */
-.icon-btn--accent {
+
+/* Primary = 唯一允許實心綠的 CTA（對齊設計系統 .btn-primary：實心底 + 膠囊圓角） */
+.icon-btn--primary {
   color: var(--text-on-accent);
   background-color: var(--accent);
+  border-radius: var(--r-pill);
 }
 
 .icon-btn--primary:hover:not(:disabled),
@@ -98,6 +101,7 @@ const handleClick = (event: MouseEvent) => {
 .icon-btn--danger {
   color: var(--text-on-accent);
   background-color: var(--error);
+  border-radius: var(--r-pill);
 }
 
 .icon-btn--danger:hover:not(:disabled) {
