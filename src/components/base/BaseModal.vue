@@ -26,7 +26,12 @@
               <button class="btn btn-secondary" @click="handleClose">
                 {{ cancelText }}
               </button>
-              <button class="btn btn-primary" :disabled="confirmDisabled" @click="handleConfirm">
+              <button
+                class="btn"
+                :class="confirmVariant === 'danger' ? 'btn-danger' : 'btn-primary'"
+                :disabled="confirmDisabled"
+                @click="handleConfirm"
+              >
                 {{ confirmText }}
               </button>
             </slot>
@@ -50,6 +55,7 @@ interface Props {
   confirmText?: string;
   cancelText?: string;
   confirmDisabled?: boolean;
+  confirmVariant?: 'primary' | 'danger';
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -58,6 +64,7 @@ const props = withDefaults(defineProps<Props>(), {
   confirmText: '確認',
   cancelText: '取消',
   confirmDisabled: false,
+  confirmVariant: 'primary',
 });
 
 const emit = defineEmits<{
@@ -165,12 +172,13 @@ const handleConfirm = () => {
 }
 
 .btn {
-  padding: 0.625rem 1.25rem;
+  padding: 0.625rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   border: none;
-  border-radius: var(--r-md);
+  border-radius: var(--r-pill);
+  transition: background-color 0.15s ease;
 }
 
 .btn:disabled {
@@ -179,13 +187,21 @@ const handleConfirm = () => {
 }
 
 .btn-primary {
-  color: white;
+  color: var(--text-on-accent);
   background: var(--accent);
 }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--accent-hover);
-  transition: background-color 0.15s ease;
+}
+
+.btn-danger {
+  color: var(--text-on-accent);
+  background: var(--error);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--error-hover);
 }
 
 .btn-secondary {

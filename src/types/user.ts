@@ -12,7 +12,9 @@ export interface UserInfo {
   username: string; // 用戶名（用於登入）
   name?: string; // 真實姓名(可選)
   role: UserRole;
-  department: string; // 主要部門（目前使用）
+  department: string; // 主要部門名稱（顯示用，沿用既有欄位）
+  departmentId?: string | null; // 所屬部門 ID（null = 不限部門，如 admin）
+  businessTypeIds?: string[]; // 負責的業務別 ID 清單（決定作業手冊/申請表單可見範圍）
   mustChangePassword?: boolean; // 是否需要修改密碼（首次登入或密碼被重置）
   email?: string; // Email(預留擴展，未來可啟用)
   phone?: string; // 電話(可選)

@@ -103,8 +103,13 @@ const hasFilters = computed(() => !!slots.filters?.());
   font-size: 0.875rem;
   color: var(--text);
   background-color: var(--bg-1);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: var(--r-md);
+  transition: border-color 0.15s ease;
+}
+
+.search-input:hover {
+  border-color: var(--border-strong);
 }
 
 .search-input:focus {

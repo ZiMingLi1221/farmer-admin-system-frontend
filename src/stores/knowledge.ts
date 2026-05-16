@@ -1,97 +1,212 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import type { KnowledgeDocument } from '@/types/knowledge';
-import { httpClient } from '@/utils/request';
+import {
+  batchDeleteDocuments,
+  deleteDocument as apiDeleteDocument,
+  deleteSingleVersion as apiDeleteSingleVersion,
+  getDocument as apiGetDocument,
+  getDocuments,
+  getDocumentTypes,
+  updateDocument as apiUpdateDocument,
+  uploadDocument as apiUploadDocument,
+  uploadNewVersion as apiUploadNewVersion,
+} from '@/api/knowledge';
+import type {
+  DocTypeOption,
+  GetDocumentsRequest,
+  KnowledgeDocument,
+  UpdateDocumentRequest,
+  UploadKnowledgeDocumentRequest,
+  UploadNewVersionRequest,
+} from '@/types/knowledge';
+import { DocumentStatus } from '@/types/knowledge';
 
+type Filters = Pick<
+  GetDocumentsRequest,
+  'keyword' | 'docType' | 'departmentId' | 'businessTypeId' | 'status' | 'sortBy' | 'sortOrder'
+>;
+
+const DEFAULT_FILTERS: Filters = {
+  keyword: undefined,
+  docType: undefined,
+  departmentId: undefined,
+  businessTypeId: undefined,
+  status: undefined,
+  sortBy: 'updatedAt',
+  sortOrder: 'desc',
+};
+
+/**
+ * 知識庫狀態管理 — 薄層。
+ *
+ * 不在前端做過濾 / 分頁 / RBAC；僅持有目前查詢條件並轉發給 API 層，
+ * 顯示後端（mock 為契約替身）回傳的已分頁結果。
+ */
 export const useKnowledgeStore = defineStore('knowledge', () => {
   // State
   const documents = ref<KnowledgeDocument[]>([]);
+  const total = ref(0);
+  const currentPage = ref(1);
+  const pageSize = ref(20);
+  const totalPages = ref(1);
   const isLoading = ref(false);
+  const filters = ref<Filters>({ ...DEFAULT_FILTERS });
+  const docTypeOptions = ref<DocTypeOption[]>([]);
+
+  /** 目前開啟的文件詳情 */
+  const currentDocument = ref<KnowledgeDocument | null>(null);
+  /** 目前文件的完整版本鏈（依 uploadedAt 升序，最舊→最新） */
+  const currentVersions = ref<KnowledgeDocument[]>([]);
 
   // Getters
-
-  // 所有可用分類
-  const categories = computed((): string[] => {
-    const cats = new Set(documents.value.map((d) => d.category).filter(Boolean));
-    return Array.from(cats);
-  });
-
-  // 所有可用部門
-  const departments = computed((): string[] => {
-    const depts = new Set(documents.value.map((d) => d.department).filter(Boolean));
-    return Array.from(depts);
-  });
+  const startIndex = computed(() =>
+    total.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1
+  );
+  const endIndex = computed(() => Math.min(currentPage.value * pageSize.value, total.value));
+  // 「處理中」涵蓋上傳中：兩者皆為向量化未完成的過渡態，需持續輪詢
+  const hasProcessing = computed(() =>
+    documents.value.some(
+      (d) => d.status === DocumentStatus.PROCESSING || d.status === DocumentStatus.UPLOADING
+    )
+  );
 
   // Actions
-
   async function fetchDocuments(): Promise<void> {
     isLoading.value = true;
     try {
-      const res = await httpClient.get<{ items: KnowledgeDocument[] }>('/knowledge/documents');
-      documents.value = res.data.items;
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  async function addDocument(
-    doc: Omit<KnowledgeDocument, 'id' | 'uploadedAt' | 'updatedAt' | 'status' | 'chunkCount'>
-  ): Promise<KnowledgeDocument> {
-    isLoading.value = true;
-    try {
-      const res = await httpClient.post<KnowledgeDocument>('/knowledge/documents', doc);
-      documents.value.push(res.data);
-      return res.data;
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  function updateDocument(
-    id: string,
-    data: Partial<
-      Pick<KnowledgeDocument, 'title' | 'category' | 'department' | 'tags' | 'description'>
-    >
-  ): KnowledgeDocument | null {
-    const index = documents.value.findIndex((d) => d.id === id);
-    if (index !== -1) {
-      const now = new Date().toLocaleString('zh-TW', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
+      const res = await getDocuments({
+        page: currentPage.value,
+        pageSize: pageSize.value,
+        ...filters.value,
       });
-      documents.value[index] = { ...documents.value[index], ...data, updatedAt: now };
-      return documents.value[index];
+      const data = res.data;
+      documents.value = data.items;
+      total.value = data.total;
+      currentPage.value = data.page;
+      pageSize.value = data.pageSize;
+      totalPages.value = data.totalPages;
+    } finally {
+      isLoading.value = false;
     }
-    return null;
   }
 
-  function deleteDocument(id: string): KnowledgeDocument | null {
-    const index = documents.value.findIndex((d) => d.id === id);
-    if (index !== -1) {
-      const deleted = documents.value[index];
-      documents.value.splice(index, 1);
-      return deleted;
+  async function fetchDocumentTypes(): Promise<void> {
+    const res = await getDocumentTypes();
+    docTypeOptions.value = res.data;
+  }
+
+  /** 載入文件詳情與版本鏈 */
+  async function fetchDocument(documentId: string): Promise<void> {
+    const res = await apiGetDocument(documentId);
+    currentDocument.value = res.data.document;
+    currentVersions.value = res.data.versions;
+  }
+
+  function setPage(page: number): Promise<void> {
+    currentPage.value = page;
+    return fetchDocuments();
+  }
+
+  function setPageSize(size: number): Promise<void> {
+    pageSize.value = size;
+    currentPage.value = 1;
+    return fetchDocuments();
+  }
+
+  function setFilters(patch: Partial<Filters>): Promise<void> {
+    filters.value = { ...filters.value, ...patch };
+    currentPage.value = 1;
+    return fetchDocuments();
+  }
+
+  function setSort(sortBy: Filters['sortBy']): Promise<void> {
+    const order =
+      filters.value.sortBy === sortBy && filters.value.sortOrder === 'desc' ? 'asc' : 'desc';
+    return setFilters({ sortBy, sortOrder: order });
+  }
+
+  function resetFilters(): Promise<void> {
+    filters.value = { ...DEFAULT_FILTERS };
+    currentPage.value = 1;
+    return fetchDocuments();
+  }
+
+  /** 多檔上傳（每檔各自中繼資料，各自開新版本鏈） */
+  async function uploadDocument(
+    payload: UploadKnowledgeDocumentRequest
+  ): Promise<KnowledgeDocument[]> {
+    const res = await apiUploadDocument(payload);
+    await fetchDocuments();
+    return res.data;
+  }
+
+  /** 追加新版本（繼承目標文件的 versionGroupId / docType / 部門 / 業別） */
+  async function uploadNewVersion(req: UploadNewVersionRequest): Promise<KnowledgeDocument> {
+    const res = await apiUploadNewVersion(req);
+    await fetchDocuments();
+    return res.data;
+  }
+
+  async function updateDocument(req: UpdateDocumentRequest): Promise<void> {
+    await apiUpdateDocument(req);
+    await fetchDocuments();
+  }
+
+  /** 軟刪除整條版本鏈 */
+  async function deleteDocument(documentId: string): Promise<void> {
+    await apiDeleteDocument({ documentId });
+    await fetchDocuments();
+  }
+
+  /** 軟刪除單一版本（詳情頁用） */
+  async function deleteSingleVersion(documentId: string): Promise<void> {
+    await apiDeleteSingleVersion(documentId);
+    // 若刪除的是 currentDocument，重新載入版本鏈
+    if (currentDocument.value) {
+      await fetchDocument(currentDocument.value.id).catch(() => {
+        currentDocument.value = null;
+        currentVersions.value = [];
+      });
     }
-    return null;
+  }
+
+  async function batchDelete(documentIds: string[]): Promise<number> {
+    const res = await batchDeleteDocuments({ documentIds });
+    await fetchDocuments();
+    return res.data.removed;
   }
 
   return {
     // State
     documents,
+    total,
+    currentPage,
+    pageSize,
+    totalPages,
     isLoading,
+    filters,
+    docTypeOptions,
+    currentDocument,
+    currentVersions,
     // Getters
-    categories,
-    departments,
+    startIndex,
+    endIndex,
+    hasProcessing,
     // Actions
     fetchDocuments,
-    addDocument,
+    fetchDocumentTypes,
+    fetchDocument,
+    setPage,
+    setPageSize,
+    setFilters,
+    setSort,
+    resetFilters,
+    uploadDocument,
+    uploadNewVersion,
     updateDocument,
     deleteDocument,
+    deleteSingleVersion,
+    batchDelete,
   };
 });

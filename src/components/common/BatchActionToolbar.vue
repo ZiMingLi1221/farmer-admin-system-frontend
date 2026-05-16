@@ -44,37 +44,43 @@ defineEmits<{
   margin-left: auto;
 }
 
-.btn-danger-outline {
-  padding: 0.375rem 0.875rem;
+/* 對齊設計系統 .btn 家族：兩鈕同尺寸、膠囊圓角 */
+.btn-danger-outline,
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0.5rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--error);
   cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--error);
-  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+/* 刪除＝實心 danger（設計系統唯一允許實心紅的確認動作） */
+.btn-danger-outline {
+  color: var(--text-on-accent);
+  background: var(--error);
 }
 
 .btn-danger-outline:hover {
-  color: white;
-  background: var(--error);
-  transition: background-color 0.15s ease;
+  background: var(--error-hover);
 }
 
+/* 取消＝中性 ghost */
 .btn-cancel {
-  padding: 0.375rem 0.875rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-2);
-  cursor: pointer;
+  color: var(--text);
   background: transparent;
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
+  border-color: var(--border-strong);
 }
 
 .btn-cancel:hover {
-  color: var(--text);
-  background: var(--bg);
-  transition: background-color 0.15s ease;
+  background: var(--bg-hover);
 }
 </style>

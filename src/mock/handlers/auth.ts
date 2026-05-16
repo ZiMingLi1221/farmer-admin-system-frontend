@@ -13,7 +13,8 @@ export const authHandlers = [
         code: 0,
         message: 'success',
         data: {
-          accessToken: 'mock-access-token',
+          // token 帶 username，供 mock handler 模擬後端解析 JWT 識別呼叫者身分
+          accessToken: `mock-access-token.${user.username}`,
           refreshToken: 'mock-refresh-token',
           mustChangePassword: user.mustChangePassword || false,
           user,

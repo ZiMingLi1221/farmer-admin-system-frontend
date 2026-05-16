@@ -1,449 +1,346 @@
 <template>
-  <div class="table-container">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th @click="$emit('sort', 'title')" class="sortable">
-            文件標題
-            <span class="sort-icon">{{ getSortIcon('title') }}</span>
-          </th>
-          <th>分類</th>
-          <th v-if="isAdmin">部門</th>
-          <th @click="$emit('sort', 'fileSize')" class="sortable">
-            大小
-            <span class="sort-icon">{{ getSortIcon('fileSize') }}</span>
-          </th>
-          <th>狀態</th>
-          <th>上傳者</th>
-          <th @click="$emit('sort', 'uploadedAt')" class="sortable">
-            上傳時間
-            <span class="sort-icon">{{ getSortIcon('uploadedAt') }}</span>
-          </th>
-          <th class="col-actions">操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-if="documents.length === 0">
-          <td :colspan="isAdmin ? 8 : 7" class="empty-cell">
-            <div class="empty-state">
-              <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1.5"
-                  d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              <p>尚無文件，請點擊「上傳文件」新增</p>
-            </div>
-          </td>
-        </tr>
+  <BaseTable
+    :columns="columns"
+    :rows="rows"
+    :selected-ids="selectedIds"
+    :sort-by="sortBy"
+    :sort-order="sortOrder"
+    sticky-first-column
+    empty-text=""
+    @toggle-row="$emit('toggle-row', $event)"
+    @toggle-all="$emit('toggle-all')"
+    @sort="$emit('sort', $event)"
+  >
+    <!-- 文件（檔名 + 圖示；點擊開詳情） -->
+    <template #cell-filename="{ row }">
+      <button class="filename-cell" @click="$emit('detail', asDoc(row))">
+        <span class="file-icon" :class="iconClass(asDoc(row).mimeType)">
+          {{ iconLabel(asDoc(row).mimeType) }}
+        </span>
+        <span class="filename-text">{{ asDoc(row).filename }}</span>
+      </button>
+    </template>
 
-        <tr
-          v-for="doc in documents"
-          :key="doc.id"
-          class="clickable-row"
-          @click="$emit('detail', doc)"
-        >
-          <!-- 文件標題欄 -->
-          <td class="col-title">
-            <div class="doc-title-cell">
-              <span class="file-icon" :class="getFileIconClass(doc.mimeType)">
-                {{ getFileIconLabel(doc.mimeType) }}
-              </span>
-              <div class="doc-info">
-                <span class="doc-title-text">{{ doc.title }}</span>
-                <span class="doc-filename">{{ doc.filename }}</span>
-                <div v-if="doc.tags.length" class="doc-tags">
-                  <span v-for="tag in doc.tags.slice(0, 3)" :key="tag" class="doc-tag">{{
-                    tag
-                  }}</span>
-                </div>
-              </div>
-            </div>
-          </td>
+    <!-- 類別：純文字 -->
+    <template #cell-docType="{ row }">
+      <span class="plain-text">{{ docTypeLabel(asDoc(row).docType) }}</span>
+    </template>
 
-          <!-- 分類（純文字） -->
-          <td>{{ doc.category }}</td>
+    <!-- 部門 -->
+    <template #cell-department="{ row }">
+      <span class="nowrap">{{ deptLabel(asDoc(row).departmentId) }}</span>
+    </template>
 
-          <!-- 部門（純文字，僅管理員） -->
-          <td v-if="isAdmin">{{ doc.department || '公開' }}</td>
+    <!-- 業務別 -->
+    <template #cell-businessType="{ row }">
+      <span class="nowrap">{{
+        asDoc(row).businessTypeIds.length ? btLabel(asDoc(row).businessTypeIds) : '—'
+      }}</span>
+    </template>
 
-          <!-- 大小 -->
-          <td>{{ formatFileSize(doc.fileSize) }}</td>
+    <!-- 大小 -->
+    <template #cell-fileSize="{ row }">
+      {{ formatFileSize(asDoc(row).fileSize) }}
+    </template>
 
-          <!-- 狀態 -->
-          <td>
-            <span class="status-badge" :class="getStatusClass(doc.status)">
-              {{ getStatusLabel(doc.status) }}
-            </span>
-          </td>
+    <!-- 狀態：lbl 家族語意 -->
+    <template #cell-status="{ row }">
+      <span class="lbl" :class="statusLblClass(asDoc(row).status)">
+        {{ statusLabel(asDoc(row).status) }}
+      </span>
+    </template>
 
-          <!-- 上傳者 -->
-          <td>{{ doc.uploadedBy }}</td>
+    <!-- 版本：僅顯目前版號（共幾版於詳情查看） -->
+    <template #cell-version="{ row }">
+      <span class="nowrap">{{ asDoc(row).version }}</span>
+    </template>
 
-          <!-- 上傳時間 -->
-          <td class="col-nowrap">{{ doc.uploadedAt }}</td>
+    <!-- 上傳時間 -->
+    <template #cell-uploadedAt="{ row }">
+      <span class="date-cell">{{ formatDateShort(asDoc(row).uploadedAt) }}</span>
+    </template>
 
-          <!-- 操作 -->
-          <td class="col-actions" @click.stop>
-            <div class="action-buttons">
-              <!-- 眼睛：開新分頁預覽原始文件 -->
-              <button class="btn-icon" title="開啟文件預覽" @click="$emit('preview', doc)">
-                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                  />
-                </svg>
-              </button>
+    <!-- 更新時間 -->
+    <template #cell-updatedAt="{ row }">
+      <span class="date-cell">{{ formatDateShort(asDoc(row).updatedAt) }}</span>
+    </template>
 
-              <!-- 編輯：管理員或主管 -->
-              <button
-                v-if="canEdit"
-                class="btn-icon"
-                title="編輯文件資訊"
-                @click="$emit('edit', doc)"
-              >
-                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  />
-                </svg>
-              </button>
+    <!-- 操作：單一 ⋮ 按鈕 + DropdownMenu -->
+    <template #actions="{ row }">
+      <button
+        :ref="(el) => setMenuAnchor(asDoc(row).id, el as HTMLElement | null)"
+        class="more-btn"
+        @click.stop="toggleMenu(asDoc(row).id)"
+      >
+        ⋮
+      </button>
+      <DropdownMenu
+        :items="menuItems(asDoc(row))"
+        :open="openMenuId === asDoc(row).id"
+        :anchor="menuAnchors[asDoc(row).id] ?? null"
+        align="right"
+        @select="handleMenuSelect(asDoc(row), $event)"
+        @close="openMenuId = null"
+      />
+    </template>
 
-              <!-- 刪除：僅管理員 -->
-              <button
-                v-if="isAdmin"
-                class="btn-icon btn-danger"
-                title="刪除"
-                @click="$emit('delete', doc)"
-              >
-                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <template #empty>
+      <div class="empty-state">
+        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+        <p>查無符合條件的文件</p>
+      </div>
+    </template>
+  </BaseTable>
 </template>
 
 <script setup lang="ts">
-import type { KnowledgeDocument } from '@/types/knowledge';
+import { computed, ref } from 'vue';
+
+import BaseTable, { type BaseTableRow, type ColumnDef } from '@/components/base/BaseTable.vue';
+import DropdownMenu from '@/components/common/DropdownMenu.vue';
+import { fileTypeOf } from '@/constants/fileType';
+import type { DocType, KnowledgeDocument } from '@/types/knowledge';
+import { DOC_TYPE_LABELS } from '@/types/knowledge';
 
 const props = defineProps<{
   documents: KnowledgeDocument[];
-  isAdmin: boolean;
-  isManager: boolean;
-  sortField: string;
-  sortOrder: 'asc' | 'desc';
+  selectedIds?: string[];
+  permissions: { canEdit: boolean; canDelete: boolean };
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  deptNameMap: Record<string, string>;
+  btNameMap: Record<string, string>;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
+  (e: 'toggle-row', id: string): void;
+  (e: 'toggle-all'): void;
+  (e: 'sort', key: string): void;
   (e: 'detail', doc: KnowledgeDocument): void;
   (e: 'preview', doc: KnowledgeDocument): void;
   (e: 'edit', doc: KnowledgeDocument): void;
   (e: 'delete', doc: KnowledgeDocument): void;
-  (e: 'sort', field: string): void;
+  (e: 'upload-version', doc: KnowledgeDocument): void;
 }>();
 
-// 排序圖示（與 StaffTable 相同）
-const getSortIcon = (field: string) => {
-  if (props.sortField !== field) return '⇅';
-  return props.sortOrder === 'asc' ? '↑' : '↓';
+const rows = computed(() => props.documents as unknown as BaseTableRow[]);
+const asDoc = (r: BaseTableRow) => r as unknown as KnowledgeDocument;
+
+const columns: ColumnDef[] = [
+  { key: 'filename', label: '文件', sortable: true, width: '280px' },
+  { key: 'docType', label: '類別' },
+  { key: 'department', label: '部門' },
+  { key: 'businessType', label: '業務別' },
+  { key: 'fileSize', label: '大小' },
+  { key: 'status', label: '狀態' },
+  { key: 'version', label: '版本' },
+  { key: 'uploadedAt', label: '上傳時間', sortable: true },
+  { key: 'updatedAt', label: '更新時間', sortable: true },
+];
+
+// ── 選單邏輯 ──────────────────────────────────────────────────────
+const openMenuId = ref<string | null>(null);
+const menuAnchors = ref<Record<string, HTMLElement>>({});
+
+const setMenuAnchor = (id: string, el: HTMLElement | null) => {
+  if (el) menuAnchors.value[id] = el;
 };
 
-// 編輯權限
-const canEdit = props.isAdmin || props.isManager;
+const toggleMenu = (id: string) => {
+  openMenuId.value = openMenuId.value === id ? null : id;
+};
 
-// 檔案大小格式
+const ICON_OPEN = 'M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14';
+const ICON_UPLOAD_VER = 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12';
+const ICON_EDIT =
+  'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z';
+const ICON_DELETE =
+  'M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16';
+
+const menuItems = (doc: KnowledgeDocument) => {
+  const canOpen = doc.status === 'ready' && !!doc.fileUrl;
+  return [
+    { key: 'preview', label: '開啟原始檔', icon: ICON_OPEN, disabled: !canOpen },
+    ...(props.permissions.canEdit
+      ? [{ key: 'upload-version', label: '上傳新版', icon: ICON_UPLOAD_VER }]
+      : []),
+    ...(props.permissions.canEdit ? [{ key: 'edit', label: '編輯資訊', icon: ICON_EDIT }] : []),
+    ...(props.permissions.canDelete
+      ? [{ key: 'delete', label: '刪除', icon: ICON_DELETE, danger: true }]
+      : []),
+  ];
+};
+
+const handleMenuSelect = (doc: KnowledgeDocument, key: string) => {
+  openMenuId.value = null;
+  if (key === 'preview') emit('preview', doc);
+  else if (key === 'upload-version') emit('upload-version', doc);
+  else if (key === 'edit') emit('edit', doc);
+  else if (key === 'delete') emit('delete', doc);
+};
+
+// ── 顯示 helpers ──────────────────────────────────────────────────
+const docTypeLabel = (t: DocType) => DOC_TYPE_LABELS[t] ?? t;
+const deptLabel = (id: string | null) => (id ? (props.deptNameMap[id] ?? id) : '全機關公開');
+const btLabel = (ids: string[]) => ids.map((id) => props.btNameMap[id] ?? id).join('、');
+
 const formatFileSize = (bytes: number): string => {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-// 檔案類型圖示
-const MIME_MAP: Record<string, { label: string; cls: string }> = {
-  'application/pdf': { label: 'PDF', cls: 'icon-pdf' },
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
-    label: 'DOC',
-    cls: 'icon-word',
-  },
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
-    label: 'XLS',
-    cls: 'icon-excel',
-  },
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation': {
-    label: 'PPT',
-    cls: 'icon-ppt',
-  },
-  'text/plain': { label: 'TXT', cls: 'icon-txt' },
+/** YYYY-MM-DD（不依賴 locale 避免環境差異） */
+const formatDateShort = (iso: string): string => {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 };
-const getFileIconLabel = (mime: string) => MIME_MAP[mime]?.label ?? 'FILE';
-const getFileIconClass = (mime: string) => MIME_MAP[mime]?.cls ?? 'icon-default';
 
-// 狀態
-const STATUS_MAP: Record<string, { label: string; cls: string }> = {
-  ready: { label: '已就緒', cls: 'status-ready' },
-  processing: { label: '處理中', cls: 'status-processing' },
-  uploading: { label: '上傳中', cls: 'status-processing' },
-  error: { label: '錯誤', cls: 'status-error' },
+const iconLabel = (mime: string) => fileTypeOf(mime).label;
+const iconClass = (mime: string) => fileTypeOf(mime).cls;
+
+const STATUS_LBL: Record<string, { label: string; cls: string }> = {
+  ready: { label: '已就緒', cls: 'lbl-accent' },
+  processing: { label: '處理中', cls: 'lbl-warning' },
+  uploading: { label: '處理中', cls: 'lbl-warning' },
+  error: { label: '錯誤', cls: 'lbl-error' },
 };
-const getStatusLabel = (s: string) => STATUS_MAP[s]?.label ?? s;
-const getStatusClass = (s: string) => STATUS_MAP[s]?.cls ?? '';
+const statusLabel = (s: string) => STATUS_LBL[s]?.label ?? s;
+const statusLblClass = (s: string) => STATUS_LBL[s]?.cls ?? 'lbl-default';
 </script>
 
 <style scoped>
-.table-container {
-  margin-bottom: 1.5rem;
-  overflow-x: auto;
-  background: var(--bg-1);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-}
-
-.data-table {
-  width: 100%;
-  min-width: 900px;
-  border-collapse: collapse;
-}
-
-/* ── Header ── */
-.data-table thead th {
-  padding: 1rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-2);
-  text-align: left;
-  white-space: nowrap;
-  background: var(--bg-hover);
-  border-bottom: 1px solid var(--border);
-}
-
-.data-table thead th.sortable {
-  cursor: pointer;
-  user-select: none;
-  transition: color 0.2s;
-}
-
-.data-table thead th.sortable:hover {
-  color: var(--accent);
-}
-
-.sort-icon {
-  margin-left: 0.25rem;
-  font-size: 0.75rem;
-  opacity: 0.5;
-}
-
-/* ── Body ── */
-.data-table tbody tr {
-  border-bottom: 1px solid var(--border-strong);
-}
-
-.data-table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.clickable-row {
-  cursor: pointer;
-}
-
-.data-table tbody tr:hover {
-  background: var(--bg-hover);
-}
-
-.data-table tbody td {
-  padding: 1rem;
-  font-size: 0.875rem;
-  vertical-align: middle;
-  color: var(--text);
-}
-
-.col-nowrap {
-  white-space: nowrap;
-}
-
-/* ── 文件標題欄 ── */
-.doc-title-cell {
-  display: flex;
-  gap: 0.75rem;
-  align-items: flex-start;
-}
-
+/* 檔案圖示：實心高對比白字，近方形 --r-xs */
 .file-icon {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  margin-top: 0.125rem;
-  font-size: 0.625rem;
+  width: 2.125rem;
+  height: 2.125rem;
+  font-size: 0.5625rem;
   font-weight: 700;
-  border-radius: var(--r-md);
+  color: #fff;
+  letter-spacing: 0.04em;
+  border-radius: var(--r-xs);
 }
 
 .icon-pdf {
-  color: #ef4444;
-  background: rgb(239 68 68 / 12%);
+  background: #c0392b;
 }
 
 .icon-word {
-  color: #3b82f6;
-  background: rgb(59 130 246 / 12%);
-}
-
-.icon-excel {
-  color: #22c55e;
-  background: rgb(34 197 94 / 12%);
-}
-
-.icon-ppt {
-  color: #f97316;
-  background: rgb(249 115 22 / 12%);
+  background: #1d4ed8;
 }
 
 .icon-txt,
 .icon-default {
-  color: var(--text-2);
-  background: var(--bg-hover);
+  background: #475569;
 }
 
-.doc-info {
+.filename-cell {
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 0;
+  gap: 0.625rem;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: none;
 }
 
-.doc-title-text {
+.filename-text {
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 500;
+  color: var(--text);
   white-space: nowrap;
 }
 
-.doc-filename {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 0.75rem;
-  color: var(--text-3);
-  white-space: nowrap;
-}
-
-.doc-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  margin-top: 0.125rem;
-}
-
-.doc-tag {
-  padding: 0.1rem 0.4rem;
-  font-size: 0.6875rem;
+.filename-cell:hover .filename-text {
   color: var(--accent);
-  background: var(--accent-soft);
-  border-radius: var(--r-md);
+  transition: color 0.15s ease;
 }
 
-/* ── 狀態徽章 ── */
-.status-badge {
+.plain-text {
+  color: var(--text);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* lbl 家族：設計系統語意標籤 */
+.lbl {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.625rem;
+  padding: 0.2rem 0.55rem;
   font-size: 0.75rem;
   font-weight: 500;
   white-space: nowrap;
-  border-radius: var(--r-xs);
+  border-radius: var(--r-pill);
 }
 
-.status-ready {
-  color: var(--success);
-  background: rgb(16 185 129 / 10%);
+.lbl-accent {
+  color: var(--accent);
+  background: var(--accent-soft);
 }
 
-.status-processing {
+.lbl-warning {
   color: var(--warning);
-  background: rgb(245 158 11 / 10%);
+  background: var(--warning-soft);
 }
 
-.status-error {
+.lbl-error {
   color: var(--error);
-  background: rgb(239 68 68 / 10%);
+  background: var(--error-soft);
 }
 
-/* ── 操作欄 ── */
-.col-actions {
-  position: sticky;
-  right: 0;
-  width: 120px;
-  background: var(--bg-1);
+.lbl-default {
+  color: var(--text-2);
+  background: var(--bg-2);
 }
 
-.data-table thead th.col-actions {
-  background: var(--bg-hover);
+.date-cell {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+  white-space: nowrap;
 }
 
-.data-table tbody tr:hover .col-actions {
-  background: var(--bg-hover);
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
+/* 操作按鈕：純文字 ⋮，透明底 hover --bg-hover */
+.more-btn {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-}
-
-/* 統一 btn-icon（與 DepartmentTable / StaffTable 完全一致） */
-.btn-icon {
-  padding: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.125rem;
+  line-height: 1;
   color: var(--text-2);
   cursor: pointer;
   background: transparent;
   border: none;
   border-radius: var(--r-md);
-  transition: all 0.2s;
 }
 
-.btn-icon:hover {
-  color: var(--accent);
-  background: var(--bg);
-}
-
-.btn-icon.btn-danger:hover {
-  color: var(--error);
-}
-
-.icon {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-/* ── 空狀態 ── */
-.empty-cell {
-  padding: 3rem;
-  text-align: center;
+.more-btn:hover {
+  color: var(--text);
+  background: var(--bg-hover);
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .empty-state {
