@@ -57,3 +57,6 @@ openspec/
 
 # docs
 docs/
+
+# .playwright-mcp
+.playwright-mcp/
