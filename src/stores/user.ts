@@ -20,6 +20,8 @@ export const useUserStore = defineStore(
       return user.value?.role ? ROLE_LABELS[user.value.role] : '';
     });
     const userDepartment = computed(() => user.value?.department || '');
+    const userDepartmentId = computed(() => user.value?.departmentId ?? null);
+    const userBusinessTypeIds = computed(() => user.value?.businessTypeIds ?? []);
 
     // Actions
     /**
@@ -43,6 +45,8 @@ export const useUserStore = defineStore(
       userName,
       userRole,
       userDepartment,
+      userDepartmentId,
+      userBusinessTypeIds,
       // Actions
       setUser,
       clearUser,
